@@ -1,0 +1,3 @@
+[submodule "MudBlazor"]
+	path = src/MudBlazor
+	url = https://github.com/kaismic/MudBlazor.git

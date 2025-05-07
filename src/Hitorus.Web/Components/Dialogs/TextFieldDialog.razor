@@ -1,0 +1,20 @@
+﻿<MudDialog>
+    <DialogContent>
+        <MudTextField FullWidth Immediate
+                      Label="Name"
+                      Counter="TagFilter.TAG_FILTER_NAME_MAX_LEN"
+                      MaxLength="TagFilter.TAG_FILTER_NAME_MAX_LEN"
+                      T="string"
+                      Value="@Text"
+                      ValueChanged="@OnTextChanged"
+                      Error="@_showErrorMessage"
+                      ErrorText="@_errorMessage"
+                      OnKeyDown="@OnKeyDown" />
+    </DialogContent>
+    <DialogActions>
+        <SimpleDialogActions ActionText="@ActionText"
+                             DisableActionButton="@(Text.Length == 0)"
+                             OnAction="@ExecuteAction"
+                             OnCancel="@MudDialog.Cancel"/>
+    </DialogActions>
+</MudDialog>

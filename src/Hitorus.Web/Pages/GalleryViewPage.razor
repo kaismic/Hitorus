@@ -1,0 +1,189 @@
+﻿@layout EmptyLayout
+@page "/gallery/{GalleryId:int}"
+
+<PageTitle>@((_gallery == null ? "" : _gallery.Title + " - ") + GalleryId.ToString())</PageTitle>
+
+<MudThemeProvider @ref="@_mudThemeProvider" @bind-IsDarkMode="@_isDarkMode" Theme="_theme" />
+<MudPopoverProvider />
+
+@if (_gallery != null) {
+    <MudToolBar Class="gap-4 justify-center" Style=@($"height: {DEFAULT_TOOLBAR_HEIGHT}")>
+        <div class="d-flex gap-4 align-center">
+            <MudFab StartIcon="@Icons.Material.Filled.NavigateBefore"
+                    Disabled="@(!CanDecrement())"
+                    OnClick="@(() => Decrement())" />
+            <div class="d-flex align-center gap-2">
+                <MudNumericField T="int"
+                                 Value="@PageNumber"
+                                 ValueChanged="@OnPageNumberChanged"
+                                 Disabled="@(_viewConfiguration.ViewMode == ViewMode.Scroll && _isAutoScrolling)"
+                                 Label="Page"
+                                 Min="1" Max=@(_imageIndexRanges.Length)
+                                 Pattern="[0-9]"
+                                 Variant="Variant.Outlined"
+                                 Style="max-width: 80px" />
+                <MudText>@("/" + _imageIndexRanges.Length)</MudText>
+            </div>
+            <MudFab StartIcon="@Icons.Material.Filled.NavigateNext"
+                    Disabled="@(!CanIncrement())"
+                    OnClick="@(() => Increment())" />
+        </div>
+        <MudSelect T="ViewMode"
+                    Label="View Mode"
+                    Disabled="@_isAutoScrolling"
+                    Value=_viewConfiguration.ViewMode
+                    ValueChanged="@OnViewModeChanged"
+                    Variant="Variant.Outlined"
+                    Style="max-width: 120px">
+            <MudSelectItem T="ViewMode" Value="ViewMode.Default" />
+            <MudSelectItem T="ViewMode" Value="ViewMode.Scroll" />
+        </MudSelect>
+        <MudSelect T="FitMode"
+                    Label="Fit Mode"
+                    Disabled="@_isAutoScrolling"
+                    @bind-Value=@_fitMode
+                    Variant="Variant.Outlined"
+                    Style="max-width: 120px">
+            <MudSelectItem T="FitMode" Value="FitMode.Auto" />
+            <MudSelectItem T="FitMode" Value="FitMode.Horizontal" />
+            <MudSelectItem T="FitMode" Value="FitMode.Vertical" />
+        </MudSelect>
+        <div class="d-flex flex-column justify-center align-center">
+            <MudToggleIconButton Toggled=@_isAutoScrolling
+                                    ToggledChanged="@ToggleAutoScroll"
+                                    Icon="@Icons.Material.Filled.PlayArrow"
+                                    ToggledIcon="@Icons.Material.Filled.Pause"
+                                    ToggledColor="Color.Primary" />
+            <span style="margin: auto;">@(_isAutoScrolling ? "Pause" : "Play")</span>
+        </div>
+        @if (_viewConfiguration.ViewMode == ViewMode.Default) {
+            <MudSlider T="int" ValueLabel TickMarks
+                        Min="1" Max="20"
+                        Value=@_viewConfiguration.PageTurnInterval
+                        ValueChanged=@OnPageTurnIntervalChanged
+                        Variant="Variant.Filled"
+                        Style="max-width: 200px">
+                Page Turn Interval
+            </MudSlider>
+        } else {
+            <MudSelect T="AutoScrollMode"
+                        Label="Auto Scroll Mode"
+                        Value=@_viewConfiguration.AutoScrollMode
+                        ValueChanged="@OnAutoScrollModeChanged"
+                        Variant="Variant.Outlined">
+                <MudSelectItem T="AutoScrollMode" Value="AutoScrollMode.Continuous">Continuous</MudSelectItem>
+                <MudSelectItem T="AutoScrollMode" Value="AutoScrollMode.ByPage">By Page</MudSelectItem>
+            </MudSelect>
+            @if (_viewConfiguration.AutoScrollMode == AutoScrollMode.Continuous) {
+                <MudSlider T="int" ValueLabel TickMarks
+                            Min="1" Max="8"
+                            Value=@_viewConfiguration.ScrollSpeed
+                            ValueChanged=@OnScrollSpeedChanged
+                            Variant="Variant.Filled"
+                            Style="max-width: 200px">
+                    Auto Scroll Speed
+                </MudSlider>
+            } else {
+                <MudSlider T="int" ValueLabel TickMarks
+                            Min="1" Max="20"
+                            Value=@_viewConfiguration.PageTurnInterval
+                            ValueChanged=@OnPageTurnIntervalChanged
+                            Variant="Variant.Filled"
+                            Style="max-width: 200px">
+                    Page Turn Interval
+                </MudSlider>
+            }
+        }
+        <MudIconButton Icon="@(_toolbarOpen ? Icons.Material.Filled.ExpandLess : Icons.Material.Filled.ExpandMore)"
+                        OnClick="@(() => _toolbarOpen = !_toolbarOpen)" />
+        <MudToggleIconButton @bind-Toggled="_isDarkMode"
+                                Color="Color.Default"
+                                Icon="@Icons.Material.Filled.LightMode"
+                                ToggledIcon="@Icons.Material.Filled.DarkMode"
+                                Style="position: absolute; right: 0px; margin-right: 8px"/>
+    </MudToolBar>
+
+    <div style=@($"display: {(_toolbarOpen ? "block" : "none")};")>
+        <div style="position: absolute; background: var(--mud-palette-background);"
+             class="mud-width-full">
+            <MudDivider DividerType="DividerType.Middle"/>
+            <MudToolBar Class="flex-wrap gap-4 justify-center" Style="@($"height: {DEFAULT_TOOLBAR_HEIGHT}")">
+                <MudSwitch T="bool"
+                           Label="Loop"
+                           Value=@_viewConfiguration.Loop
+                           ValueChanged=@OnLoopChanged
+                           Color="Color.Primary" />
+                <MudNumericField T="int"
+                                 Value="@_pageOffset"
+                                 Disabled="@_isAutoScrolling"
+                                 ValueChanged="@OnPageOffsetChanged"
+                                 Label="Page Offset"
+                                 Min="0" Max="@(_imagesPerPage - 1)"
+                                 Variant="Variant.Outlined"
+                                 Style="max-width: 120px" />
+                <MudNumericField T="int"
+                                 @bind-Value="@_imagesPerPage"
+                                 Disabled="@_isAutoScrolling"
+                                 Label=@(_viewConfiguration.ImageLayoutMode == ImageLayoutMode.Automatic ? "Maximum Images per Page" : "Images per Page")
+                                 Min="1" Max=@Math.Min(4, _gallery.Images.Count)
+                                 Variant="Variant.Outlined" />
+                <MudSelect T="ImageLayoutMode"
+                           Label="Image Layout Mode"
+                           Disabled="@_isAutoScrolling"
+                           Value=@_viewConfiguration.ImageLayoutMode
+                           ValueChanged="@OnImageLayoutModeChanged"
+                           Variant="Variant.Outlined"
+                           Style="max-width: 200px">
+                    <MudSelectItem T="ImageLayoutMode" Value="ImageLayoutMode.Automatic" />
+                    <MudSelectItem T="ImageLayoutMode" Value="ImageLayoutMode.Fixed" />
+                </MudSelect>
+                <MudSelect T="ViewDirection"
+                           Label="View Direction"
+                           @bind-Value=_viewConfiguration.ViewDirection
+                           Variant="Variant.Outlined">
+                    <MudSelectItem T="ViewDirection" Value="ViewDirection.LTR">Left to Right</MudSelectItem>
+                    <MudSelectItem T="ViewDirection" Value="ViewDirection.RTL">Right to Left</MudSelectItem>
+                </MudSelect>
+            </MudToolBar>
+        </div>
+    </div>
+
+    <div id="main-container" style="height: calc(100dvh - @DEFAULT_TOOLBAR_HEIGHT); overflow: auto;">
+        @if (_imageIndexRanges.Length > 0) {
+            <div id="image-container"
+                 class="d-flex flex-column justify-center align-center"
+                 style="outline: none; background-color: black; min-height: calc(100dvh - @DEFAULT_TOOLBAR_HEIGHT);"
+                    tabindex="-1"
+                    @onkeydown="@OnKeyDown"
+                    @onkeydown:preventDefault="@_preventDefaultKeyDown">
+                @if (_viewConfiguration.ViewMode == ViewMode.Default) {
+                    <div class="d-flex justify-center" @onclick="@OnPageClick" @onwheel="@OnWheel">
+                        @if (_viewConfiguration.ViewDirection == ViewDirection.LTR) {
+                            @for (int i = _imageIndexRanges[PageIndex].Start.Value + 1; i < _imageIndexRanges[PageIndex].End.Value + 1; i++) {
+                                <img src=@($"{_baseImageUrl}&index={i}") alt=@($"Image {i}") style=@GetImageStyle() />
+                            }
+                        } else {
+                            @for (int i = _imageIndexRanges[PageIndex].End.Value; i > _imageIndexRanges[PageIndex].Start.Value; i--) {
+                                <img src=@($"{_baseImageUrl}&index={i}") alt=@($"Image {i}") style=@GetImageStyle() />
+                            }
+                        }
+                    </div>
+                } else {
+                    @foreach (Range range in _imageIndexRanges) {
+                        <div class="d-flex justify-center">
+                            @if (_viewConfiguration.ViewDirection == ViewDirection.LTR) {
+                                @for (int i = range.Start.Value + 1; i < range.End.Value + 1; i++) {
+                                    <img src=@($"{_baseImageUrl}&index={i}") alt=@($"Image {i}") loading="lazy" style=@GetImageStyle() />
+                                }
+                            } else {
+                                @for (int i = range.End.Value; i > range.Start.Value; i--) {
+                                    <img src=@($"{_baseImageUrl}&index={i}") alt=@($"Image {i}") loading="lazy" style=@GetImageStyle() />
+                                }
+                            }
+                        </div>
+                    }
+                }
+            </div>
+        }
+    </div>
+}

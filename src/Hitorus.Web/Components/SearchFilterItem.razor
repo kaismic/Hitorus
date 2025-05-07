@@ -1,0 +1,39 @@
+﻿<a class="search-filter" href="@Model.SearchLink" target="_blank" rel="noreferrer">
+    <table style="border-collapse: collapse; width: 100%;">
+        <tbody>
+            <tr>
+                <th>Language</th>
+                <td>@Model.Language.LocalName</td>
+            </tr>
+            <tr>
+                <th>Type</th>
+                <td>@Model.Type.Value</td>
+            </tr>
+            @foreach (LabeledTagCollectionDTO collection in Model.LabeledTagCollections)
+            {
+                <tr>
+                    <th>@collection.Category.ToString()</th>
+                    <td>
+                        <div class="d-flex flex-wrap gap-1">
+                            @foreach (string value in collection.IncludeTagValues)
+                            {
+                                <span style="background-color: var(--mud-palette-success); color: var(--mud-palette-error-text);" class="rounded px-1">@value</span>
+                            }
+                            @foreach (string value in collection.ExcludeTagValues)
+                            {
+                                <span style="background-color: var(--mud-palette-error); color: var(--mud-palette-success-text);" class="rounded px-1">@value</span>
+                            }
+                        </div>
+                    </td>
+                </tr>
+            }
+            @if (Model.TitleSearchKeyword.Length > 0)
+            {
+                <tr>
+                    <th>Keywords</th>
+                    <td>@Model.TitleSearchKeyword</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</a>

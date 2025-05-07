@@ -1,0 +1,32 @@
+﻿<div class="@Class" style="@Style">
+    <MudPaper Class="ltk-search-view d-flex flex-column pa-4 gap-2">
+        <MudSelect Label="Language"
+                   T="GalleryLanguageDTO"
+                   ToStringFunc="@(l => l.LocalName)"
+                   FullWidth
+                   Variant="Variant.Outlined"
+                   Value="@SelectedLanguage"
+                   ValueChanged="@SelectedLanguageChanged">
+            @foreach (GalleryLanguageDTO l in LanguageTypeService.Languages) {
+                <MudSelectItem Value="@l" />
+            }
+        </MudSelect>
+        <MudSelect Label="Type"
+                   T="GalleryTypeDTO"
+                   ToStringFunc="@(t => t.Value)"
+                   FullWidth
+                   Variant="Variant.Outlined"
+                   Value="SelectedType"
+                   ValueChanged="@SelectedTypeChanged">
+            @foreach (GalleryTypeDTO t in LanguageTypeService.Types) {
+                <MudSelectItem Value="@t" />
+            }
+        </MudSelect>
+        <MudTextField T="string"
+                      Label="Title search keyword"
+                      Variant="Variant.Outlined"
+                      Value="@TitleSearchKeyword"
+                      ValueChanged="@TitleSearchKeywordChanged"
+                      Clearable />
+    </MudPaper>
+</div>

@@ -1,0 +1,8 @@
+﻿<MudPaper Outlined Class=@($"d-flex align-center pa-4 gap-4 {Class}") Style=@($"min-height: 80px; {Style}")>
+    <MudIcon Icon="@Icon"></MudIcon>
+    <div style="flex: 1;">
+        <MudText Typo="Typo.h6">@Header</MudText>
+        <MudText Typo="Typo.body2">@Description</MudText>
+    </div>
+    <div>@ChildContent</div>
+</MudPaper>

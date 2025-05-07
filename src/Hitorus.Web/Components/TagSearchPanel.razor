@@ -1,0 +1,29 @@
+﻿<div style="display: grid; grid-template-rows: auto 1fr;">
+    <MudAutocomplete T="TagDTO"
+                     Label="@Category.ToString()"
+                     DebounceInterval="500"
+                     SearchFunc="@Search"
+                     ToStringFunc="@(tag => tag.Value)"
+                     Clearable="true"
+                     AdornmentIcon="@Icons.Material.Filled.Search"
+                     ShowProgressIndicator="true"
+                     OpenOnFocus="false"
+                     Value="@SearchValue"
+                     ValueChanged="@OnSearchValueChanged"
+                     Style="width: 90%; margin: auto; grid-row: 1;">
+    </MudAutocomplete>
+    <MudChipSet T="@(ChipModel<TagDTO>)"
+                Style="overflow-y: auto; grid-row: 2;"
+                SelectionMode="@SelectionMode.MultiSelection"
+                SelectedColor="@Color.Primary"
+                @bind-SelectedValues="@_selectedChipModels"
+                @onkeydown="@OnKeyDown">
+        @foreach (ChipModel<TagDTO> model in ChipModels) {
+            <CustomMudChip T="TagDTO"
+                           Model="@model"
+                           ToStringFunc="@(m => m.Value.Value)"
+                           OnClose="@HandleClosed" />
+        }
+    </MudChipSet>
+
+</div>

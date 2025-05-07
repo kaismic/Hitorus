@@ -1,0 +1,19 @@
+﻿<div class="d-flex flex-column gap-4 @Class" style="@Style">
+    @if (HeaderText != null)
+    {
+        <MudText Color="@HeaderColor" Typo="Typo.h6" Align="Align.Center">@HeaderText</MudText>
+    }
+    <MudChipSet T="@(ChipModel<TagFilterDTO>)"
+                SelectionMode="SelectionMode.MultiSelection"
+                SelectedValues="@SelectedChipModels"
+                SelectedValuesChanged="@SelectedChipModelsChanged"
+                SelectedColor="@Color.Primary"
+                Class="overflow-y-auto">
+        @foreach (ChipModel<TagFilterDTO> model in ChipModels) {
+            <CustomMudChip T="TagFilterDTO"
+                           Model="@model"
+                           ToStringFunc="@(model => model.Value.Name)"
+                           OnSelectedChanged="@OnSelectedChanged" />
+        }
+    </MudChipSet>
+</div>

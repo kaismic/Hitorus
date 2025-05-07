@@ -1,0 +1,46 @@
+﻿@using Hitorus.Data
+@using Microsoft.AspNetCore.SignalR.Client
+@inherits LayoutComponentBase
+
+<MudThemeProvider @ref="@_mudThemeProvider" @bind-IsDarkMode="@_isDarkMode" Theme="_theme" />
+<MudPopoverProvider />
+<MudSnackbarProvider />
+<MudDialogProvider MaxWidth="MaxWidth.Small" FullWidth="true" />
+
+<MudLayout>
+    @if (_isInitialized) {
+        <MudAppBar Elevation="0">
+            <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@DrawerToggle" />
+            <MudText Typo="Typo.h5" Class="ml-3">Hitomi Scroll Viewer</MudText>
+            <MudSpacer />
+            <MudToggleIconButton @bind-Toggled="_isDarkMode"
+            Color="Color.Inherit"
+            Icon="@Icons.Material.Filled.LightMode"
+            ToggledIcon="@Icons.Material.Filled.DarkMode" />
+        </MudAppBar>
+        <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2" Width="180px">
+            <MudNavMenu>
+                <MudNavLink Href="/search" Icon="@Icons.Material.Filled.Search">Search</MudNavLink>
+                <MudNavLink Href="/download" Icon="@Icons.Material.Filled.Download">Download</MudNavLink>
+                <MudNavLink Href="/browse" Icon="@Icons.Material.Filled.Folder">Browse</MudNavLink>
+                <MudNavLink Href="/settings" Icon="@Icons.Material.Filled.Settings">Settings</MudNavLink>
+                <MudNavLink Href="/about" Icon="@Icons.Material.Filled.Info">About</MudNavLink>
+            </MudNavMenu>
+        </MudDrawer>
+        <MudMainContent Style="height: 100dvh">
+            @Body
+        </MudMainContent>
+    } else {
+        <div style="min-height: 100dvh; display: flex; justify-content: center; align-items: center;">
+            <div style="display: flex; flex-direction: column; align-items: center;
+                        justify-content: center; gap: 2dvh;">
+                @if (_connectionError) {
+                    <MudIcon Icon="@Icons.Material.Filled.Error" Size="Size.Large" Color="Color.Primary" Style="font-size: 4rem" />
+                } else {
+                    <MudProgressCircular Indeterminate="true" Size="Size.Large" Color="Color.Primary" Style="font-size: 4rem" />
+                }
+                <span>@_statusMessage</span>
+            </div>
+        </div>
+    }
+</MudLayout>

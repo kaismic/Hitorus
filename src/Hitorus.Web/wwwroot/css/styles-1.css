@@ -1,0 +1,10 @@
+﻿/* override
+    mud-chip.mud-chip-size-medium: height
+    mud-chip: white-space
+*/
+.mud-chip {
+    overflow-wrap: anywhere;
+    min-height: 32px;
+    height: auto !important;
+    white-space: normal !important;
+}

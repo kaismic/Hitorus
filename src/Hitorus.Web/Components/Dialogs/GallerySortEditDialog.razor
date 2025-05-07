@@ -1,0 +1,57 @@
+﻿<MudDialog>
+    <DialogContent >
+        <div style="display: grid; grid-template-rows: auto auto; grid-template-columns: 1fr auto;" class="gap-4">
+            @if (_sorts.Any(s => s.IsActive))
+            {
+                <MudDropContainer @ref="_dropContainer"
+                T="GallerySortDTO"
+                Items="@_sorts"
+                ItemsSelector="@((item, dropzone) => item.IsActive)"
+                Class="d-flex flex-column justify-center"
+                Style="grid-row: 1; grid-column: 1">
+                    <ChildContent>
+                        <MudDropZone @ref="_dropZone" AllowReorder T="GallerySortDTO" />
+                    </ChildContent>
+                    <ItemRenderer>
+                        <GallerySortItemView GallerySort="@context" OnDeleteClick="@RemoveSort"/>
+                    </ItemRenderer>
+                </MudDropContainer>
+            } else
+            {
+                <MudText Style="color: var(--mud-palette-gray-default); margin: auto">No sorts</MudText>
+            }
+            <MudMenu StartIcon="@Icons.Material.Filled.Add"
+                     Variant="Variant.Outlined"
+                     Color="Color.Primary"
+                     Label="Add Sort"
+                     AnchorOrigin="Origin.BottomCenter"
+                     TransformOrigin="Origin.TopCenter"
+                     Style="grid-row: 2; grid-column: 1; justify-self: center">
+                @foreach (GallerySortDTO sort in _sorts.Where(s => !s.IsActive)) {
+                    <MudMenuItem Label="@Constants.GALLERY_PROPERTY_NAMES[sort.Property]"
+                                 Icon="@Icons.Material.Filled.Add"
+                                 OnClick="@(() => AddSort(sort))"/>
+                }
+            </MudMenu>
+            <div class="d-flex flex-column justify-center align-center gap-2" style="grid-row: 1; grid-column: 2; color: var(--mud-palette-gray-default)">
+                <MudText Typo="Typo.caption">High</MudText>
+                <MudIcon Icon="@Icons.Material.Filled.ArrowUpward" />
+                <MudText Typo="Typo.caption">Priority</MudText>
+                <MudIcon Icon="@Icons.Material.Filled.ArrowDownward" />
+                <MudText Typo="Typo.caption">Low</MudText>
+            </div>
+        </div>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Primary"
+                   Variant="Variant.Filled"
+                   OnClick="@ExecuteAction">
+            Save
+        </MudButton>
+        <MudButton Color="Color.Primary"
+                   Variant="Variant.Text"
+                   OnClick="@Close">
+            Close
+        </MudButton>
+    </DialogActions>
+</MudDialog>

@@ -1,0 +1,3 @@
+﻿.tag-search-panel-collection > div:not(:first-child) {
+    border-left: 1px solid var(--mud-palette-primary);
+}

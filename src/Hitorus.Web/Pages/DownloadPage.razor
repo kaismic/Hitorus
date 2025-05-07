@@ -1,0 +1,49 @@
+﻿@page "/download"
+
+<PageTitle>Download</PageTitle>
+
+<div style="height: 100%;" class="d-flex gap-8 pa-8">
+    <div Style="min-width: 360px;">
+        <MudTextField FullWidth AutoGrow Immediate
+                      Variant="Variant.Outlined"
+                      T="string"
+                      Lines="8"
+                      @bind-Value="@_inputText"
+                      Placeholder="Enter Gallery ID(s) or URL(s) here. e.g. 2058075, https://hitomi.la/..." />
+        <MudTooltip Text=@(DownloadManager.IsHubConnectionOpen ? null : "Try refreshing the browser")
+                    RootClass="mud-width-full">
+            <MudButton FullWidth
+                       Variant="Variant.Filled"
+                       Color="@Color.Primary"
+                       EndIcon="@Icons.Material.Filled.Download"
+                       Disabled="@(_inputText.Length == 0 || !DownloadManager.IsHubConnectionOpen)"
+                       OnClick="@OnDownloadButtonClick"
+                       Class="mt-4">
+                @(DownloadManager.IsHubConnectionOpen ? "Download" : "Unable to connect to server")
+            </MudButton>
+        </MudTooltip>
+    </div>
+    <MudDivider Vertical />
+    <div style="flex: 1;" class="d-flex flex-column gap-4">
+        <div class="d-flex gap-4 align-center">
+            <MudSwitch T="bool"
+                       Label="Concurrent Download"
+                       Value="@DownloadConfigurationService.Config.UseParallelDownload"
+                       ValueChanged="@OnParallelDownloadChanged"
+                       Color="Color.Primary" />
+            <MudDivider Vertical FlexItem />
+            <MudNumericField T="int"
+                             Label="Threads per Download"
+                             Variant="Variant.Outlined"
+                             Min="1" Max="8"
+                             Value="@DownloadConfigurationService.Config.ThreadNum"
+                             ValueChanged="@OnThreadNumChanged" />
+        </div>
+        <MudPaper Class="d-flex flex-column gap-4 overflow-y-auto overflow-x-hidden pa-4"
+                  Style="flex: 1" Outlined>
+            @foreach (DownloadModel model in DownloadManager.Downloads.Values) {
+                <DownloadItemView Model="@model" @key=@model />
+            }
+        </MudPaper>
+    </div>
+</div>

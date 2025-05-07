@@ -1,0 +1,28 @@
+﻿<div class="gap-4 align-center" style="display: grid; grid-template-columns: auto auto 1fr auto auto;">
+    <MudFab Color="Color.Primary"
+            StartIcon="@Icons.Material.Filled.Add"
+            OnClick="@OnCreateButtonClicked" />
+    <MudFab Color="Color.Primary"
+            StartIcon="@Icons.Material.Filled.Edit"
+            OnClick="@OnRenameButtonClicked"
+            Disabled="@(CurrentTagFilter == null)" />
+    <MudSelect T="TagFilterDTO"
+               Variant="Variant.Outlined"
+               Label="Tag Filter"
+               @bind-Value="@CurrentTagFilter"
+               ToStringFunc="@(tf => tf.Name)"
+               Class="tag-filter-selector"
+               FullWidth>
+        @foreach (TagFilterDTO tagFilter in TagFilters) {
+            <MudSelectItem Value="@tagFilter" />
+        }
+    </MudSelect>
+    <MudFab Color="Color.Primary"
+            StartIcon="@Icons.Material.Filled.Save"
+            OnClick="@OnSaveButtonClicked"
+            Disabled="@(CurrentTagFilter == null)" />
+    <MudFab Color="Color.Primary"
+            StartIcon="@Icons.Material.Filled.Delete"
+            OnClick="@OnDeleteButtonClicked"
+            Disabled="@(CurrentTagFilter == null)" />
+</div>

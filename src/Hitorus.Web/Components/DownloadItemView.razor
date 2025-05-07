@@ -1,0 +1,26 @@
+﻿<MudPaper id="@Model.ElementId"
+          Class="d-flex pa-4 gap-4" Outlined>
+    <div style="width: 240px;">
+        <MudText>@Model.GalleryId</MudText>
+        <MudText>@Model.Gallery?.Title</MudText>
+    </div>
+    <div class="align-self-end" style="flex: 1;">
+        <MudProgressLinear Color="Color.Primary"
+                           Value="@Model.Progress"
+                           Min="0"
+                           Max="@(Model.Gallery == null ? 0 : Model.Gallery.ImageCount)"
+                           Class="mb-1" />
+        <div class="d-flex">
+            <MudText Style="flex: 1 1 auto;">@Model.StatusMessage</MudText>
+            <MudText Style="white-space: nowrap;">@(Model.Progress.ToString() + "/" + (Model.Gallery == null ? "-" : Model.Gallery.ImageCount.ToString()))</MudText>
+        </div>
+    </div>
+    <div style="width: 120px;" class="d-flex gap-4 align-center">
+        <MudIconButton Icon=@ControlButtonIcon
+                       Disabled=@(Model.Status is DownloadStatus.Completed or DownloadStatus.Deleted || !DownloadManager.IsHubConnectionOpen || Model.WaitingResponse)
+                       OnClick=@OnActionButtonClick />
+        <MudIconButton Icon=@Icons.Material.Filled.Delete
+                       Disabled=@(Model.Status is DownloadStatus.Completed or DownloadStatus.Deleted || !DownloadManager.IsHubConnectionOpen || Model.WaitingResponse)
+                       OnClick="@OnDeleteButtonClick" />
+    </div>
+</MudPaper>

@@ -1,0 +1,18 @@
+﻿.search-filter {
+    border: 1px solid var(--mud-palette-secondary);
+    border-radius: 4px;
+}
+
+.search-filter:hover {
+    background-color: var(--mud-palette-action-default-hover);
+}
+
+.search-filter :is(td, th) {
+    border-color: var(--mud-palette-lines-default);
+    border-width: 1px;
+    padding: 4px;
+}
+
+th {
+    font-weight: bold;
+}

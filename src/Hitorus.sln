@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32630.192
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MudBlazor", "MudBlazor\src\MudBlazor\MudBlazor.csproj", "{47C9597B-1BD3-4032-406C-C58D5BDEED29}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hitorus.Data", "Hitorus.Data\Hitorus.Data.csproj", "{E238F2FD-9DE6-50AC-ACE3-1D6896149A19}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hitorus.Api", "Hitorus.Api\Hitorus.Api.csproj", "{A7D80B43-0926-D9DE-6E51-4D3B9324659B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hitorus.Web", "Hitorus.Web\Hitorus.Web.csproj", "{C9FC9AB7-E194-D884-BD5F-823E9222CA56}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{47C9597B-1BD3-4032-406C-C58D5BDEED29}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{47C9597B-1BD3-4032-406C-C58D5BDEED29}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{47C9597B-1BD3-4032-406C-C58D5BDEED29}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{47C9597B-1BD3-4032-406C-C58D5BDEED29}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E238F2FD-9DE6-50AC-ACE3-1D6896149A19}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E238F2FD-9DE6-50AC-ACE3-1D6896149A19}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E238F2FD-9DE6-50AC-ACE3-1D6896149A19}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E238F2FD-9DE6-50AC-ACE3-1D6896149A19}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A7D80B43-0926-D9DE-6E51-4D3B9324659B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A7D80B43-0926-D9DE-6E51-4D3B9324659B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A7D80B43-0926-D9DE-6E51-4D3B9324659B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A7D80B43-0926-D9DE-6E51-4D3B9324659B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C9FC9AB7-E194-D884-BD5F-823E9222CA56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9FC9AB7-E194-D884-BD5F-823E9222CA56}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9FC9AB7-E194-D884-BD5F-823E9222CA56}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9FC9AB7-E194-D884-BD5F-823E9222CA56}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

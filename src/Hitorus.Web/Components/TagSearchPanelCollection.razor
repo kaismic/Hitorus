@@ -1,0 +1,11 @@
+﻿<div class="tag-search-panel-collection rounded"
+     style="border: 1px solid var(--mud-palette-primary); display: grid;
+            grid-template-columns: repeat(@Tag.TAG_CATEGORIES.Length, 1fr); grid-template-rows: 100%; @Style">
+    @for (int i = 0; i < Tag.TAG_CATEGORIES.Length; i++) {
+        <div style="grid-column: @(i + 1); max-height: 100%;">
+            <TagSearchPanel Category="@Tag.TAG_CATEGORIES[i]"
+                            ChipModels="@TagSearchPanelChipModels[i]"
+                            ChipModelsChanged="@ChipModelsChanged" />
+        </div>
+    }
+</div>

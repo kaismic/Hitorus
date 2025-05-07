@@ -1,0 +1,13 @@
+﻿@page "/about"
+
+<PageTitle>About</PageTitle>
+
+<div class="d-flex flex-column gap-4 pa-8">
+    <MudText Typo="Typo.h4">About</MudText>
+    <MudText Typo="Typo.body1">App Version: @AppConfigurationService.CURRENT_APP_VERSION.ToString()</MudText>
+    <div class="d-flex gap-4">
+        <MudText Typo="Typo.body1">Developer: kaismic</MudText>
+        <MudLink Href="https://github.com/kaismic">GitHub</MudLink>
+    </div>
+    <MudLink Typo="Typo.subtitle1">Check for Updates (Href TODO) </MudLink>
+</div>

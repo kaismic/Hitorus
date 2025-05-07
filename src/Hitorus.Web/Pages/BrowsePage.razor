@@ -1,0 +1,99 @@
+﻿@page "/browse"
+
+<PageTitle>Browse</PageTitle>
+
+<div class="d-flex flex-column pa-8 gap-2">
+    <div class="d-flex gap-4">
+        <TagSearchPanelCollection Style="flex: 3;"
+                                  TagSearchPanelChipModels="@_tagSearchPanelChipModels"
+                                  ChipModelsChanged="@OnChipModelsChanged" />
+        <LTKSearchView Style="flex: 1;"
+                       SelectedLanguage="@BrowseConfigurationService.Config.SelectedLanguage"
+                       SelectedLanguageChanged="@OnSelectedLanguageChanged"
+                       SelectedType="@BrowseConfigurationService.Config.SelectedType"
+                       SelectedTypeChanged="@OnSelectedTypeChanged"
+                       TitleSearchKeyword="@BrowseConfigurationService.Config.TitleSearchKeyword"
+                       TitleSearchKeywordChanged="@OnTitleSearchKeywordChanged" />
+    </div>
+    @if (_isEditing) {
+        <div class="d-flex justify-end align-center gap-4">
+            <MudButton Color="Color.Primary"
+                       Variant="Variant.Text"
+                       StartIcon="@Icons.Material.Filled.Cancel"
+                       OnClick="@(() => _isEditing = false)">
+                Cancel
+            </MudButton>
+            <MudButton Color="Color.Error"
+                       Variant="Variant.Filled"
+                       StartIcon="@Icons.Material.Filled.Delete"
+                       OnClick="@DeleteGalleries"
+                       Disabled="@(!_selections.Any(s => s))">
+                Delete
+            </MudButton>
+        </div>
+    } else {
+        <div class="d-flex justify-space-between align-center" style="position: relative;">
+            <div class="d-flex align-center gap-4">
+                <MudButton Color="Color.Primary"
+                           Variant="Variant.Outlined"
+                           StartIcon="@Icons.Material.Filled.Edit"
+                           OnClick="@(() => _isEditing = true)">
+                    Edit
+                </MudButton>
+                <MudButton Variant="Variant.Outlined"
+                           Color="@(_activeSorts.Count == 0 ? Color.Default : Color.Primary)"
+                           StartIcon="@Icons.Material.Filled.Sort"
+                           OnClick="@ShowSortEditDialog">
+                    @(_activeSorts.Count == 0 ? "Sort" : _activeSorts.Count == 1 ? "1 Sort" : $"{_activeSorts.Count} Sorts")
+                </MudButton>
+                <MudNumericField T="int"
+                                 Label="Galleries per Page"
+                                 Variant="Variant.Outlined"
+                                 Min="1" Max="24"
+                                 Style="max-width: 160px"
+                                 Value="@BrowseConfigurationService.Config.ItemsPerPage"
+                                 ValueChanged="@OnItemsPerPageChanged" />
+            </div>
+            <MudPagination ShowFirstButton ShowLastButton
+                           MiddleCount="8"
+                           Count="@_totalPages"
+                           Selected="@_pageNum"
+                           SelectedChanged="@OnPageNumChanged"
+                           Style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);" />
+            <div class="d-flex align-center gap-4">
+                <MudSwitch T="bool"
+                           Label="Refresh on filter change"
+                           Color="Color.Primary"
+                           Value="@BrowseConfigurationService.Config.AutoRefresh"
+                           ValueChanged="@OnAutoRefreshChanged" />
+                <MudButton Color="Color.Primary"
+                           Variant="Variant.Filled"
+                           StartIcon="@Icons.Material.Filled.Search"
+                           OnClick="@LoadGalleries">
+                    Browse
+                </MudButton>
+            </div>
+        </div>
+    }
+    @if (_isLoading) {
+        <div class="d-flex justify-center mt-16">
+            <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+        </div>
+    } else {
+        @if (_galleries.Length == 0) {
+            <MudText Style="margin: auto; margin-top: 160px; color: var(--mud-palette-gray-default)">No galleries found. Try removing filters.</MudText>
+        } else {
+            <MudGrid Spacing="4">
+                @for (int i = 0; i < _galleries.Length; i++) {
+                    int localIndex = i;
+                    <MudItem sm="12" md="6" lg="4" xl="3" xxl="2" Style="overflow-x: clip;">
+                        <GalleryBrowseItem Gallery="@_galleries[localIndex]"
+                                           @bind-IsSelected="@_selections[localIndex]"
+                                           IsEditing="@_isEditing"
+                                           DeleteRequested="@DeleteGallery"/>
+                    </MudItem>
+                }
+            </MudGrid>
+        }
+    }
+</div>

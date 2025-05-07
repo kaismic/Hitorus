@@ -1,0 +1,126 @@
+﻿@page "/settings"
+
+<PageTitle>Settings</PageTitle>
+
+<div class="d-flex flex-column gap-4 pa-8">
+    <MudText Typo="Typo.h4">General</MudText>
+    <SettingsCard Icon="@Icons.Material.Filled.Language"
+                  Header="Language">
+        <MudSelect T="string" Variant="Variant.Outlined" Style="max-width: 200px;">
+            <MudSelectItem T="string" Value=@("en-US")>English</MudSelectItem>
+            <MudSelectItem T="string" Value=@("ko-KR")>Korean</MudSelectItem>
+        </MudSelect>
+    </SettingsCard>
+        @*
+        <div class="d-flex gap-2">
+            <div class="flex-grow-1">
+                        <script src="https://accounts.google.com/gsi/client" async></script>
+                        <div id="g_id_onload"
+                        data-client_id="TODO_client_id"
+                        data-context="signin"
+                        data-ux_mode="popup"
+                        data-login_uri="TODO_login_uri.com"
+                        data-auto_select="true"
+                        data-itp_support="true">
+                        </div>
+                        <div class="g_id_signin"
+                        data-type="standard"
+                        data-shape="rectangular"
+                        data-theme="outline"
+                        data-text="signin_with"
+                        data-size="large"
+                        data-logo_alignment="left">
+                        </div>
+                        
+            </div>
+        </div>
+    </MudPaper>
+        *@
+
+    <MudText Typo="Typo.h4">Default Gallery View Settings</MudText>
+    <SettingsCard Icon="@(ViewConfigurationService.Config.ViewMode == ViewMode.Default ? Icons.Material.Rounded.Rectangle : Icons.Material.Filled.TableRows)"
+                    Header="View Mode">
+        <MudSelect T="ViewMode"
+                    Variant="Variant.Outlined"
+                    Style="max-width: 200px;"
+                    Value="@ViewConfigurationService.Config.ViewMode"
+                    ValueChanged="@OnViewModeChanged">
+            <MudSelectItem T="ViewMode" Value="ViewMode.Default"></MudSelectItem>
+            <MudSelectItem T="ViewMode" Value="ViewMode.Scroll"></MudSelectItem>
+        </MudSelect>
+    </SettingsCard>
+    <SettingsCard Icon="@Icons.Material.Filled.Timer"
+                    Header="Page Turn Interval"
+                    Description="Number of seconds to wait before turning to the next page.">
+        <MudSlider T="int" ValueLabel TickMarks
+                    Min="1" Max="20"
+                    Value=@ViewConfigurationService.Config.PageTurnInterval
+                    ValueChanged=@OnPageTurnIntervalChanged
+                    Variant="Variant.Filled"
+                    Style="min-width: 240px">
+        </MudSlider>
+    </SettingsCard>
+    <SettingsCard Icon="@Icons.Material.Filled.Settings"
+                    Header="Auto Scroll Mode">
+        <MudSelect T="AutoScrollMode"
+                    Value=@ViewConfigurationService.Config.AutoScrollMode
+                    ValueChanged="@OnAutoScrollModeChanged"
+                    Variant="Variant.Outlined">
+            <MudSelectItem T="AutoScrollMode" Value="AutoScrollMode.Continuous">Continuous</MudSelectItem>
+            <MudSelectItem T="AutoScrollMode" Value="AutoScrollMode.ByPage">By Page</MudSelectItem>
+        </MudSelect>
+    </SettingsCard>
+    <SettingsCard Icon="@Icons.Material.Filled.Speed"
+                    Header="Scroll Speed">
+        <MudSlider T="int" ValueLabel TickMarks
+                    Min="1" Max="8"
+                    Value=@ViewConfigurationService.Config.ScrollSpeed
+                    ValueChanged=@OnScrollSpeedChanged
+                    Variant="Variant.Filled"
+                    Style="min-width: 240px">
+        </MudSlider>
+    </SettingsCard>
+    <SettingsCard Icon="@Icons.Material.Filled.Loop"
+                    Header="Loop"
+                    Description="Whether you can go back to the first page when you reach the end.">
+        <MudSwitch T="bool"
+                    Value=@ViewConfigurationService.Config.Loop
+                    ValueChanged=@OnLoopChanged
+                    Color="Color.Primary" />
+    </SettingsCard>
+    <SettingsCard Icon="@Icons.Material.Filled.Settings"
+                    Header="Image Layout Mode">
+        <MudSelect T="ImageLayoutMode"
+                    Value=@ViewConfigurationService.Config.ImageLayoutMode
+                    ValueChanged="@OnImageLayoutModeChanged"
+                    Variant="Variant.Outlined"
+                    Style="max-width: 200px">
+            <MudSelectItem T="ImageLayoutMode" Value="ImageLayoutMode.Automatic" />
+            <MudSelectItem T="ImageLayoutMode" Value="ImageLayoutMode.Fixed" />
+        </MudSelect>
+    </SettingsCard>
+    <SettingsCard Icon="@(ViewConfigurationService.Config.ViewDirection == ViewDirection.LTR ? Icons.Material.Filled.East : Icons.Material.Filled.West)"
+                    Header="View Direction">
+        <MudSelect T="ViewDirection"
+                    Value=@ViewConfigurationService.Config.ViewDirection
+                    ValueChanged="@OnViewDirectionChanged"
+                    Variant="Variant.Outlined">
+            <MudSelectItem T="ViewDirection" Value="ViewDirection.LTR">Left to Right</MudSelectItem>
+            <MudSelectItem T="ViewDirection" Value="ViewDirection.RTL">Right to Left</MudSelectItem>
+        </MudSelect>
+    </SettingsCard>
+    <SettingsCard Icon="@Icons.Material.Filled.Settings"
+                    Header="Invert Click Navigation">
+        <MudSwitch T="bool"
+                    Value=@ViewConfigurationService.Config.InvertClickNavigation
+                    ValueChanged=@OnInvertClickNavigationChanged
+                    Color="Color.Primary" />
+    </SettingsCard>
+    <SettingsCard Icon="@Icons.Material.Filled.Settings"
+                    Header="Invert Keyboard Navigation">
+        <MudSwitch T="bool"
+                    Value=@ViewConfigurationService.Config.InvertKeyboardNavigation
+                    ValueChanged=@OnInvertKeyboardNavigationChanged
+                    Color="Color.Primary" />
+    </SettingsCard>
+</div>

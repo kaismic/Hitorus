@@ -1,0 +1,43 @@
+indonesian|^|Bahasa Indonesia
+javanese|^|Basa Jawa
+catalan|^|Català
+cebuano|^|Cebuano
+czech|^|Čeština
+danish|^|Dansk
+german|^|Deutsch
+estonian|^|Eesti
+english|^|English
+spanish|^|Español
+esperanto|^|Esperanto
+french|^|Français
+hindi|^|Hindi
+icelandic|^|Íslenska
+italian|^|Italiano
+latin|^|Latina
+hungarian|^|Magyar
+dutch|^|Nederlands
+norwegian|^|Norsk
+polish|^|Polski
+portuguese|^|Português
+romanian|^|Română
+albanian|^|Shqip
+slovak|^|Slovenčina
+serbian|^|Srpski
+finnish|^|Suomi
+swedish|^|Svenska
+tagalog|^|Tagalog
+vietnamese|^|Tiếng Việt
+turkish|^|Türkçe
+greek|^|Ελληνικά
+bulgarian|^|Български
+mongolian|^|Монгол
+russian|^|Русский
+ukrainian|^|Українська
+hebrew|^|עברית
+arabic|^|العربية
+persian|^|فارسی
+thai|^|ไทย
+burmese|^|မြန်မာဘာသာ
+korean|^|한국어
+chinese|^|中文
+japanese|^|日本語

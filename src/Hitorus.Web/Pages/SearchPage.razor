@@ -1,0 +1,140 @@
+﻿@page "/search"
+
+<PageTitle>Search</PageTitle>
+
+@if (_showWalkthrough) {
+    <MudOverlay DarkBackground Visible="@_showWalkthrough" />
+}
+<div style="height: 100%;" class="d-flex pa-8 gap-4">
+    <div id="search-page-left-container" style="flex: 3;" class="d-flex flex-column gap-2">
+        <div style=@($"height: 60%; {GetHighlightZIndexStyle(0)}")>
+            <MudPaper id="tag-filter-editor-control-panel"
+                      Class="pa-8 gap-2"
+                      Style="height: 100%; display: grid; grid-template-rows: repeat(3, min-content)">
+                <TagFilterEditor @ref="@_tagFilterEditor"
+                                 TagFilters="@TagFilters"
+                                 SelectedTagFilterChanged="@SelectedTagFilterChanged"
+                                 OnCreateButtonClicked="@CreateTagFilter"
+                                 OnRenameButtonClicked="@RenameTagFilter"
+                                 OnSaveButtonClicked="@(() => SaveTagFilter(_tagFilterEditor.CurrentTagFilter))"
+                                 OnDeleteButtonClicked="@DeleteTagFilters" />
+                <div class="d-flex">
+                    <div class="d-flex gap-4">
+                        <MudButton Color="Color.Primary"
+                                   EndIcon="@Icons.Material.Filled.Refresh"
+                                   OnClick="LoadTags"
+                                   Disabled="@(_tagFilterEditor?.CurrentTagFilter == null)">
+                            Reload
+                        </MudButton>
+                        <MudButton Color="Color.Primary"
+                                   EndIcon="@Icons.Material.Filled.Clear"
+                                   OnClick="ClearAllTags"
+                                   Disabled="@(_tagFilterEditor?.CurrentTagFilter == null)">
+                            Clear
+                        </MudButton>
+                    </div>
+                    <MudSpacer />
+                    <MudSwitch T="bool"
+                               Label="Auto save"
+                               Color="Color.Primary"
+                               Value="SearchConfigurationService.Config.IsAutoSaveEnabled"
+                               ValueChanged=@OnIsAutoSaveEnabledChanged />
+                </div>
+                <TagSearchPanelCollection TagSearchPanelChipModels="@_tagSearchPanelChipModels" />
+            </MudPaper>
+            @if (_showWalkthrough) {
+                <GuidePopover ContentText="1. Create and edit tag filters."
+                              ButtonText="Next"
+                              Open=@(_walkthroughStep == 0)
+                              OnClose="@ShowNextGuide"
+                              AnchorOrigin="Origin.BottomRight"
+                              TransformOrigin="Origin.TopRight"
+                              Class="mt-4" />
+            }
+        </div>
+        <MudPaper Class="d-flex gap-4 pa-4 overflow-y-auto" Style=@($"height: 40%; {GetHighlightZIndexStyle(1)}")>
+            <PairedTagFilterSelector @ref="_includePairedTagFilterSelector"
+                                     ChipModels="@_includeTagFilterChipModels"
+                                     SelectedChipModelsChanged="@(collection => OnSelectedTagFilterCollectionChanged(collection, true))"
+                                     HeaderText="Include"
+                                     HeaderColor="Color.Success"
+                                     Other="_excludePairedTagFilterSelector"
+                                     Style="flex: 1;" />
+            <MudDivider Vertical Class="my-4" FlexItem />
+            <PairedTagFilterSelector @ref="_excludePairedTagFilterSelector"
+                                     ChipModels="@_excludeTagFilterChipModels"
+                                     SelectedChipModelsChanged="@(collection => OnSelectedTagFilterCollectionChanged(collection, false))"
+                                     HeaderText="Exclude"
+                                     HeaderColor="Color.Error"
+                                     Other="_includePairedTagFilterSelector"
+                                     Style="flex: 1;" />
+            @if (_showWalkthrough) {
+                <GuidePopover ContentText="2. Select tag filters to include or exclude."
+                              ButtonText="Next"
+                              Open=@(_walkthroughStep == 1)
+                              OnClose="@ShowNextGuide"
+                              AnchorOrigin="Origin.TopRight"
+                              TransformOrigin="Origin.BottomRight"
+                              Class="mt-n4" />
+            }
+        </MudPaper>
+    </div>
+    <div id="search-filter-control-panel" style="flex: 1;" class="d-flex flex-column gap-2">
+        <div style=@GetHighlightZIndexStyle(2)>
+            <LTKSearchView SelectedLanguage="@SearchConfigurationService.Config.SelectedLanguage"
+                           SelectedLanguageChanged=@OnSelectedLanguageChanged
+                           SelectedType="@SearchConfigurationService.Config.SelectedType"
+                           SelectedTypeChanged=@OnSelectedTypeChanged
+                           TitleSearchKeyword="@SearchConfigurationService.Config.TitleSearchKeyword"
+                           TitleSearchKeywordChanged=@OnTitleSearchKeywordChanged />
+            @if (_showWalkthrough) {
+                <GuidePopover ContentText="3. Select language, type and optionally enter a title search keyword. "
+                              ButtonText="Next"
+                              Open=@(_walkthroughStep == 2)
+                              OnClose="@ShowNextGuide"
+                              AnchorOrigin="Origin.TopLeft"
+                              TransformOrigin="Origin.TopRight"
+                              Class="ml-n4" />
+            }
+        </div>
+        <MudPaper class="d-flex flex-column pa-4 gap-2" style=@($"flex: 1; {GetHighlightZIndexStyle(3)}")>
+            <MudStack Row Spacing="2" StretchItems="StretchItems.Start" Class="my-2">
+                <MudButton Class="py-2"
+                           FullWidth
+                           Color="Color.Primary"
+                           Variant="Variant.Filled"
+                           OnClick="@CreateSearchFilter"
+                           StartIcon="@Icons.Material.Filled.Search">
+                    Create and copy search link
+                </MudButton>
+                <MudButton Class="py-2"
+                           Color="Color.Primary"
+                           OnClick="@SearchFilters.Clear"
+                           Disabled="@(SearchFilters.Count == 0)">
+                    Clear
+                </MudButton>
+            </MudStack>
+            <hr class="mud-divider mb-2" />
+            <MudStack class="overflow-y-scroll" Spacing="2" Style="flex: 1;">
+                @foreach (SearchFilterDTO model in SearchFilters) {
+                    <div style="display: grid; grid-template-columns: 1fr min-content; gap: 4px;">
+                        <SearchFilterItem Model="@model" />
+                        <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                       Disabled="@(model.Id == 0)"
+                                       OnClick="@(() => DeleteSearchFilter(model))"
+                                       Style="height: min-content; margin: auto;" />
+                    </div>
+                }
+            </MudStack>
+            @if (_showWalkthrough) {
+                <GuidePopover ContentText="4. Create search links and use them to search for galleries."
+                              ButtonText="Finish"
+                              Open=@(_walkthroughStep == 3)
+                              OnClose="@ShowNextGuide"
+                              AnchorOrigin="Origin.TopLeft"
+                              TransformOrigin="Origin.TopRight"
+                              Class="ml-n4" />
+            }
+        </MudPaper>
+    </div>
+</div>

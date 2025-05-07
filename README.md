@@ -4,7 +4,7 @@
 
 Hitorus is a local desktop web browser-based application designed to enhance your experience with the website hitomi.la. It offers the following features:
 
-- Create custom search links with combinable tag filters
+- Create search links with customizable tag filters
 - Download galleries
 - View galleries with advanced functionalities
 

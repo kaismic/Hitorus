@@ -1,17 +1,37 @@
 ﻿using Hitorus.Data;
 using Hitorus.Web.Services;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Localization;
+using System.Globalization;
 
 namespace Hitorus.Web.Pages {
     public partial class SettingsPage {
+        [Inject] private AppConfigurationService AppConfigurationService { get; set; } = default!;
         [Inject] private ViewConfigurationService ViewConfigurationService { get; set; } = default!;
+        [Inject] NavigationManager NavigationManager { get; set; } = default!;
+        [Inject] IStringLocalizer<SettingsPage> Localizer { get; set; } = default!;
 
-        protected override async Task OnAfterRenderAsync(bool firstRender) {
-            if (firstRender) {
-                if (!ViewConfigurationService.IsLoaded) {
-                    await ViewConfigurationService.Load();
-                    StateHasChanged();
-                }
+        private static readonly string[] SUPPORTED_LANGUAGES = ["en", "ko"];
+
+        protected override async Task OnInitializedAsync() {
+            await AppConfigurationService.Load();
+            await ViewConfigurationService.Load();
+        }
+
+        private async Task OnAppLanguageChanged(string value) {
+            try {
+                AppConfigurationService.Config.AppLanguage = value;
+                AppConfigurationService.ChangeAppLanguage(value);
+                await AppConfigurationService.UpdateAppLanguage(value);
+            } catch (CultureNotFoundException e) {
+                Console.WriteLine(e.Message);
+            }
+            // Refresh the page if the new value does not match the initial app language or
+            // is not english (default) since blazor uses satellite assembly and
+            // the new language's satellite assembly must not have been loaded
+            value = value.Length == 0 ? AppConfigurationService.DefaultBrowserLanguage : value;
+            if (value != AppConfigurationService.InitialAppLanguage && !value.Contains("en")) {
+                NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
             }
         }
 

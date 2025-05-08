@@ -1,6 +1,6 @@
 ﻿@page "/search"
 
-<PageTitle>Search</PageTitle>
+<PageTitle>@Localizer["Search"]</PageTitle>
 
 @if (_showWalkthrough) {
     <MudOverlay DarkBackground Visible="@_showWalkthrough" />
@@ -24,18 +24,18 @@
                                    EndIcon="@Icons.Material.Filled.Refresh"
                                    OnClick="LoadTags"
                                    Disabled="@(_tagFilterEditor?.CurrentTagFilter == null)">
-                            Reload
+                            @SharedLocalizer["Refresh"]
                         </MudButton>
                         <MudButton Color="Color.Primary"
                                    EndIcon="@Icons.Material.Filled.Clear"
                                    OnClick="ClearAllTags"
                                    Disabled="@(_tagFilterEditor?.CurrentTagFilter == null)">
-                            Clear
+                            @SharedLocalizer["ClearAll"]
                         </MudButton>
                     </div>
                     <MudSpacer />
                     <MudSwitch T="bool"
-                               Label="Auto save"
+                               Label=@Localizer["AutoSave"]
                                Color="Color.Primary"
                                Value="SearchConfigurationService.Config.IsAutoSaveEnabled"
                                ValueChanged=@OnIsAutoSaveEnabledChanged />

@@ -11,6 +11,15 @@ namespace Hitorus.Web.Services {
         private static partial Regex AppVersionRegex();
 
         private bool _isLoaded = false;
+        /// <summary>
+        /// This value is used to store initial browser language obtained from CultureInfo.CurrentCulture so that
+        /// when user switches back to automatic language in the SettingsPage, we use this value to set CurrentCulture
+        /// </summary>
+        public string DefaultBrowserLanguage { get; set; } = "";
+        /// <summary>
+        /// This value is used to store initial app language from the API.
+        /// </summary>
+        public string InitialAppLanguage { get; set; } = "";
         public AppConfigurationDTO Config { get; private set; } = new();
 
         public async Task Load() {
@@ -19,6 +28,14 @@ namespace Hitorus.Web.Services {
             }
             Config = (await httpClient.GetFromJsonAsync<AppConfigurationDTO>(""))!;
             _isLoaded = true;
+        }
+
+        public void ChangeAppLanguage(string value) {
+            if (string.IsNullOrEmpty(value)) {
+                Utilities.SetAppLanguage(DefaultBrowserLanguage);
+            } else {
+                Utilities.SetAppLanguage(value);
+            }
         }
 
         public async Task<Version?> GetRecentVersion() {

@@ -1,8 +1,9 @@
+using BlazorPro.BlazorSize;
 using Hitorus.Web.Services;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor.Services;
-using BlazorPro.BlazorSize;
+using System.Globalization;
 
 namespace Hitorus.Web;
 
@@ -15,8 +16,9 @@ public class Program
         builder.RootComponents.Add<HeadOutlet>("head::after");
 
         builder.Services.AddMudServices();
-        //builder.Services.AddLocalization();
-
+        builder.Services.AddLocalization();
+        builder.Services.AddLocalization(options => options.ResourcesPath = "Localization");
+        
         string apiUrl = builder.Configuration["ApiUrl"]!;
         builder.Services.AddHttpClient();
         builder.Services.AddSingleton(sp =>
@@ -51,7 +53,10 @@ public class Program
             {
                 HttpClient httpClient = sp.GetRequiredService<HttpClient>();
                 httpClient.BaseAddress = new Uri(apiUrl + builder.Configuration["AppConfigPath"]);
-                return new AppConfigurationService(httpClient, builder.Configuration);
+                AppConfigurationService service = new(httpClient, builder.Configuration) {
+                    DefaultBrowserLanguage = CultureInfo.CurrentCulture.Name
+                };
+                return service;
             }
         );
         builder.Services.AddSingleton(sp =>
@@ -99,6 +104,14 @@ public class Program
         builder.Services.AddSingleton<DownloadClientManagerService>();
         builder.Services.AddResizeListener(options => options.ReportRate = 500);
         var app = builder.Build();
+        // attempt fetching language information from API and set CultureInfo.CurrentCulture
+        // if it fails, do nothing
+        AppConfigurationService appConfigService = app.Services.GetRequiredService<AppConfigurationService>();
+        try {
+            await appConfigService.Load();
+            appConfigService.ChangeAppLanguage(appConfigService.Config.AppLanguage);
+            appConfigService.InitialAppLanguage = appConfigService.Config.AppLanguage;
+        } catch (HttpRequestException) {}
         await app.RunAsync();
     }
 }

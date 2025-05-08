@@ -4,10 +4,10 @@ using Hitorus.Data.Entities;
 using Hitorus.Data.Events;
 using Hitorus.Web.Components;
 using Hitorus.Web.Components.Dialogs;
-using Hitorus.Web.Layout;
 using Hitorus.Web.Models;
 using Hitorus.Web.Services;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Localization;
 using Microsoft.JSInterop;
 using MudBlazor;
 using System.Collections.ObjectModel;
@@ -23,6 +23,8 @@ namespace Hitorus.Web.Pages {
         [Inject] IDialogService DialogService { get; set; } = default!;
         [Inject] IJSRuntime JsRuntime { get; set; } = default!;
         [Inject] IConfiguration HostConfiguration { get; set; } = default!;
+        [Inject] IStringLocalizer<SearchPage> Localizer { get; set; } = default!;
+        [Inject] IStringLocalizer<SharedResource> SharedLocalizer { get; set; } = default!;
 
         private ObservableCollection<TagFilterDTO> _tagFilters = [];
         public ObservableCollection<TagFilterDTO> TagFilters {
@@ -233,12 +235,8 @@ namespace Hitorus.Web.Pages {
                 TagFilterDTO tagFilter = buildDto.ToDTO();
                 tagFilter.Id = await TagFilterService.CreateAsync(buildDto);
                 TagFilters.Add(tagFilter);
-                //if (tagFilter != null) {
                 _tagFilterEditor.CurrentTagFilter = tagFilter;
-                Snackbar.Add($"Created \"{name}\".", Severity.Success, MainLayout.DEFAULT_SNACKBAR_OPTIONS);
-                //} else {
-                //    Snackbar.Add($"Failed to create \"{name}\".", Severity.Error, MainLayout.DEFAULT_SNACKBAR_OPTIONS);
-                //}
+                Snackbar.Add($"Created \"{name}\".", Severity.Success, UiConstants.DEFAULT_SNACKBAR_OPTIONS);
             }
         }
 
@@ -258,9 +256,9 @@ namespace Hitorus.Web.Pages {
                 bool success = await TagFilterService.UpdateNameAsync(_tagFilterEditor.CurrentTagFilter!.Id, name);
                 if (success) {
                     _tagFilterEditor.CurrentTagFilter.Name = name;
-                    Snackbar.Add($"Renamed \"{oldName} to \"{name}\".", Severity.Success, MainLayout.DEFAULT_SNACKBAR_OPTIONS);
+                    Snackbar.Add($"Renamed \"{oldName} to \"{name}\".", Severity.Success, UiConstants.DEFAULT_SNACKBAR_OPTIONS);
                 } else {
-                    Snackbar.Add($"Failed to rename \"{oldName}\".", Severity.Error, MainLayout.DEFAULT_SNACKBAR_OPTIONS);
+                    Snackbar.Add($"Failed to rename \"{oldName}\".", Severity.Error, UiConstants.DEFAULT_SNACKBAR_OPTIONS);
                 }
             }
         }
@@ -279,9 +277,9 @@ namespace Hitorus.Web.Pages {
                     _tagSearchPanelChipModels.SelectMany(l => l).Select(m => m.Value.Id)
                 );
                 if (success) {
-                    Snackbar.Add($"Saved \"{tagFilter.Name}\"", Severity.Success, MainLayout.DEFAULT_SNACKBAR_OPTIONS);
+                    Snackbar.Add($"Saved \"{tagFilter.Name}\"", Severity.Success, UiConstants.DEFAULT_SNACKBAR_OPTIONS);
                 } else {
-                    Snackbar.Add($"Failed to save \"{tagFilter.Name}\"", Severity.Error, MainLayout.DEFAULT_SNACKBAR_OPTIONS);
+                    Snackbar.Add($"Failed to save \"{tagFilter.Name}\"", Severity.Error, UiConstants.DEFAULT_SNACKBAR_OPTIONS);
                 }
             }
         }
@@ -299,12 +297,12 @@ namespace Hitorus.Web.Pages {
                 bool success = await TagFilterService.DeleteAsync(ids);
                 if (success) {
                     TagFilters = [.. TagFilters.ExceptBy(ids, tf => tf.Id)];
-                    Snackbar.Add($"Deleted {selected.Count} tag filters.", Severity.Success, MainLayout.DEFAULT_SNACKBAR_OPTIONS);
+                    Snackbar.Add($"Deleted {selected.Count} tag filters.", Severity.Success, UiConstants.DEFAULT_SNACKBAR_OPTIONS);
                     if (_tagFilterEditor.CurrentTagFilter != null && selected.Any(m => m.Value.Id == _tagFilterEditor.CurrentTagFilter.Id)) {
                         _tagFilterEditor.CurrentTagFilter = null;
                     }
                 } else {
-                    Snackbar.Add($"Failed to delete tag filters.", Severity.Error, MainLayout.DEFAULT_SNACKBAR_OPTIONS);
+                    Snackbar.Add($"Failed to delete tag filters.", Severity.Error, UiConstants.DEFAULT_SNACKBAR_OPTIONS);
                 }
             }
         }
@@ -376,7 +374,7 @@ namespace Hitorus.Web.Pages {
             if (success) {
                 SearchFilters.Remove(dto);
             } else {
-                Snackbar.Add("Failed to delete search filter.", Severity.Error, MainLayout.DEFAULT_SNACKBAR_OPTIONS);
+                Snackbar.Add("Failed to delete search filter.", Severity.Error, UiConstants.DEFAULT_SNACKBAR_OPTIONS);
             }
         }
 

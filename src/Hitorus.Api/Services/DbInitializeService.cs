@@ -161,7 +161,7 @@ namespace Hitorus.Api.Services {
 
             context.AppConfigurations.Add(new() {
                 IsFirstLaunch = true,
-                AppLanguage = "en-US",
+                AppLanguage = "",
                 LastUpdateCheckTime = DateTimeOffset.UtcNow,
             });
 

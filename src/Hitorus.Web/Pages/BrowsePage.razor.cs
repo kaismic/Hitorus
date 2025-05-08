@@ -2,7 +2,6 @@
 using Hitorus.Data.Entities;
 using Hitorus.Data.Events;
 using Hitorus.Web.Components.Dialogs;
-using Hitorus.Web.Layout;
 using Hitorus.Web.Models;
 using Hitorus.Web.Services;
 using Microsoft.AspNetCore.Components;
@@ -159,10 +158,10 @@ namespace Hitorus.Web.Pages {
             if (success) {
                 BrowseConfigurationService.Config.Sorts = sorts;
                 _activeSorts = [.. sorts.Where(s => s.IsActive)];
-                Snackbar.Add("Saved successfully", Severity.Success, MainLayout.DEFAULT_SNACKBAR_OPTIONS);
+                Snackbar.Add("Saved successfully", Severity.Success, UiConstants.DEFAULT_SNACKBAR_OPTIONS);
                 await LoadGalleries();
             } else {
-                Snackbar.Add("Save failed", Severity.Error, MainLayout.DEFAULT_SNACKBAR_OPTIONS);
+                Snackbar.Add("Save failed", Severity.Error, UiConstants.DEFAULT_SNACKBAR_OPTIONS);
             }
         }
 
@@ -175,20 +174,20 @@ namespace Hitorus.Web.Pages {
             }
             bool success = await GalleryService.DeleteGalleries(ids);
             if (success) {
-                Snackbar.Add($"Deleted {ids.Count} galleries.", Severity.Success, MainLayout.DEFAULT_SNACKBAR_OPTIONS);
+                Snackbar.Add($"Deleted {ids.Count} galleries.", Severity.Success, UiConstants.DEFAULT_SNACKBAR_OPTIONS);
                 await LoadGalleries();
             } else {
-                Snackbar.Add("Deletion failed.", Severity.Error, MainLayout.DEFAULT_SNACKBAR_OPTIONS);
+                Snackbar.Add("Deletion failed.", Severity.Error, UiConstants.DEFAULT_SNACKBAR_OPTIONS);
             }
         }
 
         private async Task DeleteGallery(int id) {
             bool success = await GalleryService.DeleteGalleries([id]);
             if (success) {
-                Snackbar.Add($"Deletion success.", Severity.Success, MainLayout.DEFAULT_SNACKBAR_OPTIONS);
+                Snackbar.Add($"Deletion success.", Severity.Success, UiConstants.DEFAULT_SNACKBAR_OPTIONS);
                 await LoadGalleries();
             } else {
-                Snackbar.Add("Deletion failed.", Severity.Error, MainLayout.DEFAULT_SNACKBAR_OPTIONS);
+                Snackbar.Add("Deletion failed.", Severity.Error, UiConstants.DEFAULT_SNACKBAR_OPTIONS);
             }
         }
     }

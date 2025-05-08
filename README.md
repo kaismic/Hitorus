@@ -20,7 +20,7 @@ Hitorus is a local desktop web browser-based application designed to enhance you
 - [Linux](TODO Linux .tar file url)
 
 ## Usage
-**Note:** This web application requires its API server to be running concurrently. The following scripts will automatically start both for you.
+**Note:** The application requires its API server to be running concurrently. The following scripts will automatically start both for you.
 
 ### Windows
 Run (TODO powershell script name)

@@ -1,6 +1,6 @@
-doujinshi
-manga
-artistcg
-gamecg
-imageset
-anime
+Doujinshi
+Manga
+ArtistCG
+GameCG
+Imageset
+Anime

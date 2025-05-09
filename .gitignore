@@ -4,6 +4,7 @@
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
 src/Hitorus.Api/Galleries
+src/Hitorus.Web/Localization
 
 # Database initialize flag
 db-init-flag.txt

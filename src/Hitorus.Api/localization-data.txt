@@ -1,0 +1,8 @@
+Separator=|
+Languages=ko
+---
+ExampleTagFilterNames
+Name1|Tag: Full color, Female: Very long hair|태그: 풀컬러, 여성: 장발
+Name2|Female: Glasses, Male: Sole male|여성: 안경, 남성: 1인 남성
+Name3|Series: Naruto, Female: Big breasts|시리즈: 나루토, 여성: 거유
+Name4|Tag: Non-H Imageset|태그: Non-H 이미지 모음

@@ -20,4 +20,19 @@
   <ItemGroup>
     <ProjectReference Include="..\Hitorus.Data\Hitorus.Data.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Localization\ExampleTagFilterNames.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ExampleTagFilterNames.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Localization\ExampleTagFilterNames.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>ExampleTagFilterNames.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
 </Project>

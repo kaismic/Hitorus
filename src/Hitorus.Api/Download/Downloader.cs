@@ -36,7 +36,7 @@ namespace Hitorus.Api.Download {
             _httpClient.DefaultRequestHeaders.Referrer = new Uri("https://" + _appConfiguration["HitomiClientDomain"]!);
         }
 
-        private void ChangeStatus(DownloadStatus status, string? message = null) {
+        public void ChangeStatus(DownloadStatus status, string? message = null) {
             Status = status;
             if (status == DownloadStatus.Failed) {
                 _hubContext.Clients.All.ReceiveFailure(GalleryId, message ?? throw new ArgumentNullException(nameof(message)));

@@ -50,6 +50,11 @@ namespace Hitorus.Api.Services {
                                     _lsiInitialized = true;
                                 } catch (HttpRequestException e) {
                                     logger.LogError(e, "Failed to fetch Live Server Info.");
+                                    foreach (int id in args.GalleryIds) {
+                                        if (_liveDownloaders.TryGetValue(id, out Downloader? value)) {
+                                            value.ChangeStatus(DownloadStatus.Failed, "Failed to fetch Live Server Info.");
+                                        }
+                                    }
                                     break;
                                 }
                             }

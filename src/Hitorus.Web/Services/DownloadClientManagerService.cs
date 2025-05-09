@@ -90,8 +90,8 @@ namespace Hitorus.Web.Services {
                     case DownloadStatus.Failed:
                         throw new InvalidOperationException($"{DownloadStatus.Failed} must be handled by {nameof(OnReceiveFailure)}");
                 }
+                model.StateHasChanged();
             }
-            DownloadPageStateHasChanged();
         }
 
         private void OnReceiveFailure(int galleryId, string message) {
@@ -113,7 +113,10 @@ namespace Hitorus.Web.Services {
         public async Task AddDownloads(IEnumerable<int> galleryIds) {
             HashSet<int> ids = [.. galleryIds];
             foreach (int id in ids) {
-                Downloads.TryAdd(id, new() { GalleryId = id });
+                Downloads.TryAdd(id, new() {
+                    GalleryId = id,
+                    StatusMessage = "Starting Download..."
+                });
             }
             if (_downloadConfigurationService.Config.UseParallelDownload) {
                 await _downloadService.StartDownloaders(ids);

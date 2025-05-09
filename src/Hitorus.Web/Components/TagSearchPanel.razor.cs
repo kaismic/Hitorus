@@ -5,18 +5,20 @@ using Hitorus.Web.Models;
 using Hitorus.Web.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.Localization;
 using Microsoft.JSInterop;
 using MudBlazor;
 
 namespace Hitorus.Web.Components {
     public partial class TagSearchPanel : ComponentBase {
-        private const string JAVASCRIPT_FILE = $"./Components/{nameof(TagSearchPanel)}.razor.js";
-        private IJSObjectReference? _jsModule;
+        [Inject] IStringLocalizer<TagSearchPanel> Localizer { get; set; } = default!;
         [Inject] private IJSRuntime JSRuntime { get; set;} = default!;
         [Inject] private TagService TagService { get; set; } = default!;
         [Parameter, EditorRequired] public TagCategory Category { get; set; }
         [Parameter, EditorRequired] public List<ChipModel<TagDTO>> ChipModels { get; set; } = default!;
         [Parameter] public EventCallback<AdvancedCollectionChangedEventArgs<ChipModel<TagDTO>>> ChipModelsChanged { get; set; } 
+        private const string JAVASCRIPT_FILE = $"./Components/{nameof(TagSearchPanel)}.razor.js";
+        private IJSObjectReference? _jsModule;
         private IReadOnlyCollection<ChipModel<TagDTO>> _selectedChipModels = [];
 
         public TagDTO? SearchValue { get; set; }

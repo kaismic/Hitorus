@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace Hitorus.Api.Services {
     public class DbInitializeService(IHubContext<DbInitializeHub, IDbStatusClient> hubContext) : BackgroundService {
-        private const string DB_INIT_FLAG_PATH = "db-init-flag.txt";
+        private const string DB_INIT_FLAG_PATH = "db-init-flag.flag";
         private static readonly string[] ALPHABETS_WITH_123 =
             ["123", .. Enumerable.Range('a', 26).Select(intValue => Convert.ToChar(intValue).ToString())];
 
@@ -44,7 +44,6 @@ namespace Hitorus.Api.Services {
                 context.Database.EnsureCreated();
                 Console.WriteLine("\n--- Starting database initialization ---\n");
                 AddDefaultDataAsync(context);
-                AddExampleTagFilters(context);
                 Console.WriteLine("\n--- Database initialization complete ---\n");
             }
             return CompleteInitialization(flagExists);
@@ -123,7 +122,8 @@ namespace Hitorus.Api.Services {
             Console.Write("{0,-" + _totalLeftAlignment + "}", "Adding configurations... ");
             hubContext.Clients.All.ReceiveStatus(DbInitStatus.InProgress, "Adding configurations... ");
             context.SearchConfigurations.Add(new() {
-                IsAutoSaveEnabled = true,
+                ExampleTagFiltersCreated = false,
+                AutoSaveEnabled = true,
                 SelectedLanguage = context.GalleryLanguages.First(gl => gl.IsAll),
                 SelectedType = context.GalleryTypes.First(gt => gt.IsAll)
             });
@@ -165,47 +165,6 @@ namespace Hitorus.Api.Services {
                 LastUpdateCheckTime = DateTimeOffset.UtcNow,
             });
 
-            Console.WriteLine("  Complete");
-            Console.Write("{0,-" + _totalLeftAlignment + "}", "Saving changes...");
-            context.SaveChanges();
-            Console.WriteLine("  Complete");
-        }
-
-        private void AddExampleTagFilters(HitomiContext context) {
-            hubContext.Clients.All.ReceiveStatus(DbInitStatus.InProgress, "Adding example tag filters... ");
-            Console.Write("{0,-" + _totalLeftAlignment + "}", "Adding example tag filters... ");
-            SearchConfiguration searchConfig = context.SearchConfigurations.First();
-            context.Entry(searchConfig).Collection(c => c.TagFilters).Load();
-            IQueryable<Tag> tags = context.Tags;
-            searchConfig.TagFilters.AddRange(
-                new() {
-                    Name = Resources.ExampleTagFilterNames.ExampleTagFilterName_1,
-                    Tags = [
-                        TagUtility.GetTag(tags, "full color", TagCategory.Tag)!,
-                        TagUtility.GetTag(tags, "very long hair", TagCategory.Female)!,
-                    ]
-                },
-                new() {
-                    Name = Resources.ExampleTagFilterNames.ExampleTagFilterName_2,
-                    Tags = [
-                        TagUtility.GetTag(tags, "glasses", TagCategory.Female)!,
-                        TagUtility.GetTag(tags, "sole male", TagCategory.Male)!,
-                    ]
-                },
-                new() {
-                    Name = Resources.ExampleTagFilterNames.ExampleTagFilterName_3,
-                    Tags = [
-                        TagUtility.GetTag(tags, "naruto", TagCategory.Series)!,
-                        TagUtility.GetTag(tags, "big breasts", TagCategory.Female)!,
-                    ]
-                },
-                new() {
-                    Name = Resources.ExampleTagFilterNames.ExampleTagFilterName_4,
-                    Tags = [
-                        TagUtility.GetTag(tags, "non-h imageset", TagCategory.Tag)!
-                    ]
-                }
-            );
             Console.WriteLine("  Complete");
             Console.Write("{0,-" + _totalLeftAlignment + "}", "Saving changes...");
             context.SaveChanges();

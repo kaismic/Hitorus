@@ -1,8 +1,11 @@
-﻿using Hitorus.Data.DbContexts;
+﻿using Hitorus.Api.Localization;
+using Hitorus.Api.Utilities;
+using Hitorus.Data.DbContexts;
 using Hitorus.Data.DTOs;
 using Hitorus.Data.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 
 namespace Hitorus.Api.Controllers {
     [ApiController]
@@ -30,10 +33,10 @@ namespace Hitorus.Api.Controllers {
             if (config == null) {
                 return NotFound();
             }
-            if (config.IsAutoSaveEnabled == enable) {
+            if (config.AutoSaveEnabled == enable) {
                 return Ok();
             }
-            config.IsAutoSaveEnabled = enable;
+            config.AutoSaveEnabled = enable;
             context.SaveChanges();
             return Ok();
         }
@@ -116,6 +119,51 @@ namespace Hitorus.Api.Controllers {
             config.SelectedType = type;
             context.SaveChanges();
             return Ok();
+        }
+
+        [HttpPost("create-examples")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public ActionResult<IEnumerable<TagFilterDTO>> CreateExampleTagFilters(string language) {
+            SearchConfiguration searchConfig = context.SearchConfigurations.First();
+            if (searchConfig.ExampleTagFiltersCreated) {
+                return NoContent();
+            }
+            ExampleTagFilterNames.Culture = CultureInfo.GetCultureInfo(language);
+            IEnumerable<TagFilter> examples = [
+                new() {
+                    Name = ExampleTagFilterNames.Name1,
+                    Tags = [
+                        TagUtility.GetTag(context.Tags, "full color", TagCategory.Tag)!,
+                        TagUtility.GetTag(context.Tags, "very long hair", TagCategory.Female)!,
+                    ]
+                },
+                new() {
+                    Name = ExampleTagFilterNames.Name2,
+                    Tags = [
+                        TagUtility.GetTag(context.Tags, "glasses", TagCategory.Female)!,
+                        TagUtility.GetTag(context.Tags, "sole male", TagCategory.Male)!,
+                    ]
+                },
+                new() {
+                    Name = ExampleTagFilterNames.Name3,
+                    Tags = [
+                        TagUtility.GetTag(context.Tags, "naruto", TagCategory.Series)!,
+                        TagUtility.GetTag(context.Tags, "big breasts", TagCategory.Female)!,
+                    ]
+                },
+                new() {
+                    Name = ExampleTagFilterNames.Name4,
+                    Tags = [
+                        TagUtility.GetTag(context.Tags, "non-h imageset", TagCategory.Tag)!
+                    ]
+                }
+            ];
+            searchConfig.TagFilters.AddRange(examples);
+            context.SaveChanges();
+            searchConfig.ExampleTagFiltersCreated = true;
+            context.SaveChanges();
+            return Ok(examples.Select(tf => tf.ToDTO()));
         }
     }
 }

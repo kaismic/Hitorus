@@ -12,7 +12,7 @@
                    ValueChanged=@OnAppLanguageChanged
                    Variant="Variant.Outlined"
                    Style="max-width: 200px;">
-            <MudSelectItem T="string" Value=@string.Empty>@Localizer["AutoSelect"]</MudSelectItem>
+            <MudSelectItem T="string" Value=@string.Empty>@Localizer["Automatic"]</MudSelectItem>
             @foreach (string lang in SUPPORTED_LANGUAGES) {
                 <MudSelectItem T="string" Value=@lang>@CultureInfo.GetCultureInfo(lang).NativeName</MudSelectItem>
             }

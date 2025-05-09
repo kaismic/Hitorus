@@ -1,6 +1,6 @@
 ﻿@page "/search"
 
-<PageTitle>@Localizer["Search"]</PageTitle>
+<PageTitle>@SharedLocalizer["Search"]</PageTitle>
 
 @if (_showWalkthrough) {
     <MudOverlay DarkBackground Visible="@_showWalkthrough" />
@@ -24,27 +24,27 @@
                                    EndIcon="@Icons.Material.Filled.Refresh"
                                    OnClick="LoadTags"
                                    Disabled="@(_tagFilterEditor?.CurrentTagFilter == null)">
-                            @SharedLocalizer["Refresh"]
+                            @Localizer["Reload"]
                         </MudButton>
                         <MudButton Color="Color.Primary"
                                    EndIcon="@Icons.Material.Filled.Clear"
                                    OnClick="ClearAllTags"
                                    Disabled="@(_tagFilterEditor?.CurrentTagFilter == null)">
-                            @SharedLocalizer["ClearAll"]
+                            @Localizer["ClearAll"]
                         </MudButton>
                     </div>
                     <MudSpacer />
                     <MudSwitch T="bool"
                                Label=@Localizer["AutoSave"]
                                Color="Color.Primary"
-                               Value="SearchConfigurationService.Config.IsAutoSaveEnabled"
-                               ValueChanged=@OnIsAutoSaveEnabledChanged />
+                               Value="SearchConfigurationService.Config.AutoSaveEnabled"
+                               ValueChanged=@OnAutoSaveEnabledChanged />
                 </div>
                 <TagSearchPanelCollection TagSearchPanelChipModels="@_tagSearchPanelChipModels" />
             </MudPaper>
             @if (_showWalkthrough) {
-                <GuidePopover ContentText="1. Create and edit tag filters."
-                              ButtonText="Next"
+                <GuidePopover ContentText=@Localizer["Walkthrough1"]
+                              ButtonText=@Localizer["Next"]
                               Open=@(_walkthroughStep == 0)
                               OnClose="@ShowNextGuide"
                               AnchorOrigin="Origin.BottomRight"
@@ -56,7 +56,7 @@
             <PairedTagFilterSelector @ref="_includePairedTagFilterSelector"
                                      ChipModels="@_includeTagFilterChipModels"
                                      SelectedChipModelsChanged="@(collection => OnSelectedTagFilterCollectionChanged(collection, true))"
-                                     HeaderText="Include"
+                                     HeaderText=@Localizer["Include"]
                                      HeaderColor="Color.Success"
                                      Other="_excludePairedTagFilterSelector"
                                      Style="flex: 1;" />
@@ -64,13 +64,13 @@
             <PairedTagFilterSelector @ref="_excludePairedTagFilterSelector"
                                      ChipModels="@_excludeTagFilterChipModels"
                                      SelectedChipModelsChanged="@(collection => OnSelectedTagFilterCollectionChanged(collection, false))"
-                                     HeaderText="Exclude"
+                                     HeaderText=@Localizer["Exclude"]
                                      HeaderColor="Color.Error"
                                      Other="_includePairedTagFilterSelector"
                                      Style="flex: 1;" />
             @if (_showWalkthrough) {
-                <GuidePopover ContentText="2. Select tag filters to include or exclude."
-                              ButtonText="Next"
+                <GuidePopover ContentText=@Localizer["Walkthrough2"]
+                              ButtonText=@Localizer["Next"]
                               Open=@(_walkthroughStep == 1)
                               OnClose="@ShowNextGuide"
                               AnchorOrigin="Origin.TopRight"
@@ -88,8 +88,8 @@
                            TitleSearchKeyword="@SearchConfigurationService.Config.TitleSearchKeyword"
                            TitleSearchKeywordChanged=@OnTitleSearchKeywordChanged />
             @if (_showWalkthrough) {
-                <GuidePopover ContentText="3. Select language, type and optionally enter a title search keyword. "
-                              ButtonText="Next"
+                <GuidePopover ContentText=@Localizer["Walkthrough3"]
+                              ButtonText=@Localizer["Next"]
                               Open=@(_walkthroughStep == 2)
                               OnClose="@ShowNextGuide"
                               AnchorOrigin="Origin.TopLeft"
@@ -98,20 +98,19 @@
             }
         </div>
         <MudPaper class="d-flex flex-column pa-4 gap-2" style=@($"flex: 1; {GetHighlightZIndexStyle(3)}")>
-            <MudStack Row Spacing="2" StretchItems="StretchItems.Start" Class="my-2">
-                <MudButton Class="py-2"
+            <MudStack Row Spacing="2" StretchItems="StretchItems.Start" Class="my-2" Style="word-break: keep-all">
+                <MudButton Style="font-size: medium"
                            FullWidth
                            Color="Color.Primary"
                            Variant="Variant.Filled"
                            OnClick="@CreateSearchFilter"
                            StartIcon="@Icons.Material.Filled.Search">
-                    Create and copy search link
+                    @Localizer["SearchLinkButtonText"]
                 </MudButton>
-                <MudButton Class="py-2"
-                           Color="Color.Primary"
+                <MudButton Color="Color.Primary"
                            OnClick="@SearchFilters.Clear"
                            Disabled="@(SearchFilters.Count == 0)">
-                    Clear
+                    @Localizer["ClearAll"]
                 </MudButton>
             </MudStack>
             <hr class="mud-divider mb-2" />
@@ -127,8 +126,8 @@
                 }
             </MudStack>
             @if (_showWalkthrough) {
-                <GuidePopover ContentText="4. Create search links and use them to search for galleries."
-                              ButtonText="Finish"
+                <GuidePopover ContentText=@Localizer["Walkthrough4"]
+                              ButtonText=@Localizer["Finish"]
                               Open=@(_walkthroughStep == 3)
                               OnClose="@ShowNextGuide"
                               AnchorOrigin="Origin.TopLeft"

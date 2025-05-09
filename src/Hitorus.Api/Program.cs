@@ -29,7 +29,6 @@ namespace Hitorus.Api {
 
             builder.Services.AddHttpClient();
             builder.Services.AddHostedService<DbInitializeService>();
-            //builder.Services.AddHostedService<DownloadManagerService>();
             builder.Services.AddSingleton<DownloadManagerService>();
             builder.Services.AddHostedService(sp => sp.GetRequiredService<DownloadManagerService>());
             builder.Services.AddSingleton<IEventBus<DownloadEventArgs>, DownloadEventBus>();

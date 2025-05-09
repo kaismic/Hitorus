@@ -82,9 +82,9 @@ namespace Hitorus.Web.Pages {
             await SearchConfigurationService.UpdateTitleSearchKeywordAsync(value);
         }
 
-        private async Task OnIsAutoSaveEnabledChanged(bool value) {
-            SearchConfigurationService.Config.IsAutoSaveEnabled = value;
-            await SearchConfigurationService.UpdateAutoSaveAsync(value);
+        private async Task OnAutoSaveEnabledChanged(bool value) {
+            SearchConfigurationService.Config.AutoSaveEnabled = value;
+            await SearchConfigurationService.UpdateAutoSaveEnabledAsync(value);
         }
 
         private ObservableCollection<SearchFilterDTO> _searchFilters = [];
@@ -184,7 +184,7 @@ namespace Hitorus.Web.Pages {
         }
 
         private async Task SelectedTagFilterChanged(ValueChangedEventArgs<TagFilterDTO> args) {
-            if (SearchConfigurationService.Config.IsAutoSaveEnabled) {
+            if (SearchConfigurationService.Config.AutoSaveEnabled) {
                 await SaveTagFilter(args.OldValue);
             }
             if (args.NewValue == null) {

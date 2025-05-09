@@ -1,6 +1,6 @@
 ﻿<div style="display: grid; grid-template-rows: auto 1fr;">
     <MudAutocomplete T="TagDTO"
-                     Label="@Category.ToString()"
+                     Label=@Localizer[Category.ToString()]
                      DebounceInterval="500"
                      SearchFunc="@Search"
                      ToStringFunc="@(tag => tag.Value)"
@@ -25,5 +25,4 @@
                            OnClose="@HandleClosed" />
         }
     </MudChipSet>
-
 </div>

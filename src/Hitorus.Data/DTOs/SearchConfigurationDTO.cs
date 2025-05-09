@@ -3,7 +3,7 @@
     public class SearchConfigurationDTO
     {
         public int Id { get; set; }
-        public bool IsAutoSaveEnabled { get; set; }
+        public bool AutoSaveEnabled { get; set; }
         public required int SelectedTagFilterId { get; set; }
         public required IEnumerable<int> SelectedIncludeTagFilterIds { get; set; }
         public required IEnumerable<int> SelectedExcludeTagFilterIds { get; set; }

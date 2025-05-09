@@ -27,7 +27,7 @@ namespace Hitorus.Web.Services {
             _isLoaded = true;
         }
 
-        public async Task<bool> UpdateAutoSaveAsync(bool enable) {
+        public async Task<bool> UpdateAutoSaveEnabledAsync(bool enable) {
             var response = await httpClient.PatchAsync($"enable-auto-save?configId={Config.Id}&enable={enable}", null);
             return response.IsSuccessStatusCode;
         }
@@ -55,6 +55,14 @@ namespace Hitorus.Web.Services {
         public async Task<bool> UpdateTypeAsync(int typeId) {
             var response = await httpClient.PatchAsync($"type?configId={Config.Id}&typeId={typeId}", null);
             return response.IsSuccessStatusCode;
+        }
+
+        public async Task<IEnumerable<TagFilterDTO>> CreateExampleTagFilters(string language) {
+            var response = await httpClient.PostAsync($"create-examples?language={language}", null);
+            if (response.StatusCode == System.Net.HttpStatusCode.NoContent) {
+                return [];
+            }
+            return (await response.Content.ReadFromJsonAsync<IEnumerable<TagFilterDTO>>())!;
         }
     }
 }

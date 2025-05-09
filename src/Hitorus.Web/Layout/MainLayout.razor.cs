@@ -2,6 +2,7 @@
 using Hitorus.Web.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.SignalR.Client;
+using Microsoft.Extensions.Localization;
 using MudBlazor;
 
 namespace Hitorus.Web.Layout {
@@ -9,6 +10,7 @@ namespace Hitorus.Web.Layout {
         [Inject] public NavigationManager NavigationManager { get; set; } = default!;
         [Inject] public LanguageTypeService LanguageTypeService { get; set; } = default!;
         [Inject] private IConfiguration HostConfiguration { get; set; } = default!;
+        [Inject] IStringLocalizer<SharedResource> SharedLocalizer { get; set; } = default!;
 
         private MudThemeProvider _mudThemeProvider = null!;
         private readonly MudTheme _theme = new();

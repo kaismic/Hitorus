@@ -125,7 +125,12 @@ namespace Hitorus.Api.Controllers {
             return Ok();
         }
 
-        // return union of tags for each tag filters
+        /// <summary>
+        /// return union of tags for each tag filters
+        /// </summary>
+        /// <param name="configId"></param>
+        /// <param name="tagFilterIds"></param>
+        /// <returns></returns>
         [HttpPost("tags-union")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]

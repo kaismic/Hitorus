@@ -5,9 +5,21 @@
 <div class="d-flex flex-column gap-4 pa-8">
     <MudText Typo="Typo.h4">About</MudText>
     <MudText Typo="Typo.body1">App Version: @AppConfigurationService.CURRENT_APP_VERSION.ToString()</MudText>
-    <div class="d-flex gap-2">
+    <div class="d-flex gap-2 align-center">
         <MudText Typo="Typo.body1">Developer: kaismic</MudText>
-        <MudLink Href="https://github.com/kaismic" Target="_blank">GitHub</MudLink>
+        <MudButton Href="https://github.com/kaismic"
+                   Target="_blank"
+                   Variant="Variant.Filled"
+                   EndIcon="@Icons.Custom.Brands.GitHub"
+                   Color="Color.Primary">
+            GitHub
+        </MudButton>
     </div>
-    <MudLink Typo="Typo.subtitle1" Href="https://github.com/kaismic/Hitorus/releases" Target="_blank">Check for Updates</MudLink>
+    <MudButton Href="https://github.com/kaismic/Hitorus/releases"
+               Target="_blank"
+               Variant="Variant.Outlined"
+               Color="Color.Primary"
+               Style="max-width: 240px">
+        Check for Updates
+    </MudButton>
 </div>

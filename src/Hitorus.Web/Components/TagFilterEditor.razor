@@ -1,14 +1,18 @@
 ﻿<div class="gap-4 align-center" style="display: grid; grid-template-columns: auto auto 1fr auto auto;">
-    <MudFab Color="Color.Primary"
-            StartIcon="@Icons.Material.Filled.Add"
-            OnClick="@OnCreateButtonClicked" />
-    <MudFab Color="Color.Primary"
-            StartIcon="@Icons.Material.Filled.Edit"
-            OnClick="@OnRenameButtonClicked"
-            Disabled="@(CurrentTagFilter == null)" />
+    <MudTooltip Text=@Localizer["Create"]>
+        <MudFab Color="Color.Primary"
+                StartIcon="@Icons.Material.Filled.Add"
+                OnClick="@OnCreateButtonClicked" />
+    </MudTooltip>
+    <MudTooltip Text=@Localizer["Rename"]>
+        <MudFab Color="Color.Primary"
+                StartIcon="@Icons.Material.Filled.Edit"
+                OnClick="@OnRenameButtonClicked"
+                Disabled="@(CurrentTagFilter == null)" />
+    </MudTooltip>
     <MudSelect T="TagFilterDTO"
                Variant="Variant.Outlined"
-               Label="Tag Filter"
+               Placeholder=@Localizer["SelectPlaceholder"]
                @bind-Value="@CurrentTagFilter"
                ToStringFunc="@(tf => tf.Name)"
                Class="tag-filter-selector"
@@ -17,12 +21,16 @@
             <MudSelectItem Value="@tagFilter" />
         }
     </MudSelect>
-    <MudFab Color="Color.Primary"
-            StartIcon="@Icons.Material.Filled.Save"
-            OnClick="@OnSaveButtonClicked"
-            Disabled="@(CurrentTagFilter == null)" />
-    <MudFab Color="Color.Primary"
-            StartIcon="@Icons.Material.Filled.Delete"
-            OnClick="@OnDeleteButtonClicked"
-            Disabled="@(CurrentTagFilter == null)" />
+    <MudTooltip Text=@Localizer["Save"]>
+        <MudFab Color="Color.Primary"
+                StartIcon="@Icons.Material.Filled.Save"
+                OnClick="@OnSaveButtonClicked"
+                Disabled="@(CurrentTagFilter == null)" />
+    </MudTooltip>
+    <MudTooltip Text=@Localizer["Delete"]>
+        <MudFab Color="Color.Primary"
+                StartIcon="@Icons.Material.Filled.Delete"
+                OnClick="@OnDeleteButtonClicked"
+                Disabled="@(CurrentTagFilter == null)" />
+    </MudTooltip>
 </div>

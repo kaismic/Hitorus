@@ -1,4 +1,5 @@
 using BlazorPro.BlazorSize;
+using Hitorus.Data.DTOs;
 using Hitorus.Web.Services;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -104,13 +105,21 @@ public class Program
         builder.Services.AddSingleton<DownloadClientManagerService>();
         builder.Services.AddResizeListener(options => options.ReportRate = 500);
         var app = builder.Build();
-        // attempt fetching language information from API and set CultureInfo.CurrentCulture
-        // if it fails, do nothing
         AppConfigurationService appConfigService = app.Services.GetRequiredService<AppConfigurationService>();
+        SearchConfigurationService searchConfigService = app.Services.GetRequiredService<SearchConfigurationService>();
         try {
+            // attempt fetching language information from API and set CultureInfo.CurrentCulture
+            // if it fails, do nothing
             await appConfigService.Load();
             appConfigService.ChangeAppLanguage(appConfigService.Config.AppLanguage);
             appConfigService.InitialAppLanguage = appConfigService.Config.AppLanguage;
+            await searchConfigService.Load();
+            if (appConfigService.Config.IsFirstLaunch) {
+                IEnumerable<TagFilterDTO> examples = await searchConfigService.CreateExampleTagFilters(appConfigService.DefaultBrowserLanguage);
+                foreach (TagFilterDTO dto in examples) {
+                    searchConfigService.Config.TagFilters.Add(dto);
+                }
+            }
         } catch (HttpRequestException) {}
         await app.RunAsync();
     }

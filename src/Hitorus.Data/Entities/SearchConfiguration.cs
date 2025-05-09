@@ -3,7 +3,8 @@
 namespace Hitorus.Data.Entities;
 public class SearchConfiguration {
     public int Id { get; set; }
-    public bool IsAutoSaveEnabled { get; set; }
+    public bool ExampleTagFiltersCreated { get; set; }
+    public bool AutoSaveEnabled { get; set; }
     public IEnumerable<int> SelectedIncludeTagFilterIds { get; set; } = [];
     public IEnumerable<int> SelectedExcludeTagFilterIds { get; set; } = [];
     public string TitleSearchKeyword { get; set; } = "";
@@ -15,7 +16,7 @@ public class SearchConfiguration {
 
     public SearchConfigurationDTO ToDTO() => new() {
         Id = Id,
-        IsAutoSaveEnabled = IsAutoSaveEnabled,
+        AutoSaveEnabled = AutoSaveEnabled,
         SelectedTagFilterId = SelectedTagFilterId,
         SelectedIncludeTagFilterIds = SelectedIncludeTagFilterIds,
         SelectedExcludeTagFilterIds = SelectedExcludeTagFilterIds,

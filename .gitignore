@@ -4,10 +4,10 @@
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
 src/Hitorus.Api/Galleries
-src/Hitorus.Web/Localization
+**/Localization
 
 # Database initialize flag
-db-init-flag.txt
+db-init-flag.*
 
 # ignore downloaded tag text files (which are in the subfolders)
 **/DatabaseResources/*/

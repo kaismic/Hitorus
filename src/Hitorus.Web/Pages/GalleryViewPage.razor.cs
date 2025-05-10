@@ -4,6 +4,7 @@ using Hitorus.Data.DTOs;
 using Hitorus.Web.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.Localization;
 using Microsoft.JSInterop;
 using MudBlazor;
 using System.Text;

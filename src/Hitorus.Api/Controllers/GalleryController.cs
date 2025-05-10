@@ -1,3 +1,4 @@
+using Hitorus.Api.Utilities;
 using Hitorus.Data.DbContexts;
 using Hitorus.Data.DTOs;
 using Hitorus.Data.Entities;
@@ -119,10 +120,10 @@ namespace Hitorus.Api.Controllers {
                 if (gallery != null) {
                     context.Galleries.Remove(gallery);
                 }
+                GalleryFileUtility.DeleteGalleryDir(id);
             }
             context.SaveChanges();
             return Ok();
         }
-
     }
 }

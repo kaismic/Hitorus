@@ -49,5 +49,12 @@ namespace Hitorus.Api.Utilities {
             Directory.CreateDirectory(dir);
             await File.WriteAllBytesAsync(Path.Combine(dir, fullFileName), data);
         }
+
+        public static void DeleteGalleryDir(int id) {
+            string dir = Path.Combine(ROOT_PATH, id.ToString());
+            if (Directory.Exists(dir)) {
+                Directory.Delete(dir, true);
+            }
+        }
     }
 }

@@ -5,6 +5,7 @@ using Hitorus.Web.Components.Dialogs;
 using Hitorus.Web.Models;
 using Hitorus.Web.Services;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Localization;
 using Microsoft.JSInterop;
 using MudBlazor;
 
@@ -15,6 +16,7 @@ namespace Hitorus.Web.Pages {
         [Inject] private IJSRuntime JsRuntime {get;set;} = default!;
         [Inject] IDialogService DialogService { get; set; } = default!;
         [Inject] ISnackbar Snackbar { get; set; } = default!;
+        [Inject] IStringLocalizer<SharedResource> SharedLocalizer { get; set; } = default!;
 
         private readonly List<ChipModel<TagDTO>>[] _tagSearchPanelChipModels = [.. Tag.TAG_CATEGORIES.Select(t => new List<ChipModel<TagDTO>>())];
 

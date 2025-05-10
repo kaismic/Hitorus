@@ -10,6 +10,7 @@ namespace Hitorus.Web.Pages {
         [Inject] private ViewConfigurationService ViewConfigurationService { get; set; } = default!;
         [Inject] NavigationManager NavigationManager { get; set; } = default!;
         [Inject] IStringLocalizer<SettingsPage> Localizer { get; set; } = default!;
+        [Inject] IStringLocalizer<SharedResource> SharedLocalizer { get; set; } = default!;
 
         private static readonly string[] SUPPORTED_LANGUAGES = ["en", "ko"];
 

@@ -1,5 +1,6 @@
 ﻿using Hitorus.Web.Services;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Localization;
 using MudBlazor;
 using System.Text.RegularExpressions;
 
@@ -8,6 +9,7 @@ namespace Hitorus.Web.Pages {
         [Inject] private ISnackbar Snackbar { get; set; } = default!;
         [Inject] private DownloadConfigurationService DownloadConfigurationService { get; set; } = default!;
         [Inject] private DownloadClientManagerService DownloadManager { get; set; } = default!;
+        [Inject] IStringLocalizer<SharedResource> SharedLocalizer { get; set; } = default!;
 
         private string _inputText = "";
 

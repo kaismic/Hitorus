@@ -5,7 +5,6 @@ using Hitorus.Data.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor;
-using System.Reflection;
 
 namespace Hitorus.Api.Controllers {
     [ApiController]
@@ -50,7 +49,6 @@ namespace Hitorus.Api.Controllers {
                 GalleryProperty.Title => g => g.Title,
                 GalleryProperty.UploadTime => g => g.Date,
                 GalleryProperty.LastDownloadTime => g => g.LastDownloadTime,
-                GalleryProperty.Type => g => g.Type.Value,
                 _ => throw new NotImplementedException(),
             };
         }

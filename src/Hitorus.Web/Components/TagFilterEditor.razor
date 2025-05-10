@@ -1,10 +1,10 @@
 ﻿<div class="gap-4 align-center" style="display: grid; grid-template-columns: auto auto 1fr auto auto;">
-    <MudTooltip Text=@Localizer["Create"]>
+    <MudTooltip Text=@Localizer["CreateTooltip"]>
         <MudFab Color="Color.Primary"
                 StartIcon="@Icons.Material.Filled.Add"
                 OnClick="@OnCreateButtonClicked" />
     </MudTooltip>
-    <MudTooltip Text=@Localizer["Rename"]>
+    <MudTooltip Text=@Localizer["RenameTooltip"]>
         <MudFab Color="Color.Primary"
                 StartIcon="@Icons.Material.Filled.Edit"
                 OnClick="@OnRenameButtonClicked"
@@ -12,7 +12,7 @@
     </MudTooltip>
     <MudSelect T="TagFilterDTO"
                Variant="Variant.Outlined"
-               Placeholder=@Localizer["SelectPlaceholder"]
+               Placeholder=@SelectPlaceholder
                @bind-Value="@CurrentTagFilter"
                ToStringFunc="@(tf => tf.Name)"
                Class="tag-filter-selector"
@@ -21,13 +21,13 @@
             <MudSelectItem Value="@tagFilter" />
         }
     </MudSelect>
-    <MudTooltip Text=@Localizer["Save"]>
+    <MudTooltip Text=@Localizer["SaveTooltip"]>
         <MudFab Color="Color.Primary"
                 StartIcon="@Icons.Material.Filled.Save"
                 OnClick="@OnSaveButtonClicked"
                 Disabled="@(CurrentTagFilter == null)" />
     </MudTooltip>
-    <MudTooltip Text=@Localizer["Delete"]>
+    <MudTooltip Text=@Localizer["DeleteTooltip"]>
         <MudFab Color="Color.Primary"
                 StartIcon="@Icons.Material.Filled.Delete"
                 OnClick="@OnDeleteButtonClicked"

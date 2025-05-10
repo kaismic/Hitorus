@@ -14,6 +14,8 @@ namespace Hitorus.Web.Components {
         [Parameter, EditorRequired] public EventCallback OnSaveButtonClicked { get; set; }
         [Parameter, EditorRequired] public EventCallback OnDeleteButtonClicked { get; set; }
         [Parameter] public EventCallback<ValueChangedEventArgs<TagFilterDTO>> SelectedTagFilterChanged { get; set; }
+        [Parameter, EditorRequired] public string SelectPlaceholder { get; set; } = default!;
+
         private bool _firstTagFilter = true;
         private TagFilterDTO? _currentTagFilter;
         public TagFilterDTO? CurrentTagFilter {

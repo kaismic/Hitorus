@@ -2,17 +2,17 @@
     <table style="border-collapse: collapse; width: 100%;">
         <tbody>
             <tr>
-                <th>Language</th>
-                <td>@Model.Language.LocalName</td>
+                <th>@SharedLocalizer["Language"]</th>
+                <td>@(Model.Language.IsAll ? SharedLocalizer["All"] : Model.Language.LocalName)</td>
             </tr>
             <tr>
-                <th>Type</th>
-                <td>@Model.Type.Value</td>
+                <th>@SharedLocalizer["Type"]</th>
+                <td>@(Model.Type.IsAll ? SharedLocalizer["All"] : SharedLocalizer[Model.Type.Value])</td>
             </tr>
             @foreach (LabeledTagCollectionDTO collection in Model.LabeledTagCollections)
             {
                 <tr>
-                    <th>@collection.Category.ToString()</th>
+                    <th>@SharedLocalizer[collection.Category.ToString()]</th>
                     <td>
                         <div class="d-flex flex-wrap gap-1">
                             @foreach (string value in collection.IncludeTagValues)
@@ -30,7 +30,7 @@
             @if (Model.TitleSearchKeyword.Length > 0)
             {
                 <tr>
-                    <th>Keywords</th>
+                    <th>@SharedLocalizer["TitleKeyword"]</th>
                     <td>@Model.TitleSearchKeyword</td>
                 </tr>
             }

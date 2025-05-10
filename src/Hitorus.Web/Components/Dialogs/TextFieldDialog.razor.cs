@@ -5,8 +5,8 @@ using MudBlazor;
 namespace Hitorus.Web.Components.Dialogs {
     public partial class TextFieldDialog : ComponentBase {
         [CascadingParameter] private IMudDialogInstance MudDialog { get; set; } = null!;
-        [Parameter, EditorRequired] public string ActionText { get; set; } = null!;
         [Parameter] public string Text { get; set; } = "";
+        [Parameter] public string TextFieldLabel { get; set; } = "";
 
         private readonly List<Func<string, string?>> _validators = [IsEmpty];
         private string _errorMessage = "";

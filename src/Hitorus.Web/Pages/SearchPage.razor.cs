@@ -24,7 +24,6 @@ namespace Hitorus.Web.Pages {
         [Inject] IJSRuntime JsRuntime { get; set; } = default!;
         [Inject] IConfiguration HostConfiguration { get; set; } = default!;
         [Inject] IStringLocalizer<SearchPage> Localizer { get; set; } = default!;
-        [Inject] IStringLocalizer<SharedResource> SharedLocalizer { get; set; } = default!;
 
         private ObservableCollection<TagFilterDTO> _tagFilters = [];
         public ObservableCollection<TagFilterDTO> TagFilters {
@@ -220,9 +219,9 @@ namespace Hitorus.Web.Pages {
             // to prevent enter key acting on the last clicked button
             await JsRuntime.InvokeVoidAsync("document.body.focus");
             DialogParameters<TextFieldDialog> parameters = new() {
-                { d => d.ActionText, "Create" }
+                { d => d.TextFieldLabel, Localizer["TagFilterName"] }
             };
-            IDialogReference dialogRef = await DialogService.ShowAsync<TextFieldDialog>("Create Tag Filter", parameters);
+            IDialogReference dialogRef = await DialogService.ShowAsync<TextFieldDialog>(Localizer["Dialog_Title_CreateTagFilter"], parameters);
             ((TextFieldDialog)dialogRef.Dialog!).AddValidators(IsDuplicate);
             DialogResult result = (await dialogRef.Result)!;
             if (!result.Canceled) {
@@ -236,7 +235,11 @@ namespace Hitorus.Web.Pages {
                 tagFilter.Id = await TagFilterService.CreateAsync(buildDto);
                 TagFilters.Add(tagFilter);
                 _tagFilterEditor.CurrentTagFilter = tagFilter;
-                Snackbar.Add($"Created \"{name}\".", Severity.Success, UiConstants.DEFAULT_SNACKBAR_OPTIONS);
+                Snackbar.Add(
+                    string.Format(Localizer["Snackbar_Msg_CreateTagFilter_Success"], name),
+                    Severity.Success,
+                    UiConstants.DEFAULT_SNACKBAR_OPTIONS
+                );
             }
         }
 
@@ -245,10 +248,10 @@ namespace Hitorus.Web.Pages {
             await JsRuntime.InvokeVoidAsync("document.body.focus");
             string oldName = _tagFilterEditor.CurrentTagFilter!.Name;
             DialogParameters<TextFieldDialog> parameters = new() {
-                { d => d.ActionText, "Rename" },
+                { d => d.TextFieldLabel, Localizer["TagFilterName"] },
                 { d => d.Text, oldName }
             };
-            IDialogReference dialogRef = await DialogService.ShowAsync<TextFieldDialog>("Rename Tag Filter", parameters);
+            IDialogReference dialogRef = await DialogService.ShowAsync<TextFieldDialog>(Localizer["Dialog_Title_RenameTagFilter"], parameters);
             ((TextFieldDialog)dialogRef.Dialog!).AddValidators(IsDuplicate);
             DialogResult result = (await dialogRef.Result)!;
             if (!result.Canceled) {
@@ -256,16 +259,24 @@ namespace Hitorus.Web.Pages {
                 bool success = await TagFilterService.UpdateNameAsync(_tagFilterEditor.CurrentTagFilter!.Id, name);
                 if (success) {
                     _tagFilterEditor.CurrentTagFilter.Name = name;
-                    Snackbar.Add($"Renamed \"{oldName} to \"{name}\".", Severity.Success, UiConstants.DEFAULT_SNACKBAR_OPTIONS);
+                    Snackbar.Add(
+                        string.Format(Localizer["Snackbar_Msg_RenameTagFilter_Success"], oldName, name),
+                        Severity.Success,
+                        UiConstants.DEFAULT_SNACKBAR_OPTIONS
+                    );
                 } else {
-                    Snackbar.Add($"Failed to rename \"{oldName}\".", Severity.Error, UiConstants.DEFAULT_SNACKBAR_OPTIONS);
+                    Snackbar.Add(
+                        string.Format(Localizer["Snackbar_Msg_RenameTagFilter_Failure"], oldName, name),
+                        Severity.Error,
+                        UiConstants.DEFAULT_SNACKBAR_OPTIONS
+                    );
                 }
             }
         }
 
         private string? IsDuplicate(string name) {
             if (TagFilters.Any(tf => tf.Name == name)) {
-                return $"\"{name}\" already exists.";
+                return string.Format(Localizer["Validation_Msg_Duplicate"], name);
             }
             return null;
         }
@@ -277,19 +288,26 @@ namespace Hitorus.Web.Pages {
                     _tagSearchPanelChipModels.SelectMany(l => l).Select(m => m.Value.Id)
                 );
                 if (success) {
-                    Snackbar.Add($"Saved \"{tagFilter.Name}\"", Severity.Success, UiConstants.DEFAULT_SNACKBAR_OPTIONS);
+                    Snackbar.Add(
+                        string.Format(Localizer["Snackbar_Msg_SaveTagFilter_Success"], tagFilter.Name),
+                        Severity.Success,
+                        UiConstants.DEFAULT_SNACKBAR_OPTIONS
+                    );
                 } else {
-                    Snackbar.Add($"Failed to save \"{tagFilter.Name}\"", Severity.Error, UiConstants.DEFAULT_SNACKBAR_OPTIONS);
+                    Snackbar.Add(
+                        string.Format(Localizer["Snackbar_Msg_SaveTagFilter_Failure"], tagFilter.Name),
+                        Severity.Error,
+                        UiConstants.DEFAULT_SNACKBAR_OPTIONS
+                    );
                 }
             }
         }
 
         private async Task DeleteTagFilters() {
             DialogParameters<TagFilterSelectorDialog> parameters = new() {
-                { d => d.ActionText, "Delete" },
                 { d => d.ChipModels, [.. TagFilters.Select(tf => new ChipModel<TagFilterDTO>() { Value = tf })] }
             };
-            IDialogReference dialogRef = await DialogService.ShowAsync<TagFilterSelectorDialog>("Select tag filters to delete", parameters);
+            IDialogReference dialogRef = await DialogService.ShowAsync<TagFilterSelectorDialog>(Localizer["Dialog_Title_DeleteTagFilter"], parameters);
             DialogResult result = (await dialogRef.Result)!;
             if (!result.Canceled) {
                 IReadOnlyCollection<ChipModel<TagFilterDTO>> selected = (IReadOnlyCollection<ChipModel<TagFilterDTO>>)result.Data!;
@@ -297,12 +315,20 @@ namespace Hitorus.Web.Pages {
                 bool success = await TagFilterService.DeleteAsync(ids);
                 if (success) {
                     TagFilters = [.. TagFilters.ExceptBy(ids, tf => tf.Id)];
-                    Snackbar.Add($"Deleted {selected.Count} tag filters.", Severity.Success, UiConstants.DEFAULT_SNACKBAR_OPTIONS);
+                    Snackbar.Add(
+                        string.Format(Localizer["Snackbar_Msg_DeleteTagFilter_Success"], selected.Count),
+                        Severity.Success,
+                        UiConstants.DEFAULT_SNACKBAR_OPTIONS
+                    );
                     if (_tagFilterEditor.CurrentTagFilter != null && selected.Any(m => m.Value.Id == _tagFilterEditor.CurrentTagFilter.Id)) {
                         _tagFilterEditor.CurrentTagFilter = null;
                     }
                 } else {
-                    Snackbar.Add($"Failed to delete tag filters.", Severity.Error, UiConstants.DEFAULT_SNACKBAR_OPTIONS);
+                    Snackbar.Add(
+                        string.Format(Localizer["Snackbar_Msg_DeleteTagFilter_Failure"]),
+                        Severity.Error,
+                        UiConstants.DEFAULT_SNACKBAR_OPTIONS
+                    );
                 }
             }
         }
@@ -348,10 +374,10 @@ namespace Hitorus.Web.Pages {
                                 .Select(tag => tag.Category.ToString() + ':' + tag.Value)
                 );
                 DialogParameters<NotificationDialog> parameters = new() {
-                    { d => d.HeaderText, "The following tags are conflicting:" },
+                    { d => d.HeaderText, Localizer["Dialog_Header_ConflictingTags"] },
                     { d => d.ContentText, contentText },
                 };
-                await DialogService.ShowAsync<NotificationDialog>("Duplicate Tags", parameters);
+                await DialogService.ShowAsync<NotificationDialog>(Localizer["Dialog_Title_ConflictingTags"], parameters);
                 return;
             }
 
@@ -374,7 +400,11 @@ namespace Hitorus.Web.Pages {
             if (success) {
                 SearchFilters.Remove(dto);
             } else {
-                Snackbar.Add("Failed to delete search filter.", Severity.Error, UiConstants.DEFAULT_SNACKBAR_OPTIONS);
+                Snackbar.Add(
+                    string.Format(Localizer["Snackbar_Msg_DeleteSearchLink_Failure"]),
+                    Severity.Error,
+                    UiConstants.DEFAULT_SNACKBAR_OPTIONS
+                );
             }
         }
 

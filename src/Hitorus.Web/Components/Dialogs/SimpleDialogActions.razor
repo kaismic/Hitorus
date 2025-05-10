@@ -2,6 +2,6 @@
            Variant="Variant.Filled"
            OnClick="@OnAction"
            Disabled="@DisableActionButton">
-    @ActionText
+    @Localizer["Confirm"]
 </MudButton>
-<MudButton OnClick="@OnCancel">Cancel</MudButton>
+<MudButton OnClick="@OnCancel">@Localizer["Cancel"]</MudButton>

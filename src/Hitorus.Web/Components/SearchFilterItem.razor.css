@@ -10,9 +10,18 @@
 .search-filter :is(td, th) {
     border-color: var(--mud-palette-lines-default);
     border-width: 1px;
+}
+
+td {
     padding: 4px;
 }
 
 th {
     font-weight: bold;
+    white-space: nowrap;
+    padding: 4px 8px;
+}
+
+td:last-child {
+    width: 100%;
 }

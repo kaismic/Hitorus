@@ -11,7 +11,7 @@ using MudBlazor;
 
 namespace Hitorus.Web.Components {
     public partial class TagSearchPanel : ComponentBase {
-        [Inject] IStringLocalizer<TagSearchPanel> Localizer { get; set; } = default!;
+        [Inject] IStringLocalizer<SharedResource> SharedLocalizer { get; set; } = default!;
         [Inject] private IJSRuntime JSRuntime { get; set;} = default!;
         [Inject] private TagService TagService { get; set; } = default!;
         [Parameter, EditorRequired] public TagCategory Category { get; set; }

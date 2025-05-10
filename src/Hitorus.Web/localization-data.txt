@@ -7,33 +7,6 @@ Download|Download|다운로드
 Browse|Browse|찾아보기
 Settings|Settings|설정
 AppInfo|App Info|앱 정보
----
-Pages\SearchPage
-Reload|Reload|다시 불러오기
-ClearAll|Clear All|모두 지우기
-AutoSave|Auto Save|자동 저장
-Next|Next|다음
-Finish|Finish|마침
-Walkthrough1|1. Create and edit tag filters here.|1. 여기에서 태그 필터를 생성하고 수정하세요.
-Walkthrough2|2. Select tag filters to include or exclude.|2. 포함 또는 제외할 태그 필터를 선택하세요.
-Walkthrough3|3. Select a language, a type and optionally enter a title search keyword.|3. 언어, 타입을 선택하고 선택적으로 검색할 제목 키워드를 입력하세요.
-Walkthrough4|4. Create search links and use them to search for galleries.|4. 검색 링크를 생성하고 갤러리를 검색하는데 사용하세요.
-Include|Include|포함
-Exclude|Exclude|제외
-SearchLinkButtonText|Create/Copy Search Link|검색 링크를 생성/복사하기
----
-Pages\SettingsPage
-Automatic|Automatic|자동
-GlobalSettings|Global Settings|전체 설정
----
-Components\TagFilterEditor
-SelectPlaceholder|Select a tag filter|태그 필터를 선택하세요
-Create|Create a new tag filter|새로운 태그 필터를 생성하기
-Rename|Rename|이름 바꾸기
-Save|Save|저장
-Delete|Delete|삭제
----
-Components\LTKSearchView
 Language|Language|언어
 Type|Type|타입
 TitleKeyword|Title Keyword|제목 키워드
@@ -44,8 +17,6 @@ ArtistCG|Artist CG|작가 CG
 GameCG|Game CG|게임 CG
 Imageset|Imageset|이미지 모음
 Anime|Anime|애니메이션
----
-Components\TagSearchPanel
 Tag|Tag|태그
 Artist|Artist|작가
 Male|Male|남성
@@ -53,3 +24,54 @@ Female|Female|여성
 Group|Group|그룹
 Character|Character|캐릭터
 Series|Series|시리즈
+---
+Pages\SearchPage
+Reload|Reload|다시 불러오기
+ClearAll|Clear All|모두 지우기
+AutoSave|Auto Save|자동 저장
+Next|Next|다음
+Finish|Finish|마침
+Walkthrough1|1. Create and edit tag filters here.|1. 여기에서 태그 필터를 만들고 수정하세요.
+Walkthrough2|2. Select tag filters to include or exclude.|2. 포함 또는 제외할 태그 필터를 선택하세요.
+Walkthrough3|3. Select a language, a type and optionally enter a title search keyword.|3. 언어, 타입을 선택하고 선택적으로 검색할 제목 키워드를 입력하세요.
+Walkthrough4|4. Create search links and use them to search for galleries.|4. 검색 링크를 생성하고 갤러리를 검색하는데 사용하세요.
+Include|Include|포함
+Exclude|Exclude|제외
+SelectPlaceholder|Select a tag filter|태그 필터를 선택하세요
+TagFilterName|Tag filter name|태그 필터 이름
+Button_Text_CreateSearchLink|Create/copy search link|검색 링크를 생성/복사하기
+Dialog_Title_CreateTagFilter|Create a new tag filter|새로운 태그 필터 만들기
+Dialog_Title_RenameTagFilter|Rename tag filter|태그 필터 이름 바꾸기
+Dialog_Title_DeleteTagFilter|Select tag filters to delete:|삭제할 태그 필터를 선택하세요:
+Dialog_Title_DupliateTags|Duplicate Tags|중복 태그
+Dialog_Header_DupliateTags|The following tags are conflicting:|아래에 충돌하는 태그들이 있습니다:
+Snackbar_Msg_CreateTagFilter_Success|Created "{0}".|"{0}" 생성 완료.
+Snackbar_Msg_RenameTagFilter_Success|Renamed "{0}" to "{1}".|"{0}"에서 "{1}"(으)로 이름을 변경하였습니다.
+Snackbar_Msg_RenameTagFilter_Failure|Failed to rename "{0}" to "{1}".|"{0}"에서 "{1}"(으)로 이름 변경을 실패하였습니다.
+Snackbar_Msg_SaveTagFilter_Success|Saved "{0}".|"{0}" 저장 완료.
+Snackbar_Msg_SaveTagFilter_Failure|Failed to save "{0}".|"{0}" 저장 실패.
+Snackbar_Msg_DeleteTagFilter_Success|Deleted {0} tag filters.|{0}개의 태그 필터를 삭제하였습니다.
+Snackbar_Msg_DeleteTagFilter_Failure|Failed to delete tag filters.|태그 필터를 삭제하는데 실패하였습니다.
+Snackbar_Msg_DeleteSearchLink_Failure|Failed to delete search link.|검색 링크를 삭제하는데 실패하였습니다.
+Validation_Msg_Duplicate|"{0}" already exists.|"{0}"이(가) 이미 존재합니다.
+---
+Pages\SettingsPage
+Automatic|Automatic|자동
+GlobalSettings|Global Settings|전체 설정
+---
+Pages\AboutPage
+Version|Version|버전
+Developer|Developer|개발자
+---
+Components\TagFilterEditor
+CreateTooltip|Create new|새로 만들기
+RenameTooltip|Rename|이름 바꾸기
+SaveTooltip|Save|저장
+DeleteTooltip|Delete|삭제
+---
+Components\Dialogs\NotificationDialog
+Close|Close|닫기
+---
+Components\Dialogs\SimpleDialogActions
+Cancel|Cancel|취소
+Confirm|Confirm|확인

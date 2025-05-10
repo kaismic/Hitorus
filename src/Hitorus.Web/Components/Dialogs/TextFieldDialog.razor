@@ -1,7 +1,7 @@
 ﻿<MudDialog>
     <DialogContent>
         <MudTextField FullWidth Immediate
-                      Label="Name"
+                      Label=@TextFieldLabel
                       Counter="TagFilter.TAG_FILTER_NAME_MAX_LEN"
                       MaxLength="TagFilter.TAG_FILTER_NAME_MAX_LEN"
                       T="string"
@@ -12,8 +12,7 @@
                       OnKeyDown="@OnKeyDown" />
     </DialogContent>
     <DialogActions>
-        <SimpleDialogActions ActionText="@ActionText"
-                             DisableActionButton="@(Text.Length == 0)"
+        <SimpleDialogActions DisableActionButton="@(Text.Length == 0)"
                              OnAction="@ExecuteAction"
                              OnCancel="@MudDialog.Cancel"/>
     </DialogActions>

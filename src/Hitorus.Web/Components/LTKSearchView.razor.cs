@@ -5,7 +5,7 @@ using Microsoft.Extensions.Localization;
 
 namespace Hitorus.Web.Components {
     public partial class LTKSearchView : ComponentBase {
-        [Inject] IStringLocalizer<LTKSearchView> Localizer { get; set; } = default!;
+        [Inject] IStringLocalizer<SharedResource> SharedLocalizer { get; set; } = default!;
         [Inject] private LanguageTypeService LanguageTypeService { get; set; } = default!;
         [Parameter] public string? Style { get; set; }
         [Parameter] public string? Class { get; set; }

@@ -1,7 +1,5 @@
 ﻿@page "/search"
 
-<PageTitle>@SharedLocalizer["Search"]</PageTitle>
-
 @if (_showWalkthrough) {
     <MudOverlay DarkBackground Visible="@_showWalkthrough" />
 }
@@ -17,7 +15,8 @@
                                  OnCreateButtonClicked="@CreateTagFilter"
                                  OnRenameButtonClicked="@RenameTagFilter"
                                  OnSaveButtonClicked="@(() => SaveTagFilter(_tagFilterEditor.CurrentTagFilter))"
-                                 OnDeleteButtonClicked="@DeleteTagFilters" />
+                                 OnDeleteButtonClicked="@DeleteTagFilters"
+                                 SelectPlaceholder=@Localizer["SelectPlaceholder"] />
                 <div class="d-flex">
                     <div class="d-flex gap-4">
                         <MudButton Color="Color.Primary"
@@ -105,7 +104,7 @@
                            Variant="Variant.Filled"
                            OnClick="@CreateSearchFilter"
                            StartIcon="@Icons.Material.Filled.Search">
-                    @Localizer["SearchLinkButtonText"]
+                    @Localizer["Button_Text_CreateSearchLink"]
                 </MudButton>
                 <MudButton Color="Color.Primary"
                            OnClick="@SearchFilters.Clear"

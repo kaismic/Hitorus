@@ -19,14 +19,14 @@
                        Variant="Variant.Text"
                        StartIcon="@Icons.Material.Filled.Cancel"
                        OnClick="@(() => _isEditing = false)">
-                Cancel
+                @SharedLocalizer["Cancel"]
             </MudButton>
             <MudButton Color="Color.Error"
                        Variant="Variant.Filled"
                        StartIcon="@Icons.Material.Filled.Delete"
                        OnClick="@DeleteGalleries"
                        Disabled="@(!_selections.Any(s => s))">
-                Delete
+                @Localizer["DeleteSelection"]
             </MudButton>
         </div>
     } else {
@@ -36,16 +36,20 @@
                            Variant="Variant.Outlined"
                            StartIcon="@Icons.Material.Filled.Edit"
                            OnClick="@(() => _isEditing = true)">
-                    Edit
+                    @Localizer["EditMode"]
                 </MudButton>
                 <MudButton Variant="Variant.Outlined"
                            Color="@(_activeSorts.Count == 0 ? Color.Default : Color.Primary)"
                            StartIcon="@Icons.Material.Filled.Sort"
                            OnClick="@ShowSortEditDialog">
-                    @(_activeSorts.Count == 0 ? "Sort" : _activeSorts.Count == 1 ? "1 Sort" : $"{_activeSorts.Count} Sorts")
+                    @(
+                        _activeSorts.Count == 0 ? Localizer["Sort"] :
+                        _activeSorts.Count == 1 ? Localizer["SingleSort"] :
+                        string.Format(Localizer["MultiSort"], _activeSorts.Count)
+                    )
                 </MudButton>
                 <MudNumericField T="int"
-                                 Label="Galleries per Page"
+                                 Label=@Localizer["ItemsPerPage"]
                                  Variant="Variant.Outlined"
                                  Min="1" Max="24"
                                  Style="max-width: 160px"
@@ -60,7 +64,7 @@
                            Style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);" />
             <div class="d-flex align-center gap-4">
                 <MudSwitch T="bool"
-                           Label="Refresh on filter change"
+                           Label=@Localizer["AutoRefresh"]
                            Color="Color.Primary"
                            Value="@BrowseConfigurationService.Config.AutoRefresh"
                            ValueChanged="@OnAutoRefreshChanged" />
@@ -68,7 +72,7 @@
                            Variant="Variant.Filled"
                            StartIcon="@Icons.Material.Filled.Search"
                            OnClick="@LoadGalleries">
-                    Browse
+                    @SharedLocalizer["Browse"]
                 </MudButton>
             </div>
         </div>
@@ -79,7 +83,7 @@
         </div>
     } else {
         @if (_galleries.Length == 0) {
-            <MudText Style="margin: auto; margin-top: 160px; color: var(--mud-palette-gray-default)">No galleries found. Try removing filters.</MudText>
+            <MudText Style="margin: auto; margin-top: 160px; color: var(--mud-palette-gray-default)">@Localizer["NoGalleriesFound"]</MudText>
         } else {
             <MudGrid Spacing="4">
                 @for (int i = 0; i < _galleries.Length; i++) {
@@ -88,7 +92,7 @@
                         <GalleryBrowseItem Gallery="@_galleries[localIndex]"
                                            @bind-IsSelected="@_selections[localIndex]"
                                            IsEditing="@_isEditing"
-                                           DeleteRequested="@DeleteGallery"/>
+                                           DeleteRequested="@(() => DeleteGallery(localIndex))" />
                     </MudItem>
                 }
             </MudGrid>

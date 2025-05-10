@@ -24,6 +24,15 @@ Female|Female|여성
 Group|Group|그룹
 Character|Character|캐릭터
 Series|Series|시리즈
+Cancel|Cancel|취소
+Save|Save|저장
+Delete|Delete|삭제
+Id|Id|아이디
+Title|Title|제목
+UploadTime|Upload Time|업로드 시간
+LastDownloadTime|Last Download Time|마지막 다운로드 시간
+Ascending|Ascending|오름차순
+Descending|Descending|내림차순
 ---
 Pages\SearchPage
 Reload|Reload|다시 불러오기
@@ -46,14 +55,31 @@ Dialog_Title_DeleteTagFilter|Select tag filters to delete:|삭제할 태그 필�
 Dialog_Title_DupliateTags|Duplicate Tags|중복 태그
 Dialog_Header_DupliateTags|The following tags are conflicting:|아래에 충돌하는 태그들이 있습니다:
 Snackbar_Msg_CreateTagFilter_Success|Created "{0}".|"{0}" 생성 완료.
-Snackbar_Msg_RenameTagFilter_Success|Renamed "{0}" to "{1}".|"{0}"에서 "{1}"(으)로 이름을 변경하였습니다.
-Snackbar_Msg_RenameTagFilter_Failure|Failed to rename "{0}" to "{1}".|"{0}"에서 "{1}"(으)로 이름 변경을 실패하였습니다.
+Snackbar_Msg_RenameTagFilter_Success|Renamed "{0}" to "{1}".|"{0}"에서 "{1}"(으)로 이름을 변경했습니다.
+Snackbar_Msg_RenameTagFilter_Failure|Failed to rename "{0}" to "{1}".|"{0}"에서 "{1}"(으)로 이름 변경을 실패했습니다.
 Snackbar_Msg_SaveTagFilter_Success|Saved "{0}".|"{0}" 저장 완료.
 Snackbar_Msg_SaveTagFilter_Failure|Failed to save "{0}".|"{0}" 저장 실패.
-Snackbar_Msg_DeleteTagFilter_Success|Deleted {0} tag filters.|{0}개의 태그 필터를 삭제하였습니다.
-Snackbar_Msg_DeleteTagFilter_Failure|Failed to delete tag filters.|태그 필터를 삭제하는데 실패하였습니다.
-Snackbar_Msg_DeleteSearchLink_Failure|Failed to delete search link.|검색 링크를 삭제하는데 실패하였습니다.
+Snackbar_Msg_DeleteTagFilter_Success|Deleted {0} tag filters.|{0}개의 태그 필터를 삭제했습니다.
+Snackbar_Msg_DeleteTagFilter_Failure|Failed to delete tag filters.|태그 필터를 삭제하는데 실패했습니다.
+Snackbar_Msg_DeleteSearchLink_Failure|Failed to delete search link.|검색 링크를 삭제하는데 실패했습니다.
 Validation_Msg_Duplicate|"{0}" already exists.|"{0}"이(가) 이미 존재합니다.
+---
+Pages\BrowsePage
+DeleteSelection|Delete selected items|선택 항목 지우기
+EditMode|Edit Mode|수정 모드
+Sort|Sort|정렬
+SingleSort|1 Sort|1 정렬
+MultiSort|{0} Sorts|{0} 정렬
+ItemsPerPage|Items per Page|페이지 당 항목 개수
+AutoRefresh|Auto Refresh|자동 새로고침
+NoGalleriesFound|No galleries found. Try again after removing search filters.|아무런 갤러리를 찾지 못했습니다. 검색 필터를 제거한 후 다시 시도해보세요.
+Dialog_Title_SortGalleries|Sort Galleries|갤러리 정렬
+Snackbar_Msg_SortSaveSuccess|Save sucess.|저장 완료.
+Snackbar_Msg_SortSaveFailure|Save failed.|저장 실패.
+Snackbar_Msg_MultiGalleryDeleteSuccess|Deleted {0} galleries.|{0}개의 갤러리를 삭제했습니다.
+Snackbar_Msg_MultiGalleryDeleteFailure|Failed to delete galleries.|갤러리 삭제를 실패했습니다.
+Snackbar_Msg_SingleGalleryDeleteSuccess|Deleted "{0}".|"{0}"을(를) 삭제했습니다.
+Snackbar_Msg_SingleGalleryDeleteFailure|Failed to delete "{0}".|"{0}"을(를) 삭제하는데 실패했습니다.
 ---
 Pages\SettingsPage
 Automatic|Automatic|자동
@@ -66,12 +92,16 @@ Developer|Developer|개발자
 Components\TagFilterEditor
 CreateTooltip|Create new|새로 만들기
 RenameTooltip|Rename|이름 바꾸기
-SaveTooltip|Save|저장
-DeleteTooltip|Delete|삭제
 ---
 Components\Dialogs\NotificationDialog
 Close|Close|닫기
 ---
 Components\Dialogs\SimpleDialogActions
-Cancel|Cancel|취소
 Confirm|Confirm|확인
+---
+Components\Dialogs\GallerySortEditDialog
+NoSorts|No Sorts|정렬 없음
+AddSort|Add Sort|정렬 추가
+Priority|Priority|우선순위
+High|High|높음
+Low|Low|낮음

@@ -4,7 +4,7 @@ using MudBlazor;
 
 namespace Hitorus.Data.Entities {
     public enum GalleryProperty {
-        Id, Title, UploadTime, LastDownloadTime, Type
+        Id, Title, UploadTime, LastDownloadTime
     }
     [Index(nameof(IsActive))]
     [Index(nameof(RankIndex))]

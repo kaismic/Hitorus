@@ -21,13 +21,13 @@
             <MudSelectItem Value="@tagFilter" />
         }
     </MudSelect>
-    <MudTooltip Text=@Localizer["SaveTooltip"]>
+    <MudTooltip Text=@SharedLocalizer["Save"]>
         <MudFab Color="Color.Primary"
                 StartIcon="@Icons.Material.Filled.Save"
                 OnClick="@OnSaveButtonClicked"
                 Disabled="@(CurrentTagFilter == null)" />
     </MudTooltip>
-    <MudTooltip Text=@Localizer["DeleteTooltip"]>
+    <MudTooltip Text=@SharedLocalizer["Delete"]>
         <MudFab Color="Color.Primary"
                 StartIcon="@Icons.Material.Filled.Delete"
                 OnClick="@OnDeleteButtonClicked"

@@ -1,11 +1,14 @@
 ﻿using Hitorus.Data.DTOs;
 using Hitorus.Web.Services;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Localization;
 using MudBlazor;
 
 namespace Hitorus.Web.Components.Dialogs {
     public partial class GallerySortEditDialog : ComponentBase {
         [CascadingParameter] private IMudDialogInstance MudDialog { get; set; } = null!;
+        [Inject] IStringLocalizer<GallerySortEditDialog> Localizer { get; set; } = default!;
+        [Inject] IStringLocalizer<SharedResource> SharedLocalizer { get; set; } = default!;
         [Inject] private BrowseConfigurationService BrowseConfigurationService { get; set; } = default!;
 
         private MudDropContainer<GallerySortDTO> _dropContainer = default!;

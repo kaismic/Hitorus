@@ -16,6 +16,7 @@ namespace Hitorus.Web.Pages {
         [Inject] private IJSRuntime JsRuntime {get;set;} = default!;
         [Inject] IDialogService DialogService { get; set; } = default!;
         [Inject] ISnackbar Snackbar { get; set; } = default!;
+        [Inject] IStringLocalizer<BrowsePage> Localizer { get; set; } = default!;
         [Inject] IStringLocalizer<SharedResource> SharedLocalizer { get; set; } = default!;
 
         private readonly List<ChipModel<TagDTO>>[] _tagSearchPanelChipModels = [.. Tag.TAG_CATEGORIES.Select(t => new List<ChipModel<TagDTO>>())];
@@ -150,7 +151,7 @@ namespace Hitorus.Web.Pages {
         }
 
         private async Task ShowSortEditDialog() {
-            IDialogReference dialogRef = await DialogService.ShowAsync<GallerySortEditDialog>("Sort Galleries");
+            IDialogReference dialogRef = await DialogService.ShowAsync<GallerySortEditDialog>(Localizer["Dialog_Title_SortGalleries"]);
             DialogResult result = (await dialogRef.Result)!;
             if (result.Canceled) {
                 return;
@@ -160,10 +161,10 @@ namespace Hitorus.Web.Pages {
             if (success) {
                 BrowseConfigurationService.Config.Sorts = sorts;
                 _activeSorts = [.. sorts.Where(s => s.IsActive)];
-                Snackbar.Add("Saved successfully", Severity.Success, UiConstants.DEFAULT_SNACKBAR_OPTIONS);
+                Snackbar.Add(Localizer["Snackbar_Msg_SortSaveSuccess"], Severity.Success, UiConstants.DEFAULT_SNACKBAR_OPTIONS);
                 await LoadGalleries();
             } else {
-                Snackbar.Add("Save failed", Severity.Error, UiConstants.DEFAULT_SNACKBAR_OPTIONS);
+                Snackbar.Add(Localizer["Snackbar_Msg_SortSaveFailure"], Severity.Error, UiConstants.DEFAULT_SNACKBAR_OPTIONS);
             }
         }
 
@@ -176,20 +177,37 @@ namespace Hitorus.Web.Pages {
             }
             bool success = await GalleryService.DeleteGalleries(ids);
             if (success) {
-                Snackbar.Add($"Deleted {ids.Count} galleries.", Severity.Success, UiConstants.DEFAULT_SNACKBAR_OPTIONS);
+                Snackbar.Add(
+                    string.Format(Localizer["Snackbar_Msg_MultiGalleryDeleteSuccess"], ids.Count),
+                    Severity.Success,
+                    UiConstants.DEFAULT_SNACKBAR_OPTIONS
+                );
                 await LoadGalleries();
             } else {
-                Snackbar.Add("Deletion failed.", Severity.Error, UiConstants.DEFAULT_SNACKBAR_OPTIONS);
+                Snackbar.Add(
+                    string.Format(Localizer["Snackbar_Msg_MultiGalleryDeleteFailure"]),
+                    Severity.Error,
+                    UiConstants.DEFAULT_SNACKBAR_OPTIONS
+                );
             }
         }
 
-        private async Task DeleteGallery(int id) {
-            bool success = await GalleryService.DeleteGalleries([id]);
+        private async Task DeleteGallery(int index) {
+            BrowseGalleryDTO gallery = _galleries[index];
+            bool success = await GalleryService.DeleteGalleries([gallery.Id]);
             if (success) {
-                Snackbar.Add($"Deletion success.", Severity.Success, UiConstants.DEFAULT_SNACKBAR_OPTIONS);
+                Snackbar.Add(
+                    string.Format(Localizer["Snackbar_Msg_SingleGalleryDeleteSuccess"], gallery.Title),
+                    Severity.Success,
+                    UiConstants.DEFAULT_SNACKBAR_OPTIONS
+                );
                 await LoadGalleries();
             } else {
-                Snackbar.Add("Deletion failed.", Severity.Error, UiConstants.DEFAULT_SNACKBAR_OPTIONS);
+                Snackbar.Add(
+                    string.Format(Localizer["Snackbar_Msg_SingleGalleryDeleteFailure"], gallery.Title),
+                    Severity.Error,
+                    UiConstants.DEFAULT_SNACKBAR_OPTIONS
+                );
             }
         }
     }

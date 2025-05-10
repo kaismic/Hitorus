@@ -18,27 +18,27 @@
                 </MudDropContainer>
             } else
             {
-                <MudText Style="color: var(--mud-palette-gray-default); margin: auto">No sorts</MudText>
+                <MudText Style="color: var(--mud-palette-gray-default); margin: auto">@Localizer["NoSorts"]</MudText>
             }
             <MudMenu StartIcon="@Icons.Material.Filled.Add"
                      Variant="Variant.Outlined"
                      Color="Color.Primary"
-                     Label="Add Sort"
+                     Label=@Localizer["AddSort"]
                      AnchorOrigin="Origin.BottomCenter"
                      TransformOrigin="Origin.TopCenter"
                      Style="grid-row: 2; grid-column: 1; justify-self: center">
                 @foreach (GallerySortDTO sort in _sorts.Where(s => !s.IsActive)) {
-                    <MudMenuItem Label="@Data.Constants.GALLERY_PROPERTY_NAMES[sort.Property]"
+                    <MudMenuItem Label="@SharedLocalizer[sort.Property.ToString()]"
                                  Icon="@Icons.Material.Filled.Add"
                                  OnClick="@(() => AddSort(sort))"/>
                 }
             </MudMenu>
             <div class="d-flex flex-column justify-center align-center gap-2" style="grid-row: 1; grid-column: 2; color: var(--mud-palette-gray-default)">
-                <MudText Typo="Typo.caption">High</MudText>
+                <MudText Typo="Typo.caption">@Localizer["High"]</MudText>
                 <MudIcon Icon="@Icons.Material.Filled.ArrowUpward" />
-                <MudText Typo="Typo.caption">Priority</MudText>
+                <MudText Typo="Typo.caption">@Localizer["Priority"]</MudText>
                 <MudIcon Icon="@Icons.Material.Filled.ArrowDownward" />
-                <MudText Typo="Typo.caption">Low</MudText>
+                <MudText Typo="Typo.caption">@Localizer["Low"]</MudText>
             </div>
         </div>
     </DialogContent>
@@ -46,12 +46,12 @@
         <MudButton Color="Color.Primary"
                    Variant="Variant.Filled"
                    OnClick="@ExecuteAction">
-            Save
+            @SharedLocalizer["Save"]
         </MudButton>
         <MudButton Color="Color.Primary"
                    Variant="Variant.Text"
                    OnClick="@Close">
-            Close
+            @SharedLocalizer["Close"]
         </MudButton>
     </DialogActions>
 </MudDialog>

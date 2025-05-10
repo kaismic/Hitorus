@@ -7,6 +7,7 @@ using Microsoft.Extensions.Localization;
 namespace Hitorus.Web.Components {
     public partial class TagFilterEditor : ComponentBase {
         [Inject] IStringLocalizer<TagFilterEditor> Localizer { get; set; } = default!;
+        [Inject] IStringLocalizer<SharedResource> SharedLocalizer { get; set; } = default!;
         [Inject] private SearchConfigurationService SearchConfigurationService { get; set; } = default!;
         [Parameter, EditorRequired] public IEnumerable<TagFilterDTO> TagFilters { get; set; } = null!;
         [Parameter, EditorRequired] public EventCallback OnCreateButtonClicked { get; set; }

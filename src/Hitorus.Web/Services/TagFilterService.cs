@@ -17,14 +17,22 @@ namespace Hitorus.Web.Services {
         }
 
         public async Task<bool> DeleteAsync(IEnumerable<int> tagFilterIds) {
-            var response = await httpClient.PostAsJsonAsync($"delete?configId={searchConfigurationService.Config.Id}", tagFilterIds);
-            return response.IsSuccessStatusCode;
+            try {
+                var response = await httpClient.PostAsJsonAsync($"delete?configId={searchConfigurationService.Config.Id}", tagFilterIds);
+                return response.IsSuccessStatusCode;
+            } catch (HttpRequestException) {
+                return false;
+            }
         }
 
         public async Task<bool> UpdateNameAsync(int tagFilterId, string name) {
-            var response = await httpClient.PatchAsync($"name?configId={searchConfigurationService.Config.Id}&tagFilterId={tagFilterId}",
-                JsonContent.Create(name));
-            return response.IsSuccessStatusCode;
+            try {
+                var response = await httpClient.PatchAsync($"name?configId={searchConfigurationService.Config.Id}&tagFilterId={tagFilterId}",
+                    JsonContent.Create(name));
+                return response.IsSuccessStatusCode;
+            } catch (HttpRequestException) {
+                return false;
+            }
         }
 
         public async Task<IEnumerable<TagDTO>> GetTagsAsync(int tagFilterId) {
@@ -32,8 +40,12 @@ namespace Hitorus.Web.Services {
         }
 
         public async Task<bool> UpdateTagsAsync(int tagFilterId, IEnumerable<int> tagIds) {
-            var response = await httpClient.PatchAsync($"tags?configId={searchConfigurationService.Config.Id}&tagFilterId={tagFilterId}", JsonContent.Create(tagIds));
-            return response.IsSuccessStatusCode;
+            try {
+                var response = await httpClient.PatchAsync($"tags?configId={searchConfigurationService.Config.Id}&tagFilterId={tagFilterId}", JsonContent.Create(tagIds));
+                return response.IsSuccessStatusCode;
+            } catch (HttpRequestException) {
+                return false;
+            }
         }
 
         public async Task<IEnumerable<TagDTO>> GetTagsUnionAsync(IEnumerable<int> tagFilterIds) {

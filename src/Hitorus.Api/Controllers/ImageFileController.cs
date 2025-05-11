@@ -30,6 +30,8 @@ namespace Hitorus.Api.Controllers {
                 return File(stream, $"image/{path.Split('.').Last()}");
             } catch (FileNotFoundException) {
                 return NotFound($"Image file at the index {index} was not found.");
+            } catch (DirectoryNotFoundException) {
+                return NotFound($"Gallery directory with id {galleryId} was not found.");
             }
         }
     }

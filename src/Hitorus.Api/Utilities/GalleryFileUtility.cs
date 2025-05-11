@@ -29,6 +29,7 @@ namespace Hitorus.Api.Utilities {
         /// <param name="galleryImage"></param>
         /// <returns></returns>
         /// <exception cref="FileNotFoundException"></exception>
+        /// <exception cref="DirectoryNotFoundException"></exception>
         public static string GetImagePath(Gallery gallery, GalleryImage galleryImage) {
             string[] fullFilePaths = Directory.GetFiles(Path.Combine(ROOT_PATH, gallery.Id.ToString()), "*.*");
             foreach (string fullFilePath in fullFilePaths) {

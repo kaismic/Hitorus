@@ -32,11 +32,18 @@
     } else {
         <div class="d-flex justify-space-between align-center" style="position: relative;">
             <div class="d-flex align-center gap-4">
+                <MudNumericField T="int"
+                                 Label=@Localizer["ItemsPerPage"]
+                                 Variant="Variant.Outlined"
+                                 Min="1" Max="24"
+                                 Style="max-width: 160px"
+                                 Value="@BrowseConfigurationService.Config.ItemsPerPage"
+                                 ValueChanged="@OnItemsPerPageChanged" />
                 <MudButton Color="Color.Primary"
                            Variant="Variant.Outlined"
                            StartIcon="@Icons.Material.Filled.Edit"
                            OnClick="@(() => _isEditing = true)">
-                    @Localizer["EditMode"]
+                    @Localizer["Edit"]
                 </MudButton>
                 <MudButton Variant="Variant.Outlined"
                            Color="@(_activeSorts.Count == 0 ? Color.Default : Color.Primary)"
@@ -48,13 +55,6 @@
                         string.Format(Localizer["MultiSort"], _activeSorts.Count)
                     )
                 </MudButton>
-                <MudNumericField T="int"
-                                 Label=@Localizer["ItemsPerPage"]
-                                 Variant="Variant.Outlined"
-                                 Min="1" Max="24"
-                                 Style="max-width: 160px"
-                                 Value="@BrowseConfigurationService.Config.ItemsPerPage"
-                                 ValueChanged="@OnItemsPerPageChanged" />
             </div>
             <MudPagination ShowFirstButton ShowLastButton
                            MiddleCount="8"

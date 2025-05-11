@@ -14,6 +14,8 @@ namespace Hitorus.Web.Pages {
         [Inject] private IJSRuntime JSRuntime { get; set; } = default!;
         [Inject] private IResizeListener ResizeListener { get; set; } = default!;
         [Inject] private IConfiguration HostConfiguration { get; set; } = default!;
+        [Inject] IStringLocalizer<GalleryViewPage> Localizer { get; set; } = default!;
+        [Inject] IStringLocalizer<SharedResource> SharedLocalizer { get; set; } = default!;
         [Inject] private GalleryService GalleryService { get; set; } = default!;
         [Inject] private ViewConfigurationService ViewConfigurationService { get; set; } = default!;
         [Parameter] public int GalleryId { get; set; }
@@ -280,37 +282,30 @@ namespace Hitorus.Web.Pages {
         }
 
         private async Task OnKeyDown(KeyboardEventArgs e) {
-            _preventDefaultKeyDown = false;
+            _preventDefaultKeyDown = true;
             switch (e.Code) {
-                case "ArrowLeft" or "ArrowUp":
-                    if (e.Code == "ArrowUp") {
-                        _preventDefaultKeyDown = true;
-                        if (_viewConfiguration.ViewMode == ViewMode.Default) {
-                            return;
-                        }
-                    }
-                    if (ViewConfigurationService.Config.InvertKeyboardNavigation) {
-                        if (CanIncrement()) await Increment();
-                    } else {
+                case "ArrowLeft" or "ArrowRight":
+                    if (e.Code == "ArrowLeft" ^ ViewConfigurationService.Config.InvertKeyboardNavigation) {
                         if (CanDecrement()) await Decrement();
+                    } else {
+                        if (CanIncrement()) await Increment();
                     }
                     break;
-                case "ArrowRight" or "ArrowDown":
-                    if (e.Code == "ArrowUp") {
-                        _preventDefaultKeyDown = true;
-                        if (_viewConfiguration.ViewMode == ViewMode.Default) {
-                            return;
-                        }
+                case "ArrowDown" or "ArrowUp":
+                    if (_viewConfiguration.ViewMode == ViewMode.Default) {
+                        return;
                     }
-                    if (ViewConfigurationService.Config.InvertKeyboardNavigation) {
+                    if (e.Code == "ArrowUp") {
                         if (CanDecrement()) await Decrement();
                     } else {
                         if (CanIncrement()) await Increment();
                     }
                     break;
                 case "Space":
-                    _preventDefaultKeyDown = true;
                     ToggleAutoScroll(!_isAutoScrolling);
+                    break;
+                default:
+                    _preventDefaultKeyDown = false;
                     break;
             }
         }

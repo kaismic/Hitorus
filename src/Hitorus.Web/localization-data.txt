@@ -32,8 +32,7 @@ Id|Id|아이디
 Title|Title|제목
 UploadTime|Upload Time|업로드 시간
 LastDownloadTime|Last Download Time|마지막 다운로드 시간
-Ascending|Ascending|오름차순
-Descending|Descending|내림차순
+Automatic|Automatic|자동
 ---
 Pages\SearchPage
 Reload|Reload|다시 불러오기
@@ -98,12 +97,37 @@ Snackbar_Msg_SingleGalleryDeleteSuccess|Deleted "{0}".|"{0}"을(를) 삭제했�
 Snackbar_Msg_SingleGalleryDeleteFailure|Failed to delete "{0}".|"{0}"을(를) 삭제하는데 실패했습니다.
 ---
 Pages\SettingsPage
-Automatic|Automatic|자동
 GlobalSettings|Global Settings|전체 설정
 ---
 Pages\AboutPage
 Version|Version|버전
 Developer|Developer|개발자
+---
+Pages\GalleryViewPage
+Page|Page|페이지
+ViewMode|View Mode|읽기 모드
+Default|Default|기본
+Scroll|Scroll|스크롤
+ImageFitMode|Image Fit Mode|이미지 맞춤 모드
+Horizontal|Horizontal|가로
+Vertical|Vertical|세로
+Play|Play|재생
+Stop|Stop|정지
+Unit_Second|s|초
+PageTurnInterval|Page Turn Interval|페이지 넘김 간격
+AutoScrollMode|Auto Scroll Mode|자동 스크롤 모드
+Continuous|Continuous|연속적
+ByPage|By Page|페이지 단위
+AutoScrollSpeed|Auto Scroll Speed|자동 스크롤 속도
+Loop|Loop|루프
+PageOffset|Page Offset|페이지 오프셋
+ImagesPerPage|Images per Page|페이지 당 이미지 개수
+MaxImagesPerPage|Max Images per Page|페이지 당 최대 이미지 개수
+ImageLayoutMode|Image Layout Mode|이미지 레이아웃 모드
+Fixed|Fixed|고정
+ViewDirection|View Direction|읽기 방향
+LTR|Left to Right|왼쪽에서 오른쪽
+RTL|Right to Left|오른쪽에서 왼쪽
 ---
 Components\TagFilterEditor
 CreateTooltip|Create new|새로 만들기
@@ -118,3 +142,7 @@ AddSort|Add Sort|정렬 추가
 Priority|Priority|우선순위
 High|High|높음
 Low|Low|낮음
+---
+Components\GallerySortItemView
+Ascending|Ascending|오름차순
+Descending|Descending|내림차순

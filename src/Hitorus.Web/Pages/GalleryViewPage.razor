@@ -8,108 +8,115 @@
 
 @if (_gallery != null) {
     <MudToolBar Class="gap-4 justify-center" Style=@($"height: {DEFAULT_TOOLBAR_HEIGHT}")>
-        <div class="d-flex gap-4 align-center">
-            <MudFab StartIcon="@Icons.Material.Filled.NavigateBefore"
-                    Disabled="@(!CanDecrement())"
-                    OnClick="@(() => Decrement())" />
-            <div class="d-flex align-center gap-2">
-                <MudNumericField T="int"
-                                 Value="@PageNumber"
-                                 ValueChanged="@OnPageNumberChanged"
-                                 Disabled="@(_viewConfiguration.ViewMode == ViewMode.Scroll && _isAutoScrolling)"
-                                 Label="Page"
-                                 Min="1" Max=@(_imageIndexRanges.Length)
-                                 Pattern="[0-9]"
-                                 Variant="Variant.Outlined"
-                                 Style="max-width: 80px" />
-                <MudText>@("/" + _imageIndexRanges.Length)</MudText>
-            </div>
-            <MudFab StartIcon="@Icons.Material.Filled.NavigateNext"
-                    Disabled="@(!CanIncrement())"
-                    OnClick="@(() => Increment())" />
+        <div class="d-flex align-center gap-2">
+            <MudNumericField T="int"
+                                Value="@PageNumber"
+                                ValueChanged="@OnPageNumberChanged"
+                                Disabled="@(_viewConfiguration.ViewMode == ViewMode.Scroll && _isAutoScrolling)"
+                                Label=@Localizer["Page"]
+                                Min="1" Max=@(_imageIndexRanges.Length)
+                                Pattern="[0-9]"
+                                Variant="Variant.Outlined"
+                                Style="max-width: 80px" />
+            <MudText>@("/" + _imageIndexRanges.Length)</MudText>
         </div>
         <MudSelect T="ViewMode"
-                    Label="View Mode"
-                    Disabled="@_isAutoScrolling"
-                    Value=_viewConfiguration.ViewMode
-                    ValueChanged="@OnViewModeChanged"
-                    Variant="Variant.Outlined"
-                    Style="max-width: 120px">
-            <MudSelectItem T="ViewMode" Value="ViewMode.Default" />
-            <MudSelectItem T="ViewMode" Value="ViewMode.Scroll" />
+                   Label=@Localizer["ViewMode"]
+                   Disabled="@_isAutoScrolling"
+                   Value=_viewConfiguration.ViewMode
+                   ValueChanged="@OnViewModeChanged"
+                   Variant="Variant.Outlined"
+                   Style="min-width: 120px">
+            <MudSelectItem T="ViewMode" Value="ViewMode.Default">@Localizer["Default"]</MudSelectItem>
+            <MudSelectItem T="ViewMode" Value="ViewMode.Scroll">@Localizer["Scroll"]</MudSelectItem>
         </MudSelect>
         <MudSelect T="FitMode"
-                    Label="Fit Mode"
-                    Disabled="@_isAutoScrolling"
-                    @bind-Value=@_fitMode
-                    Variant="Variant.Outlined"
-                    Style="max-width: 120px">
-            <MudSelectItem T="FitMode" Value="FitMode.Auto" />
-            <MudSelectItem T="FitMode" Value="FitMode.Horizontal" />
-            <MudSelectItem T="FitMode" Value="FitMode.Vertical" />
+                   Label=@Localizer["ImageFitMode"]
+                   Disabled="@_isAutoScrolling"
+                   @bind-Value=@_fitMode
+                   Variant="Variant.Outlined"
+                   Style="min-width: 160px">
+            <MudSelectItem T="FitMode" Value="FitMode.Auto">@SharedLocalizer["Automatic"]</MudSelectItem>
+            <MudSelectItem T="FitMode" Value="FitMode.Horizontal">@Localizer["Horizontal"]</MudSelectItem>
+            <MudSelectItem T="FitMode" Value="FitMode.Vertical">@Localizer["Vertical"]</MudSelectItem>
         </MudSelect>
         <div class="d-flex flex-column justify-center align-center">
             <MudToggleIconButton Toggled=@_isAutoScrolling
-                                    ToggledChanged="@ToggleAutoScroll"
-                                    Icon="@Icons.Material.Filled.PlayArrow"
-                                    ToggledIcon="@Icons.Material.Filled.Pause"
-                                    ToggledColor="Color.Primary" />
-            <span style="margin: auto;">@(_isAutoScrolling ? "Pause" : "Play")</span>
+                                 ToggledChanged="@ToggleAutoScroll"
+                                 Icon="@Icons.Material.Filled.PlayArrow"
+                                 ToggledIcon="@Icons.Material.Filled.Pause"
+                                 ToggledColor="Color.Primary" />
+            <span style="margin: auto;">@(_isAutoScrolling ? @Localizer["Stop"] : @Localizer["Play"])</span>
         </div>
         @if (_viewConfiguration.ViewMode == ViewMode.Default) {
             <MudSlider T="int" ValueLabel TickMarks
-                        Min="1" Max="20"
-                        Value=@_viewConfiguration.PageTurnInterval
-                        ValueChanged=@OnPageTurnIntervalChanged
-                        Variant="Variant.Filled"
-                        Style="max-width: 200px">
-                Page Turn Interval
+                       Min="1" Max="20"
+                       Value=@_viewConfiguration.PageTurnInterval
+                       ValueChanged=@OnPageTurnIntervalChanged
+                       Variant="Variant.Filled"
+                       Style="max-width: 200px">
+                <ValueLabelContent>
+                    @(context.Value.ToString() + Localizer["Unit_Second"])
+                </ValueLabelContent>
+                <ChildContent>
+                    @Localizer["PageTurnInterval"]
+                </ChildContent>
             </MudSlider>
         } else {
             <MudSelect T="AutoScrollMode"
-                        Label="Auto Scroll Mode"
-                        Value=@_viewConfiguration.AutoScrollMode
-                        ValueChanged="@OnAutoScrollModeChanged"
-                        Variant="Variant.Outlined">
-                <MudSelectItem T="AutoScrollMode" Value="AutoScrollMode.Continuous">Continuous</MudSelectItem>
-                <MudSelectItem T="AutoScrollMode" Value="AutoScrollMode.ByPage">By Page</MudSelectItem>
+                       Label=@Localizer["AutoScrollMode"]
+                       Value=@_viewConfiguration.AutoScrollMode
+                       ValueChanged="@OnAutoScrollModeChanged"
+                       Variant="Variant.Outlined">
+                <MudSelectItem T="AutoScrollMode" Value="AutoScrollMode.Continuous">@Localizer["Continuous"]</MudSelectItem>
+                <MudSelectItem T="AutoScrollMode" Value="AutoScrollMode.ByPage">@Localizer["ByPage"]</MudSelectItem>
             </MudSelect>
             @if (_viewConfiguration.AutoScrollMode == AutoScrollMode.Continuous) {
                 <MudSlider T="int" ValueLabel TickMarks
-                            Min="1" Max="8"
-                            Value=@_viewConfiguration.ScrollSpeed
-                            ValueChanged=@OnScrollSpeedChanged
-                            Variant="Variant.Filled"
-                            Style="max-width: 200px">
-                    Auto Scroll Speed
+                           Min="1" Max="8"
+                           Value=@_viewConfiguration.ScrollSpeed
+                           ValueChanged=@OnScrollSpeedChanged
+                           Variant="Variant.Filled"
+                           Style="max-width: 200px">
+                    <ValueLabelContent>
+                        @(context.Value.ToString() + Localizer["Unit_Second"])
+                    </ValueLabelContent>
+                    <ChildContent>
+                        @Localizer["AutoScrollSpeed"]
+                    </ChildContent>
                 </MudSlider>
             } else {
                 <MudSlider T="int" ValueLabel TickMarks
-                            Min="1" Max="20"
-                            Value=@_viewConfiguration.PageTurnInterval
-                            ValueChanged=@OnPageTurnIntervalChanged
-                            Variant="Variant.Filled"
-                            Style="max-width: 200px">
-                    Page Turn Interval
+                           Min="1" Max="20"
+                           Value=@_viewConfiguration.PageTurnInterval
+                           ValueChanged=@OnPageTurnIntervalChanged
+                           Variant="Variant.Filled"
+                           Style="max-width: 200px">
+                    <ValueLabelContent>
+                        @(context.Value.ToString() + Localizer["Unit_Second"])
+                    </ValueLabelContent>
+                    <ChildContent>
+                        @Localizer["PageTurnInterval"]
+                    </ChildContent>
                 </MudSlider>
             }
         }
         <MudIconButton Icon="@(_toolbarOpen ? Icons.Material.Filled.ExpandLess : Icons.Material.Filled.ExpandMore)"
-                        OnClick="@(() => _toolbarOpen = !_toolbarOpen)" />
+                       OnClick="@(() => _toolbarOpen = !_toolbarOpen)" />
         <MudToggleIconButton @bind-Toggled="_isDarkMode"
-                                Color="Color.Default"
-                                Icon="@Icons.Material.Filled.LightMode"
-                                ToggledIcon="@Icons.Material.Filled.DarkMode"
-                                Style="position: absolute; right: 0px; margin-right: 8px"/>
+                             Color="Color.Default"
+                             Icon="@Icons.Material.Filled.LightMode"
+                             ToggledIcon="@Icons.Material.Filled.DarkMode"
+                             Style="position: absolute; right: 0px; margin-right: 8px" />
     </MudToolBar>
 
     <div style=@($"display: {(_toolbarOpen ? "block" : "none")};")>
         <div style="position: absolute; background: var(--mud-palette-background);"
              class="mud-width-full">
-            <MudDivider DividerType="DividerType.Middle"/>
+            <MudDivider DividerType="DividerType.Middle" />
             <MudToolBar Class="flex-wrap gap-4 justify-center" Style="@($"height: {DEFAULT_TOOLBAR_HEIGHT}")">
                 <MudSwitch T="bool"
-                           Label="Loop"
+                           Label=@Localizer["Loop"]
                            Value=@_viewConfiguration.Loop
                            ValueChanged=@OnLoopChanged
                            Color="Color.Primary" />
@@ -117,32 +124,32 @@
                                  Value="@_pageOffset"
                                  Disabled="@_isAutoScrolling"
                                  ValueChanged="@OnPageOffsetChanged"
-                                 Label="Page Offset"
+                                 Label=@Localizer["PageOffset"]
                                  Min="0" Max="@(_imagesPerPage - 1)"
                                  Variant="Variant.Outlined"
                                  Style="max-width: 120px" />
                 <MudNumericField T="int"
                                  @bind-Value="@_imagesPerPage"
                                  Disabled="@_isAutoScrolling"
-                                 Label=@(_viewConfiguration.ImageLayoutMode == ImageLayoutMode.Automatic ? "Maximum Images per Page" : "Images per Page")
+                                 Label=@(_viewConfiguration.ImageLayoutMode == ImageLayoutMode.Automatic ? Localizer["MaxImagesPerPage"] : Localizer["ImagesPerPage"])
                                  Min="1" Max=@Math.Min(4, _gallery.Images.Count)
                                  Variant="Variant.Outlined" />
                 <MudSelect T="ImageLayoutMode"
-                           Label="Image Layout Mode"
+                           Label=@Localizer["ImageLayoutMode"]
                            Disabled="@_isAutoScrolling"
                            Value=@_viewConfiguration.ImageLayoutMode
                            ValueChanged="@OnImageLayoutModeChanged"
                            Variant="Variant.Outlined"
-                           Style="max-width: 200px">
-                    <MudSelectItem T="ImageLayoutMode" Value="ImageLayoutMode.Automatic" />
-                    <MudSelectItem T="ImageLayoutMode" Value="ImageLayoutMode.Fixed" />
+                           Style="min-width: 160px">
+                    <MudSelectItem T="ImageLayoutMode" Value="ImageLayoutMode.Automatic">@SharedLocalizer["Automatic"]</MudSelectItem>
+                    <MudSelectItem T="ImageLayoutMode" Value="ImageLayoutMode.Fixed">@Localizer["Fixed"]</MudSelectItem>
                 </MudSelect>
                 <MudSelect T="ViewDirection"
-                           Label="View Direction"
+                           Label=@Localizer["ViewDirection"]
                            @bind-Value=_viewConfiguration.ViewDirection
                            Variant="Variant.Outlined">
-                    <MudSelectItem T="ViewDirection" Value="ViewDirection.LTR">Left to Right</MudSelectItem>
-                    <MudSelectItem T="ViewDirection" Value="ViewDirection.RTL">Right to Left</MudSelectItem>
+                    <MudSelectItem T="ViewDirection" Value="ViewDirection.LTR">@Localizer["LTR"]</MudSelectItem>
+                    <MudSelectItem T="ViewDirection" Value="ViewDirection.RTL">@Localizer["RTL"]</MudSelectItem>
                 </MudSelect>
             </MudToolBar>
         </div>
@@ -153,9 +160,9 @@
             <div id="image-container"
                  class="d-flex flex-column justify-center align-center"
                  style="outline: none; background-color: black; min-height: calc(100dvh - @DEFAULT_TOOLBAR_HEIGHT);"
-                    tabindex="-1"
-                    @onkeydown="@OnKeyDown"
-                    @onkeydown:preventDefault="@_preventDefaultKeyDown">
+                 tabindex="-1"
+                 @onkeydown="@OnKeyDown"
+                 @onkeydown:preventDefault="@_preventDefaultKeyDown">
                 @if (_viewConfiguration.ViewMode == ViewMode.Default) {
                     <div class="d-flex justify-center" @onclick="@OnPageClick" @onwheel="@OnWheel">
                         @if (_viewConfiguration.ViewDirection == ViewDirection.LTR) {

@@ -145,7 +145,8 @@ namespace Hitorus.Web.Pages {
             BrowseGalleryDTO[] temp = [.. result.Galleries];
             _selections = new bool[temp.Length];
             _galleries = temp;
-            _totalPages = (result.TotalGalleryCount / BrowseConfigurationService.Config.ItemsPerPage) + 1; ;
+            _totalPages = result.TotalGalleryCount / BrowseConfigurationService.Config.ItemsPerPage +
+                          Math.Min(result.TotalGalleryCount % BrowseConfigurationService.Config.ItemsPerPage, 1);
             _isLoading = false;
             StateHasChanged();
         }

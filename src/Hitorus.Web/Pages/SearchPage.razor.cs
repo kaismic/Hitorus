@@ -422,8 +422,8 @@ namespace Hitorus.Web.Pages {
             }
         }
 
-        private string GetHighlightZIndexStyle(int step) {
-            return _showWalkthrough && _walkthroughStep == step ? "z-index: calc(var(--mud-zindex-popover) + 1);" : "";
+        private string GetWalkthroughHighlightStyle(int step) {
+            return _showWalkthrough && _walkthroughStep == step ? "z-index: calc(var(--mud-zindex-popover) + 1); pointer-events: none;" : "";
         }
     }
 }

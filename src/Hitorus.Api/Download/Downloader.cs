@@ -75,38 +75,40 @@ namespace Hitorus.Api.Download {
 
             using (HitomiContext dbContext = new()) {
                 _gallery ??= dbContext.Galleries.Find(GalleryId);
-                if (_gallery == null) {
-                    string galleryInfoResponse;
-                    try {
-                        galleryInfoResponse = await GetGalleryInfo(_cts.Token);
-                        OriginalGalleryInfoDTO? ogi = JsonSerializer.Deserialize<OriginalGalleryInfoDTO>(galleryInfoResponse, OriginalGalleryInfoDTO.SERIALIZER_OPTIONS);
-                        if (ogi == null) {
-                            ChangeStatus(DownloadStatus.Failed, "Failed to parse gallery info.");
-                            return;
-                        }
-                        _gallery = await CreateGallery(ogi);
-                        if (_gallery == null) {
-                            return;
-                        }
-                    } catch (HttpRequestException) {
-                        ChangeStatus(DownloadStatus.Failed, "Failed to get gallery info.");
-                        return;
-                    } catch (TaskCanceledException) {
-                        return;
-                    } catch (Exception e) {
-                        _logger.LogError(e, "");
+            }
+            if (_gallery == null) {
+                string galleryInfoResponse;
+                try {
+                    galleryInfoResponse = await GetGalleryInfo(_cts.Token);
+                    OriginalGalleryInfoDTO? ogi = JsonSerializer.Deserialize<OriginalGalleryInfoDTO>(galleryInfoResponse, OriginalGalleryInfoDTO.SERIALIZER_OPTIONS);
+                    if (ogi == null) {
+                        ChangeStatus(DownloadStatus.Failed, "Failed to parse gallery info.");
                         return;
                     }
-                } else {
-                    if (_gallery.Images == null) {
+                    _gallery = await CreateGallery(ogi);
+                    if (_gallery == null) {
+                        return;
+                    }
+                } catch (HttpRequestException) {
+                    ChangeStatus(DownloadStatus.Failed, "Failed to get gallery info.");
+                    return;
+                } catch (TaskCanceledException) {
+                    return;
+                } catch (Exception e) {
+                    _logger.LogError(e, "");
+                    return;
+                }
+            } else {
+                if (_gallery.Images == null) {
+                    using (HitomiContext dbContext = new()) {
                         dbContext.Entry(_gallery).Collection(g => g.Images).Load();
-                        if (_gallery.Images == null) {
-                            throw new InvalidOperationException("_gallery.GalleryImages is null after loading images");
-                        }
+                    }
+                    if (_gallery.Images == null) {
+                        throw new InvalidOperationException("_gallery.GalleryImages is null after loading images");
                     }
                 }
-                await _hubContext.Clients.All.ReceiveGalleryAvailable(GalleryId);
             }
+            await _hubContext.Clients.All.ReceiveGalleryAvailable(GalleryId);
 
             GalleryImage[] missingGalleryImages = [.. GalleryFileUtility.GetMissingImages(GalleryId, _gallery.Images)];
             _logger.LogInformation("{GalleryId}: Found {ImageCount} missing images", GalleryId, missingGalleryImages.Length);

@@ -8,16 +8,7 @@ namespace Hitorus.Data.Entities {
         public int Id { get; set; }
         public required bool IsAll { get; set; }
         public required string EnglishName { get; set; }
-        private string _localName = null!;
-        public required string LocalName {
-            get {
-                //if (IsAll) {
-                //    throw new InvalidOperationException($"{nameof(LocalName)} must not be accessed when {nameof(IsAll)} is true");
-                //}
-                return _localName;
-            }
-            set => _localName = value;
-        }
+        public required string LocalName { get; set; }
 
         public ICollection<Gallery> Galleries { get; } = [];
         public GalleryLanguageDTO ToDTO() => new() {

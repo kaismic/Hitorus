@@ -7,16 +7,7 @@ namespace Hitorus.Data.Entities {
     public class GalleryType {
         public int Id { get; set; }
         public required bool IsAll { get; set; }
-        private string _value = null!;
-        public required string Value {
-            get {
-                //if (IsAll) {
-                //    throw new InvalidOperationException($"{nameof(Value)} must not be accessed when {nameof(IsAll)} is true");
-                //}
-                return _value;
-            }
-            set => _value = value;
-        }
+        public required string Value { get; set; }
         public ICollection<Gallery> Galleries { get; } = [];
 
         public GalleryTypeDTO ToDTO() => new() {

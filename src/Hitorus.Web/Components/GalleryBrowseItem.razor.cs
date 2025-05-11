@@ -3,6 +3,7 @@ using Hitorus.Data.DTOs;
 using Hitorus.Data.Entities;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.Localization;
 using Microsoft.JSInterop;
 using MudBlazor;
 
@@ -11,6 +12,8 @@ namespace Hitorus.Web.Components {
         [Inject] private IJSRuntime JSRuntime { get; set; } = default!;
         [Inject] private IResizeListener ResizeListener { get; set; } = default!;
         [Inject] IConfiguration HostConfiguration { get; set; } = default!;
+        [Inject] IStringLocalizer<SharedResource> SharedLocalizer { get; set; } = default!;
+        [Inject] IStringLocalizer<GalleryBrowseItem> Localizer { get; set; } = default!;
         [Parameter, EditorRequired] public BrowseGalleryDTO Gallery { get; set; } = default!;
         [Parameter, EditorRequired] public bool IsEditing { get; set; }
         [Parameter, EditorRequired] public bool IsSelected { get; set; }

@@ -21,14 +21,14 @@
             <MudText>@("/" + _imageIndexRanges.Length)</MudText>
         </div>
         <MudSelect T="ViewMode"
-                   Label=@Localizer["ViewMode"]
+                   Label=@SharedLocalizer["ViewMode"]
                    Disabled="@_isAutoScrolling"
                    Value=_viewConfiguration.ViewMode
                    ValueChanged="@OnViewModeChanged"
                    Variant="Variant.Outlined"
                    Style="min-width: 120px">
-            <MudSelectItem T="ViewMode" Value="ViewMode.Default">@Localizer["Default"]</MudSelectItem>
-            <MudSelectItem T="ViewMode" Value="ViewMode.Scroll">@Localizer["Scroll"]</MudSelectItem>
+            <MudSelectItem T="ViewMode" Value="ViewMode.Default">@SharedLocalizer["Default"]</MudSelectItem>
+            <MudSelectItem T="ViewMode" Value="ViewMode.Scroll">@SharedLocalizer["Scroll"]</MudSelectItem>
         </MudSelect>
         <MudSelect T="FitMode"
                    Label=@Localizer["ImageFitMode"]
@@ -56,20 +56,20 @@
                        Variant="Variant.Filled"
                        Style="max-width: 200px">
                 <ValueLabelContent>
-                    @(context.Value.ToString() + Localizer["Unit_Second"])
+                    @(context.Value.ToString() + SharedLocalizer["Unit_Second"])
                 </ValueLabelContent>
                 <ChildContent>
-                    @Localizer["PageTurnInterval"]
+                    @SharedLocalizer["PageTurnInterval"]
                 </ChildContent>
             </MudSlider>
         } else {
             <MudSelect T="AutoScrollMode"
-                       Label=@Localizer["AutoScrollMode"]
+                       Label=@SharedLocalizer["AutoScrollMode"]
                        Value=@_viewConfiguration.AutoScrollMode
                        ValueChanged="@OnAutoScrollModeChanged"
                        Variant="Variant.Outlined">
-                <MudSelectItem T="AutoScrollMode" Value="AutoScrollMode.Continuous">@Localizer["Continuous"]</MudSelectItem>
-                <MudSelectItem T="AutoScrollMode" Value="AutoScrollMode.ByPage">@Localizer["ByPage"]</MudSelectItem>
+                <MudSelectItem T="AutoScrollMode" Value="AutoScrollMode.Continuous">@SharedLocalizer["Continuous"]</MudSelectItem>
+                <MudSelectItem T="AutoScrollMode" Value="AutoScrollMode.ByPage">@SharedLocalizer["ByPage"]</MudSelectItem>
             </MudSelect>
             @if (_viewConfiguration.AutoScrollMode == AutoScrollMode.Continuous) {
                 <MudSlider T="int" ValueLabel TickMarks
@@ -79,10 +79,10 @@
                            Variant="Variant.Filled"
                            Style="max-width: 200px">
                     <ValueLabelContent>
-                        @(context.Value.ToString() + Localizer["Unit_Second"])
+                        @(context.Value.ToString() + SharedLocalizer["Unit_Second"])
                     </ValueLabelContent>
                     <ChildContent>
-                        @Localizer["AutoScrollSpeed"]
+                        @SharedLocalizer["AutoScrollSpeed"]
                     </ChildContent>
                 </MudSlider>
             } else {
@@ -93,10 +93,10 @@
                            Variant="Variant.Filled"
                            Style="max-width: 200px">
                     <ValueLabelContent>
-                        @(context.Value.ToString() + Localizer["Unit_Second"])
+                        @(context.Value.ToString() + SharedLocalizer["Unit_Second"])
                     </ValueLabelContent>
                     <ChildContent>
-                        @Localizer["PageTurnInterval"]
+                        @SharedLocalizer["PageTurnInterval"]
                     </ChildContent>
                 </MudSlider>
             }
@@ -116,7 +116,7 @@
             <MudDivider DividerType="DividerType.Middle" />
             <MudToolBar Class="flex-wrap gap-4 justify-center" Style="@($"height: {DEFAULT_TOOLBAR_HEIGHT}")">
                 <MudSwitch T="bool"
-                           Label=@Localizer["Loop"]
+                           Label=@SharedLocalizer["Loop"]
                            Value=@_viewConfiguration.Loop
                            ValueChanged=@OnLoopChanged
                            Color="Color.Primary" />
@@ -135,21 +135,21 @@
                                  Min="1" Max=@Math.Min(4, _gallery.Images.Count)
                                  Variant="Variant.Outlined" />
                 <MudSelect T="ImageLayoutMode"
-                           Label=@Localizer["ImageLayoutMode"]
+                           Label=@SharedLocalizer["ImageLayoutMode"]
                            Disabled="@_isAutoScrolling"
                            Value=@_viewConfiguration.ImageLayoutMode
                            ValueChanged="@OnImageLayoutModeChanged"
                            Variant="Variant.Outlined"
                            Style="min-width: 160px">
                     <MudSelectItem T="ImageLayoutMode" Value="ImageLayoutMode.Automatic">@SharedLocalizer["Automatic"]</MudSelectItem>
-                    <MudSelectItem T="ImageLayoutMode" Value="ImageLayoutMode.Fixed">@Localizer["Fixed"]</MudSelectItem>
+                    <MudSelectItem T="ImageLayoutMode" Value="ImageLayoutMode.Fixed">@SharedLocalizer["Fixed"]</MudSelectItem>
                 </MudSelect>
                 <MudSelect T="ViewDirection"
-                           Label=@Localizer["ViewDirection"]
+                           Label=@SharedLocalizer["ViewDirection"]
                            @bind-Value=_viewConfiguration.ViewDirection
                            Variant="Variant.Outlined">
-                    <MudSelectItem T="ViewDirection" Value="ViewDirection.LTR">@Localizer["LTR"]</MudSelectItem>
-                    <MudSelectItem T="ViewDirection" Value="ViewDirection.RTL">@Localizer["RTL"]</MudSelectItem>
+                    <MudSelectItem T="ViewDirection" Value="ViewDirection.LTR">@SharedLocalizer["LTR"]</MudSelectItem>
+                    <MudSelectItem T="ViewDirection" Value="ViewDirection.RTL">@SharedLocalizer["RTL"]</MudSelectItem>
                 </MudSelect>
             </MudToolBar>
         </div>

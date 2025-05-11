@@ -211,5 +211,12 @@ namespace Hitorus.Web.Pages {
                 );
             }
         }
+
+        private void ExitEditMode() {
+            _isEditing = false;
+            for (int i = 0; i < _selections.Length; i++) {
+                _selections[i] = false;
+            }
+        }
     }
 }

@@ -24,6 +24,7 @@ namespace Hitorus.Web.Pages {
         [Inject] IJSRuntime JsRuntime { get; set; } = default!;
         [Inject] IConfiguration HostConfiguration { get; set; } = default!;
         [Inject] IStringLocalizer<SearchPage> Localizer { get; set; } = default!;
+        [Inject] IStringLocalizer<SharedResource> SharedLocalizer { get; set; } = default!;
 
         private ObservableCollection<TagFilterDTO> _tagFilters = [];
         public ObservableCollection<TagFilterDTO> TagFilters {
@@ -371,13 +372,13 @@ namespace Hitorus.Web.Pages {
                 string contentText = string.Join(
                     ", ",
                     duplicateIds.Select(id => includeDict[id])
-                                .Select(tag => tag.Category.ToString() + ':' + tag.Value)
+                                .Select(tag => SharedLocalizer[tag.Category.ToString()] + ':' + tag.Value)
                 );
                 DialogParameters<NotificationDialog> parameters = new() {
-                    { d => d.HeaderText, Localizer["Dialog_Header_ConflictingTags"] },
+                    { d => d.HeaderText, Localizer["Dialog_Header_DuplicateTags"] },
                     { d => d.ContentText, contentText },
                 };
-                await DialogService.ShowAsync<NotificationDialog>(Localizer["Dialog_Title_ConflictingTags"], parameters);
+                await DialogService.ShowAsync<NotificationDialog>(Localizer["Dialog_Title_DupliacteTags"], parameters);
                 return;
             }
 

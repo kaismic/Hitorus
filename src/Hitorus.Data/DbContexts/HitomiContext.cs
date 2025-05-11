@@ -7,6 +7,7 @@ namespace Hitorus.Data.DbContexts {
         public HitomiContext() {}
 
         public DbSet<Gallery> Galleries { get; set; }
+        public DbSet<GalleryImage> GalleryImages { get; set; }
         public DbSet<Tag> Tags { get; set; }
         public DbSet<GalleryLanguage> GalleryLanguages { get; set; }
         public DbSet<GalleryType> GalleryTypes { get; set; }
@@ -19,7 +20,7 @@ namespace Hitorus.Data.DbContexts {
         public DbSet<SearchFilter> SearchFilters { get; set; }
         public DbSet<LabeledTagCollection> LabeledTagCollections { get; set; }
         public DbSet<AppConfiguration> AppConfigurations { get; set; }
-
+        
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
             optionsBuilder
                 .UseSqlite($"Data Source={MAIN_DATABASE_PATH}")

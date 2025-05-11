@@ -94,23 +94,17 @@ namespace Hitorus.Api.Services {
             string[][] languages = [.. File.ReadAllLines(LANGUAGES_FILE_PATH).Select(pair => pair.Split(delimiter))];
             context.GalleryLanguages.Add(new GalleryLanguage() {
                 IsAll = true,
-                EnglishName = "All",
-                LocalName = "All" // TODO localize?
+                EnglishName = "",
+                LocalName = ""
             });
-            context.GalleryLanguages.AddRange(languages.Select(
-                pair => {
-                    return new GalleryLanguage() {
-                        IsAll = false,
-                        EnglishName = pair[0],
-                        LocalName = pair[1]
-                    };
-                }
-            ));
+            context.GalleryLanguages.AddRange(languages.Select(pair => new GalleryLanguage() {
+                IsAll = false, EnglishName = pair[0], LocalName = pair[1]
+            }));
             // add gallery types
             string[] types = [.. File.ReadAllLines(TYPES_FILE_PATH)];
             context.GalleryTypes.Add(new GalleryType() {
                 IsAll = true,
-                Value = "All" // TODO localize?
+                Value = ""
             });
             context.GalleryTypes.AddRange(types.Select(t => new GalleryType() { IsAll = false, Value = t }));
             Console.WriteLine("  Complete");

@@ -1,6 +1,7 @@
 ﻿using Hitorus.Data;
 using Hitorus.Web.Models;
 using Microsoft.AspNetCore.SignalR.Client;
+using Microsoft.Extensions.Localization;
 using Microsoft.JSInterop;
 
 namespace Hitorus.Web.Services {
@@ -10,6 +11,7 @@ namespace Hitorus.Web.Services {
         private readonly DownloadConfigurationService _downloadConfigurationService;
         private readonly DownloadService _downloadService;
         private readonly IJSRuntime _jsRuntime;
+        private readonly IStringLocalizer<DownloadClientManagerService> _localizer;
 
         private HubConnection? _hubConnection;
         public Dictionary<int, DownloadModel> Downloads { get; } = [];
@@ -23,13 +25,15 @@ namespace Hitorus.Web.Services {
             IConfiguration hostConfiguration,
             DownloadConfigurationService downloadConfigurationService,
             DownloadService downloadService,
-            IJSRuntime jsRuntime
+            IJSRuntime jsRuntime,
+            IStringLocalizer<DownloadClientManagerService> localizer
         ) {
             _galleryService = galleryService;
             _hostConfiguration = hostConfiguration;
             _downloadConfigurationService = downloadConfigurationService;
             _downloadService = downloadService;
             _jsRuntime = jsRuntime;
+            _localizer = localizer;
             _dotNetObjectRef = DotNetObjectReference.Create(this);
         }
 
@@ -72,15 +76,15 @@ namespace Hitorus.Web.Services {
                 model.Status = status;
                 switch (status) {
                     case DownloadStatus.Downloading:
-                        model.StatusMessage = "Downloading...";
+                        model.StatusMessage = _localizer["DownloadStatus_Downloading"];
                         model.WaitingResponse = false;
                         break;
                     case DownloadStatus.Completed:
-                        model.StatusMessage = "Download completed.";
+                        model.StatusMessage = _localizer["DownloadStatus_Completed"];
                         await _jsRuntime.InvokeVoidAsync("startDeleteAnimation", model.ElementId, galleryId, _dotNetObjectRef);
                         break;
                     case DownloadStatus.Paused:
-                        model.StatusMessage = "Download paused.";
+                        model.StatusMessage = _localizer["DownloadStatus_Paused"];
                         model.WaitingResponse = false;
                         break;
                     case DownloadStatus.Deleted:
@@ -105,6 +109,10 @@ namespace Hitorus.Web.Services {
 
         private async Task OnClosed(Exception? e) {
             if (_hubConnection != null) {
+                foreach (DownloadModel d in Downloads.Values) {
+                    d.StatusMessage = _localizer["DownloadStatus_ConnectionLost"];
+                    d.Status = DownloadStatus.Failed;
+                }
                 await _hubConnection.DisposeAsync();
                 _hubConnection = null;
             }
@@ -115,7 +123,7 @@ namespace Hitorus.Web.Services {
             foreach (int id in ids) {
                 Downloads.TryAdd(id, new() {
                     GalleryId = id,
-                    StatusMessage = "Starting Download..."
+                    StatusMessage = _localizer["DownloadStatus_Starting"]
                 });
             }
             if (_downloadConfigurationService.Config.UseParallelDownload) {

@@ -9,6 +9,7 @@ namespace Hitorus.Web.Pages {
         [Inject] private ISnackbar Snackbar { get; set; } = default!;
         [Inject] private DownloadConfigurationService DownloadConfigurationService { get; set; } = default!;
         [Inject] private DownloadClientManagerService DownloadManager { get; set; } = default!;
+        [Inject] IStringLocalizer<DownloadPage> Localizer { get; set; } = default!;
         [Inject] IStringLocalizer<SharedResource> SharedLocalizer { get; set; } = default!;
 
         private string _inputText = "";
@@ -35,7 +36,7 @@ namespace Hitorus.Web.Pages {
         private void OnDownloadButtonClick() {
             MatchCollection matches = IdPatternRegex().Matches(_inputText);
             if (matches.Count == 0) {
-                Snackbar.Add("No valid IDs or URLs found in the input text.", Severity.Error, UiConstants.DEFAULT_SNACKBAR_OPTIONS);
+                Snackbar.Add(Localizer["InvalidInput"], Severity.Error, UiConstants.DEFAULT_SNACKBAR_OPTIONS);
                 return;
             }
             _ = DownloadManager.AddDownloads(matches.Select(m => int.Parse(m.Value)));

@@ -7,8 +7,8 @@
                       T="string"
                       Lines="8"
                       @bind-Value="@_inputText"
-                      Placeholder="Enter Gallery ID(s) or URL(s) here. e.g. 2058075, https://hitomi.la/..." />
-        <MudTooltip Text=@(DownloadManager.IsHubConnectionOpen ? null : "Try refreshing the browser")
+                      Placeholder=@Localizer["InputPlaceholder"] />
+        <MudTooltip Text=@(DownloadManager.IsHubConnectionOpen ? "" : Localizer["TryPageRefresh"])
                     RootClass="mud-width-full">
             <MudButton FullWidth
                        Variant="Variant.Filled"
@@ -17,7 +17,7 @@
                        Disabled="@(_inputText.Length == 0 || !DownloadManager.IsHubConnectionOpen)"
                        OnClick="@OnDownloadButtonClick"
                        Class="mt-4">
-                @(DownloadManager.IsHubConnectionOpen ? "Download" : "Unable to connect to server")
+                @(DownloadManager.IsHubConnectionOpen ? SharedLocalizer["Download"] : Localizer["ServerUnavilable"])
             </MudButton>
         </MudTooltip>
     </div>
@@ -25,15 +25,15 @@
     <div style="flex: 1;" class="d-flex flex-column gap-4">
         <div class="d-flex gap-4 align-center">
             <MudSwitch T="bool"
-                       Label="Concurrent Download"
+                       Label=@Localizer["ConcurrentDownload"]
                        Value="@DownloadConfigurationService.Config.UseParallelDownload"
                        ValueChanged="@OnParallelDownloadChanged"
                        Color="Color.Primary" />
             <MudDivider Vertical FlexItem />
             <MudNumericField T="int"
-                             Label="Threads per Download"
+                             Label=@Localizer["ThreadsPerDownload"]
                              Variant="Variant.Outlined"
-                             Min="1" Max="8"
+                             Min="1" Max="16"
                              Value="@DownloadConfigurationService.Config.ThreadNum"
                              ValueChanged="@OnThreadNumChanged" />
         </div>

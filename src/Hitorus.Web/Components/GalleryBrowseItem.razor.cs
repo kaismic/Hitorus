@@ -76,10 +76,14 @@ namespace Hitorus.Web.Components {
                 return;
             }
             _maxRecordedAspectRatio = aspectRatio;
-            for (int i = 0; i < _cumulativeImageAspectRatios.Length; i++) {
-                if (_cumulativeImageAspectRatios[i] > aspectRatio) {
-                    _maxImageCount = i + 1;
-                    break;
+            if (aspectRatio >= _cumulativeImageAspectRatios[^1]) {
+                _maxImageCount = Gallery.Images.Count;
+            } else {
+                for (int i = _maxImageCount - 1; i < _cumulativeImageAspectRatios.Length; i++) {
+                    if (_cumulativeImageAspectRatios[i] > aspectRatio) {
+                        _maxImageCount = i + 1;
+                        break;
+                    }
                 }
             }
             StateHasChanged();

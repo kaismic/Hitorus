@@ -51,10 +51,22 @@ namespace Hitorus.Api.Utilities {
             await File.WriteAllBytesAsync(Path.Combine(dir, fullFileName), data);
         }
 
-        public static void DeleteGalleryDir(int id) {
+        public static void DeleteGalleryDirectory(int id) {
             string dir = Path.Combine(ROOT_PATH, id.ToString());
             if (Directory.Exists(dir)) {
                 Directory.Delete(dir, true);
+            }
+        }
+
+        public static void RenameDirectory(int oldId, int newId) {
+            string oldDir = Path.Combine(ROOT_PATH, oldId.ToString());
+            if (Directory.Exists(oldDir)) {
+                string newDir = Path.Combine(ROOT_PATH, newId.ToString());
+                if (Directory.Exists(newDir)) {
+                    Directory.Delete(oldDir, true);
+                } else {
+                    Directory.Move(oldDir, newDir);
+                }
             }
         }
     }

@@ -7,6 +7,7 @@ namespace Hitorus.Web {
         /// </summary>
         /// <param name="value"></param>
         public static void SetAppLanguage(string value) {
+            Console.WriteLine("Setting app language to " + value);
             CultureInfo.DefaultThreadCurrentCulture = CultureInfo.GetCultureInfo(value);
             CultureInfo.DefaultThreadCurrentUICulture= CultureInfo.GetCultureInfo(value);
         }

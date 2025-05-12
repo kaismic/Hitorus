@@ -12,7 +12,7 @@ using System.Text.Json;
 namespace Hitorus.Api.Download {
     public class Downloader : IDisposable {
         private const int GALLERY_JS_EXCLUDE_LENGTH = 18; // length of the string "var galleryinfo = "
-        public required int GalleryId { get; init; }
+        public required int GalleryId { get; set; }
         public required DownloadManagerService DownloadManagerService { get; init; }
         public DownloadStatus Status { get; private set; } = DownloadStatus.Paused;
 
@@ -85,7 +85,15 @@ namespace Hitorus.Api.Download {
                         ChangeStatus(DownloadStatus.Failed, "Failed to parse gallery info.");
                         return;
                     }
-                    _gallery = await CreateGallery(ogi);
+                    if (ogi.Id != GalleryId) {
+                        await _hubContext.Clients.All.ReceiveIdChange(GalleryId, ogi.Id);
+                        DownloadManagerService.OnDownloaderIdChange(GalleryId, ogi.Id);
+                        GalleryFileUtility.RenameDirectory(GalleryId, ogi.Id);
+                        GalleryId = ogi.Id;
+                        using HitomiContext dbContext = new();
+                        _gallery = dbContext.Galleries.Find(GalleryId);
+                    }
+                    _gallery ??= await CreateGallery(ogi);
                     if (_gallery == null) {
                         return;
                     }
@@ -98,14 +106,13 @@ namespace Hitorus.Api.Download {
                     _logger.LogError(e, "");
                     return;
                 }
-            } else {
+            }
+            if (_gallery.Images == null) {
+                using (HitomiContext dbContext = new()) {
+                    dbContext.Entry(_gallery).Collection(g => g.Images).Load();
+                }
                 if (_gallery.Images == null) {
-                    using (HitomiContext dbContext = new()) {
-                        dbContext.Entry(_gallery).Collection(g => g.Images).Load();
-                    }
-                    if (_gallery.Images == null) {
-                        throw new InvalidOperationException("_gallery.GalleryImages is null after loading images");
-                    }
+                    throw new InvalidOperationException("_gallery.GalleryImages is null after loading images");
                 }
             }
             await _hubContext.Clients.All.ReceiveGalleryAvailable(GalleryId);

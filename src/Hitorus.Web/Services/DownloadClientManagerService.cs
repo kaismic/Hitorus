@@ -46,6 +46,7 @@ namespace Hitorus.Web.Services {
             _hubConnection.On<int, int>("ReceiveProgress", OnReceiveProgress);
             _hubConnection.On<int, DownloadStatus>("ReceiveStatus", OnReceiveStatus);
             _hubConnection.On<int, string>("ReceiveFailure", OnReceiveFailure);
+            _hubConnection.On<int, int>("ReceiveIdChange", OnReceiveIdChange);
             _hubConnection.Closed += OnClosed;
             _hubConnection.StartAsync();
         }
@@ -103,6 +104,15 @@ namespace Hitorus.Web.Services {
                 model.WaitingResponse = false;
                 model.Status = DownloadStatus.Failed;
                 model.StatusMessage = message;
+                model.StateHasChanged();
+            }
+        }
+
+        private void OnReceiveIdChange(int oldId, int newId) {
+            if (Downloads.TryGetValue(oldId, out DownloadModel? model)) {
+                Downloads.Remove(oldId);
+                Downloads.TryAdd(newId, model);
+                model.GalleryId = newId;
                 model.StateHasChanged();
             }
         }

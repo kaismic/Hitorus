@@ -2,6 +2,7 @@
 using Hitorus.Data;
 using Hitorus.Data.DbContexts;
 using Hitorus.Data.Entities;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Concurrent;
 using System.Text.RegularExpressions;
 using System.Threading.Channels;
@@ -34,7 +35,7 @@ namespace Hitorus.Api.Services {
             try {
                 ChannelReader<DownloadEventArgs> reader = eventBus.Subscribe();
                 await foreach (DownloadEventArgs args in reader.ReadAllAsync(stoppingToken)) {
-                    logger.LogInformation("Download Event Received: Ids = [{Ids}], Action = {Action}", string.Join(", ", args.GalleryIds), args.Action);
+                    logger.LogInformation("Download event received: Ids = [{Ids}], Action = {Action}", string.Join(", ", args.GalleryIds), args.Action);
                     switch (args.Action) {
                         case DownloadAction.Create: {
                             foreach (int id in args.GalleryIds) {
@@ -119,6 +120,23 @@ namespace Hitorus.Api.Services {
             }
             if (startNext) {
                 StartNext();
+            }
+        }
+
+        public void OnDownloaderIdChange(int oldId, int newId) {
+            logger.LogInformation("Downloader Id changed: Old = {old}, New = {new}", oldId, newId);
+            if (_liveDownloaders.TryRemove(oldId, out Downloader? downloader)) {
+                using HitomiContext dbContext = new();
+                DownloadConfiguration config = dbContext.DownloadConfigurations.First();
+                config.Downloads.Remove(oldId);
+                if (_liveDownloaders.TryAdd(newId, downloader)) {
+                    if (!config.Downloads.Contains(newId)) {
+                        config.Downloads.Add(newId);
+                    }
+                } else {
+                    downloader.Dispose();
+                }
+                dbContext.SaveChanges();
             }
         }
 

@@ -98,8 +98,8 @@ namespace Hitorus.Api.Services {
                 EnglishName = "",
                 LocalName = ""
             });
-            context.GalleryLanguages.AddRange(languages.Select(pair => new GalleryLanguage() {
-                IsAll = false, EnglishName = pair[0], LocalName = pair[1]
+            context.GalleryLanguages.AddRange(languages.Select((pair, i) => new GalleryLanguage() {
+                Id = i + 2, IsAll = false, EnglishName = pair[0], LocalName = pair[1]
             }));
             // add gallery types
             string[] types = [.. File.ReadAllLines(TYPES_FILE_PATH)];
@@ -108,7 +108,7 @@ namespace Hitorus.Api.Services {
                 IsAll = true,
                 Value = ""
             });
-            context.GalleryTypes.AddRange(types.Select(t => new GalleryType() { IsAll = false, Value = t }));
+            context.GalleryTypes.AddRange(types.Select((t, i) => new GalleryType() { Id = i + 2, IsAll = false, Value = t }));
             Console.WriteLine("  Complete");
             Console.Write("{0,-" + _totalLeftAlignment + "}", "Saving changes...");
             context.SaveChanges();

@@ -1,8 +1,7 @@
 ﻿<div class="gallery-browse-item pa-2 d-flex flex-column gap-2 rounded @(IsSelected ? "selected" : "") @(IsEditing ? "editing" : "")"
      style="height: 300px; overflow-y: auto; overflow-x: hidden;"
      onclick="@OnClick"
-     @oncontextmenu="@(OpenContextMenu)"
-     @oncontextmenu:preventDefault>
+     @oncontextmenu=@OpenContextMenu @oncontextmenu:preventDefault>
     <MudText Typo="Typo.h6">@Gallery.Title</MudText>
     <a href=@($"/gallery/{Gallery.Id}") target="_blank">
         <div id="@_imageContainerId" class="d-flex relative" style="width: 100%; height: @(THUMBNAIL_IMAGE_HEIGHT)px; overflow-x: hidden;">
@@ -10,9 +9,13 @@
                 <img src=@($"{_baseImageUrl}&index={i}") alt=@($"Image {i}") loading="lazy" />
             }
             <div class="image-overlay absolute d-flex justify-center align-center" style="width: 100%; height: 100%;">
-                <MudPaper Outlined Class="pa-2">
-                    <MudText Typo="Typo.h6">@Localizer["OpenGallery"]</MudText>
-                </MudPaper>
+                <MudButton Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           StartIcon="@Icons.Material.Filled.Link"
+                           DropShadow="false"
+                           Ripple="false">
+                    @Localizer["OpenGallery"]
+                </MudButton>
             </div>
         </div>
     </a>

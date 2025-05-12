@@ -34,7 +34,7 @@ Title|Title|제목
 UploadTime|Upload Time|업로드 시간
 LastDownloadTime|Last Download Time|마지막 다운로드 시간
 Automatic|Automatic|자동
-ViewMode|View Mode|읽기 모드
+ViewMode|View Mode|보기 모드
 Default|Default|기본
 Scroll|Scroll|스크롤
 Unit_Second|s|초
@@ -46,7 +46,7 @@ AutoScrollSpeed|Auto Scroll Speed|자동 스크롤 속도
 Loop|Loop|루프
 ImageLayoutMode|Image Layout Mode|이미지 레이아웃 모드
 Fixed|Fixed|고정
-ViewDirection|View Direction|읽기 방향
+ViewDirection|View Direction|보기 방향
 LTR|Left to Right|왼쪽에서 오른쪽
 RTL|Right to Left|오른쪽에서 왼쪽
 ---
@@ -114,10 +114,17 @@ Snackbar_Msg_SingleGalleryDeleteFailure|Failed to delete "{0}".|"{0}"을(를) �
 ---
 Pages\SettingsPage
 GlobalSettings|Global Settings|전체 설정
+DefaultGalleryViewPageSettings|Default Gallery View Page Settings|기본 갤러리 보기 설정
+LoopDesc|Go back to the first page when you have reach the end of the page.|마지막 페이지에 도달하면 첫번째 페이지로 돌아갑니다.
+InvertClickNav|Invert Click Navigation|클릭 내비게이션 반전
+InvertClickNavDesc|When enabled, clicking left side of the image navigates the page forward, and vice versa.|켜져있으면 이미지의 왼쪽을 클릭 시 페이지를 앞으로 가게하고, 오른쪽을 클릭시 뒤로 가게 합니다.
+InvertKeyboardNav|Invert Keyboard Navigation|키보드 내비게이션 반전
+InvertKeyboardNavDesc|When enabled, pressing the left arrow key  navigates the page forward, and vice versa.|켜져있으면 왼쪽 화살표 키를 누를 시 페이지를 앞으로 가게하고, 오른쪽 화살표 키를 누를 시 뒤로 가게 합니다.
 ---
 Pages\AboutPage
 Version|Version|버전
 Developer|Developer|개발자
+CheckForUpdates|Check for Updates|업데이트 확인
 ---
 Pages\GalleryViewPage
 Page|Page|페이지

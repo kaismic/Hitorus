@@ -4,7 +4,7 @@
 <div class="d-flex flex-column gap-4 pa-8">
     <MudText Typo="Typo.h4">@Localizer["GlobalSettings"]</MudText>
     <SettingsCard Icon="@Icons.Material.Filled.Language"
-                  Header=@Localizer["Language"]>
+                  Header=@SharedLocalizer["Language"]>
         <MudSelect T="string"
                    Value="AppConfigurationService.Config.AppLanguage"
                    ValueChanged=@OnAppLanguageChanged
@@ -16,87 +16,95 @@
             }
         </MudSelect>
     </SettingsCard>
-    <MudText Typo="Typo.h4">Default Gallery View Settings</MudText>
+    <MudText Typo="Typo.h4">@Localizer["DefaultGalleryViewPageSettings"]</MudText>
     <SettingsCard Icon="@(ViewConfigurationService.Config.ViewMode == ViewMode.Default ? Icons.Material.Rounded.Rectangle : Icons.Material.Filled.TableRows)"
-                  Header="View Mode">
+                  Header=@SharedLocalizer["ViewMode"]>
         <MudSelect T="ViewMode"
                    Variant="Variant.Outlined"
                    Style="max-width: 200px;"
                    Value="@ViewConfigurationService.Config.ViewMode"
                    ValueChanged="@OnViewModeChanged">
-            <MudSelectItem T="ViewMode" Value="ViewMode.Default"></MudSelectItem>
-            <MudSelectItem T="ViewMode" Value="ViewMode.Scroll"></MudSelectItem>
+            <MudSelectItem T="ViewMode" Value="ViewMode.Default">@SharedLocalizer["Default"]</MudSelectItem>
+            <MudSelectItem T="ViewMode" Value="ViewMode.Scroll">@SharedLocalizer["Scroll"]</MudSelectItem>
         </MudSelect>
     </SettingsCard>
     <SettingsCard Icon="@Icons.Material.Filled.Timer"
-                  Header="Page Turn Interval"
-                  Description="Number of seconds to wait before turning to the next page.">
+                  Header=@SharedLocalizer["PageTurnInterval"]>
         <MudSlider T="int" ValueLabel TickMarks
                    Min="1" Max="20"
                    Value=@ViewConfigurationService.Config.PageTurnInterval
                    ValueChanged=@OnPageTurnIntervalChanged
                    Variant="Variant.Filled"
                    Style="min-width: 240px">
+            <ValueLabelContent>
+                @(context.Value.ToString() + SharedLocalizer["Unit_Second"])
+            </ValueLabelContent>
         </MudSlider>
     </SettingsCard>
     <SettingsCard Icon="@Icons.Material.Filled.Settings"
-                  Header="Auto Scroll Mode">
+                  Header=@SharedLocalizer["AutoScrollMode"]>
+
         <MudSelect T="AutoScrollMode"
                    Value=@ViewConfigurationService.Config.AutoScrollMode
                    ValueChanged="@OnAutoScrollModeChanged"
                    Variant="Variant.Outlined">
-            <MudSelectItem T="AutoScrollMode" Value="AutoScrollMode.Continuous">Continuous</MudSelectItem>
-            <MudSelectItem T="AutoScrollMode" Value="AutoScrollMode.ByPage">By Page</MudSelectItem>
+            <MudSelectItem T="AutoScrollMode" Value="AutoScrollMode.Continuous">@SharedLocalizer["Continuous"]</MudSelectItem>
+            <MudSelectItem T="AutoScrollMode" Value="AutoScrollMode.ByPage">@SharedLocalizer["ByPage"]</MudSelectItem>
         </MudSelect>
     </SettingsCard>
     <SettingsCard Icon="@Icons.Material.Filled.Speed"
-                  Header="Scroll Speed">
+                  Header=@SharedLocalizer["AutoScrollSpeed"]>
         <MudSlider T="int" ValueLabel TickMarks
                    Min="1" Max="8"
                    Value=@ViewConfigurationService.Config.ScrollSpeed
                    ValueChanged=@OnScrollSpeedChanged
                    Variant="Variant.Filled"
                    Style="min-width: 240px">
+            <ValueLabelContent>
+                @(context.Value.ToString() + SharedLocalizer["Unit_Second"])
+            </ValueLabelContent>
         </MudSlider>
     </SettingsCard>
     <SettingsCard Icon="@Icons.Material.Filled.Loop"
-                  Header="Loop"
-                  Description="Whether you can go back to the first page when you reach the end.">
+                  Header=@SharedLocalizer["Loop"]
+                  Description=@Localizer["LoopDesc"]>
         <MudSwitch T="bool"
                    Value=@ViewConfigurationService.Config.Loop
                    ValueChanged=@OnLoopChanged
                    Color="Color.Primary" />
     </SettingsCard>
     <SettingsCard Icon="@Icons.Material.Filled.Settings"
-                  Header="Image Layout Mode">
+                  Header=@SharedLocalizer["ImageLayoutMode"]>
         <MudSelect T="ImageLayoutMode"
                    Value=@ViewConfigurationService.Config.ImageLayoutMode
                    ValueChanged="@OnImageLayoutModeChanged"
                    Variant="Variant.Outlined"
                    Style="max-width: 200px">
-            <MudSelectItem T="ImageLayoutMode" Value="ImageLayoutMode.Automatic" />
-            <MudSelectItem T="ImageLayoutMode" Value="ImageLayoutMode.Fixed" />
+            <MudSelectItem T="ImageLayoutMode" Value="ImageLayoutMode.Automatic">@SharedLocalizer["Automatic"]</MudSelectItem>
+            <MudSelectItem T="ImageLayoutMode" Value="ImageLayoutMode.Fixed">@SharedLocalizer["Fixed"]</MudSelectItem>
         </MudSelect>
     </SettingsCard>
     <SettingsCard Icon="@(ViewConfigurationService.Config.ViewDirection == ViewDirection.LTR ? Icons.Material.Filled.East : Icons.Material.Filled.West)"
-                  Header="View Direction">
+                  Header=@SharedLocalizer["ViewDirection"]>
         <MudSelect T="ViewDirection"
                    Value=@ViewConfigurationService.Config.ViewDirection
                    ValueChanged="@OnViewDirectionChanged"
                    Variant="Variant.Outlined">
-            <MudSelectItem T="ViewDirection" Value="ViewDirection.LTR">Left to Right</MudSelectItem>
-            <MudSelectItem T="ViewDirection" Value="ViewDirection.RTL">Right to Left</MudSelectItem>
+            <MudSelectItem T="ViewDirection" Value="ViewDirection.LTR">@SharedLocalizer["LTR"]</MudSelectItem>
+            <MudSelectItem T="ViewDirection" Value="ViewDirection.RTL">@SharedLocalizer["RTL"]</MudSelectItem>
         </MudSelect>
     </SettingsCard>
-    <SettingsCard Icon="@Icons.Material.Filled.Settings"
-                  Header="Invert Click Navigation">
+    <SettingsCard Icon="@Icons.Material.Filled.Mouse"
+                  Header=@Localizer["InvertClickNav"]
+                  Description=@Localizer["InvertClickNavDesc"]>
         <MudSwitch T="bool"
                    Value=@ViewConfigurationService.Config.InvertClickNavigation
                    ValueChanged=@OnInvertClickNavigationChanged
                    Color="Color.Primary" />
     </SettingsCard>
-    <SettingsCard Icon="@Icons.Material.Filled.Settings"
-                  Header="Invert Keyboard Navigation">
+    <SettingsCard Icon="@Icons.Material.Filled.Keyboard"
+                  Header=@Localizer["InvertKeyboardNav"]
+                  Description=@Localizer["InvertKeyboardNavDesc"]>
         <MudSwitch T="bool"
                    Value=@ViewConfigurationService.Config.InvertKeyboardNavigation
                    ValueChanged=@OnInvertKeyboardNavigationChanged

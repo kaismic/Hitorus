@@ -28,7 +28,9 @@
             </MudNavMenu>
         </MudDrawer>
         <MudMainContent Style="height: 100dvh">
-            @Body
+            <CascadingValue Value="StateHasChanged" TValue="Action">
+                @Body
+            </CascadingValue>
         </MudMainContent>
     } else {
         <div style="min-height: 100dvh; display: flex; justify-content: center; align-items: center;">

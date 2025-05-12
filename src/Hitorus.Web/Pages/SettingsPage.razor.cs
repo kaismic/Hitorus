@@ -6,6 +6,7 @@ using System.Globalization;
 
 namespace Hitorus.Web.Pages {
     public partial class SettingsPage {
+        [CascadingParameter] private Action LayoutStateHasChanged { get; set; } = default!;
         [Inject] private AppConfigurationService AppConfigurationService { get; set; } = default!;
         [Inject] private ViewConfigurationService ViewConfigurationService { get; set; } = default!;
         [Inject] NavigationManager NavigationManager { get; set; } = default!;
@@ -34,6 +35,7 @@ namespace Hitorus.Web.Pages {
             if (value != AppConfigurationService.InitialAppLanguage && !value.Contains("en")) {
                 NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
             }
+            LayoutStateHasChanged();
         }
 
         private async Task OnViewModeChanged(ViewMode value) {

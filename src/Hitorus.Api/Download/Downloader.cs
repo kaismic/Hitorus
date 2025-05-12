@@ -246,7 +246,6 @@ namespace Hitorus.Api.Download {
                 JapaneseTitle = original.JapaneseTitle,
                 Date = original.Date,
                 SceneIndexes = original.SceneIndexes,
-                Related = original.Related,
                 LastDownloadTime = DateTimeOffset.UtcNow,
                 Language = language,
                 Type = type,

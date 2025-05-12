@@ -2,17 +2,30 @@
 
 <div class="d-flex flex-column gap-4 pa-8">
     <MudText Typo="Typo.h4">@SharedLocalizer["AppInfo"]</MudText>
-    <MudText Typo="Typo.body1">@Localizer["Version"]: @AppConfigurationService.CURRENT_APP_VERSION.ToString()</MudText>
-    <div class="d-flex gap-2 align-center">
-        <MudText Typo="Typo.body1">@Localizer["Developer"]: kaismic</MudText>
-        <MudButton Href="https://github.com/kaismic"
-                   Target="_blank"
-                   Variant="Variant.Filled"
-                   EndIcon="@Icons.Custom.Brands.GitHub"
-                   Color="Color.Primary">
-            GitHub
-        </MudButton>
-    </div>
+    
+    <table style="width: min-content;">
+        <tbody>
+            <tr>
+                <th>@Localizer["Version"]</th>
+                <td>@AppConfigurationService.CURRENT_APP_VERSION.ToString()</td>
+            </tr>
+            <tr>
+                <th>@Localizer["Developer"]</th>
+                <td>
+                    <div class="d-flex gap-2 align-center">
+                        <MudText>kaismic</MudText>
+                        <MudButton Href="https://github.com/kaismic"
+                                   Target="_blank"
+                                   Variant="Variant.Filled"
+                                   EndIcon="@Icons.Custom.Brands.GitHub"
+                                   Color="Color.Primary">
+                            GitHub
+                        </MudButton>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
     <MudButton Href="https://github.com/kaismic/Hitorus/releases"
                Target="_blank"
                Variant="Variant.Outlined"

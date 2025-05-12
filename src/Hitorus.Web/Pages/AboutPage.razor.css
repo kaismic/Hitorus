@@ -1,0 +1,9 @@
+﻿td {
+    padding: 4px;
+}
+
+th {
+    font-weight: bold;
+    white-space: nowrap;
+    padding: 4px 16px;
+}

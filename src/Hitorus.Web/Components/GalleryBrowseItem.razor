@@ -6,7 +6,7 @@
     <a href=@($"/gallery/{Gallery.Id}") target="_blank">
         <div id="@_imageContainerId" class="d-flex relative" style="width: 100%; height: @(THUMBNAIL_IMAGE_HEIGHT)px; overflow-x: hidden;">
             @for (int i = 1; i <= _maxImageCount; i++) {
-                <img src=@($"{_baseImageUrl}&index={i}") alt=@($"Image {i}") loading="lazy" />
+                <img src=@($"{_baseImageUrl}&index={i}") alt=@($"Image {i}") />
             }
             <div class="image-overlay absolute d-flex justify-center align-center" style="width: 100%; height: 100%;">
                 <MudButton Variant="Variant.Filled"
@@ -27,11 +27,11 @@
             </tr>
             <tr>
                 <th>@SharedLocalizer["Language"]</th>
-                <td>@Gallery.Language.LocalName</td>
+                <td>@LanguageTypeService.GetLanguageLocalName(Gallery.LanguageId)</td>
             </tr>
             <tr>
                 <th>@SharedLocalizer["Type"]</th>
-                <td>@Gallery.Type.Value</td>
+                <td>@(SharedLocalizer[LanguageTypeService.GetTypeValue(Gallery.TypeId)])</td>
             </tr>
             @foreach (var (category, tags) in _tagCollections) {
                 <tr>

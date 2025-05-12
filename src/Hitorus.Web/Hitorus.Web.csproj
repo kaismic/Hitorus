@@ -13,6 +13,7 @@
 	<ProjectReference Include="..\MudBlazor\src\MudBlazor\MudBlazor.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="BitFaster.Caching" Version="2.5.3" />
     <PackageReference Include="BlazorPro.BlazorSize" Version="9.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.4" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="9.0.4" PrivateAssets="all" />

@@ -11,10 +11,11 @@ namespace Hitorus.Data.Entities {
         public required string Title { get; set; }
         public string? JapaneseTitle { get; set; }
         public DateTimeOffset Date { get; set; }
-        public required int[] SceneIndexes { get; set; }
-        [MaxLength(45)] public required int[] Related { get; set; } // 7 digits * 5 items + "[]" + ", " * (5 - 1)
+        public int[] SceneIndexes { get; set; } = [];
         public DateTimeOffset LastDownloadTime { get; set; }
+        public int LanguageId { get; set; }
         [Required] public required GalleryLanguage Language { get; set; }
+        public int TypeId { get; set; }
         [Required] public required GalleryType Type { get; set; }
         public required ICollection<GalleryImage> Images { get; set; }
         public required ICollection<Tag> Tags { get; set; }
@@ -24,8 +25,8 @@ namespace Hitorus.Data.Entities {
             Title = Title,
             Date = Date,
             LastDownloadTime = LastDownloadTime,
-            Language = Language.ToDTO(),
-            Type = Type.ToDTO(),
+            LanguageId = LanguageId,
+            TypeId = TypeId,
             Tags = [.. Tags.Select(t => t.ToDTO())],
             Images = [.. Images.Select(g => g.ToDTO())],
         };

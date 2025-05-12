@@ -4,7 +4,9 @@ namespace Hitorus.Data.Entities;
 public class BrowseConfiguration {
     public int Id { get; set; }
     public ICollection<Tag> Tags { get; set; } = [];
+    public int SelectedLanguageId { get; set; }
     public required GalleryLanguage SelectedLanguage { get; set; }
+    public int SelectedTypeId { get; set; }
     public required GalleryType SelectedType { get; set; }
     public string TitleSearchKeyword { get; set; } = "";
     public required int ItemsPerPage { get; set; }

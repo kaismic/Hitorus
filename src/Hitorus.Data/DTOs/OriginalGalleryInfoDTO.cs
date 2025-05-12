@@ -26,7 +26,6 @@ namespace Hitorus.Data.DTOs {
         [JsonConverter(typeof(GalleryDateTimeOffsetConverter))]
         public DateTimeOffset Date { get; set; }
         public int[] SceneIndexes { get; set; } = [];
-        public int[] Related { get; set; } = [];
         public required ICollection<OriginalImageInfoDTO> Files { get; set; }
         public Dictionary<string, string>[]? Artists { get; set; }
         public Dictionary<string, string>[]? Groups { get; set; }

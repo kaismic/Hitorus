@@ -21,16 +21,8 @@ namespace Hitorus.Web.Pages {
 
         private readonly List<ChipModel<TagDTO>>[] _tagSearchPanelChipModels = [.. Tag.TAG_CATEGORIES.Select(t => new List<ChipModel<TagDTO>>())];
 
-        /// <summary>
-        /// 1-based page number
-        /// </summary>
-        private int _pageNum = 1;
-        private int _totalPages = 1;
-        private BrowseGalleryDTO[] _galleries = [];
-        private bool[] _selections = [];
         private bool _isLoading = false;
         private bool _isEditing = false;
-        private ICollection<GallerySortDTO> _activeSorts = [];
 
         private async Task OnSelectedLanguageChanged(GalleryLanguageDTO value) {
             BrowseConfigurationService.Config.SelectedLanguage = value;
@@ -77,7 +69,6 @@ namespace Hitorus.Web.Pages {
 
         protected override async Task OnInitializedAsync() {
             await BrowseConfigurationService.Load();
-            _activeSorts = [.. BrowseConfigurationService.Config.Sorts.Where(s => s.IsActive)];
             _isInitialized = true;
             _ = OnInitRenderComplete();
         }
@@ -99,7 +90,9 @@ namespace Hitorus.Web.Pages {
                         _tagSearchPanelChipModels[i].Add(new ChipModel<TagDTO> { Value = tag });
                     }
                 }
-                await LoadGalleries();
+                if (BrowseConfigurationService.Galleries.Count == 0) {
+                    await LoadGalleries();
+                }
                 StateHasChanged();
             }
         }
@@ -134,19 +127,34 @@ namespace Hitorus.Web.Pages {
         }
 
         private async Task OnPageNumChanged(int value) {
-            _pageNum = value;
+            BrowseConfigurationService.PageNum = value;
             await LoadGalleries();
         }
 
         private async Task LoadGalleries() {
             _isLoading = true;
             StateHasChanged();
-            BrowseQueryResult result = await GalleryService.GetBrowseQueryResult(_pageNum - 1, BrowseConfigurationService.Config.Id);
-            BrowseGalleryDTO[] temp = [.. result.Galleries];
-            _selections = new bool[temp.Length];
-            _galleries = temp;
-            _totalPages = result.TotalGalleryCount / BrowseConfigurationService.Config.ItemsPerPage +
-                          Math.Min(result.TotalGalleryCount % BrowseConfigurationService.Config.ItemsPerPage, 1);
+            BrowseQueryResult result = await GalleryService.GetBrowseQueryResult(BrowseConfigurationService.PageNum - 1, BrowseConfigurationService.Config.Id);
+            BrowseConfigurationService.TotalPages = result.TotalGalleryCount / BrowseConfigurationService.Config.ItemsPerPage + 
+                Math.Min(result.TotalGalleryCount % BrowseConfigurationService.Config.ItemsPerPage, 1);
+            HashSet<int> ids = [.. result.GalleryIds];
+            List<BrowseGalleryDTO> galleries = new(ids.Count);
+            foreach (int id in ids) {
+                if (BrowseConfigurationService.GalleryCache.TryGet(id, out BrowseGalleryDTO? gallery)) {
+                    galleries.Add(gallery);
+                    ids.Remove(id);
+                }
+            }
+            if (ids.Count > 0) {
+                List<BrowseGalleryDTO> temp = await GalleryService.GetBrowseGalleryDTOs(ids);
+                foreach (BrowseGalleryDTO gallery in temp) {
+                    BrowseConfigurationService.GalleryCache.AddOrUpdate(gallery.Id, gallery);
+                    galleries.Add(gallery);
+                }
+            }
+            // need to set _selections before setting _galleries
+            BrowseConfigurationService.Selections = new bool[galleries.Count];
+            BrowseConfigurationService.Galleries = galleries;
             _isLoading = false;
             StateHasChanged();
         }
@@ -161,7 +169,7 @@ namespace Hitorus.Web.Pages {
             bool success = await BrowseConfigurationService.UpdateGallerySorts(sorts);
             if (success) {
                 BrowseConfigurationService.Config.Sorts = sorts;
-                _activeSorts = [.. sorts.Where(s => s.IsActive)];
+                BrowseConfigurationService.ActiveSorts = [.. sorts.Where(s => s.IsActive)];
                 Snackbar.Add(Localizer["Snackbar_Msg_SortSaveSuccess"], Severity.Success, UiConstants.DEFAULT_SNACKBAR_OPTIONS);
                 await LoadGalleries();
             } else {
@@ -171,9 +179,9 @@ namespace Hitorus.Web.Pages {
 
         private async Task DeleteGalleries() {
             List<int> ids = [];
-            for (int i = 0; i < _selections.Length; i++) {
-                if (_selections[i]) {
-                    ids.Add(_galleries[i].Id);
+            for (int i = 0; i < BrowseConfigurationService.Selections.Length; i++) {
+                if (BrowseConfigurationService.Selections[i]) {
+                    ids.Add(BrowseConfigurationService.Galleries[i].Id);
                 }
             }
             bool success = await GalleryService.DeleteGalleries(ids);
@@ -194,7 +202,7 @@ namespace Hitorus.Web.Pages {
         }
 
         private async Task DeleteGallery(int index) {
-            BrowseGalleryDTO gallery = _galleries[index];
+            BrowseGalleryDTO gallery = BrowseConfigurationService.Galleries[index];
             bool success = await GalleryService.DeleteGalleries([gallery.Id]);
             if (success) {
                 Snackbar.Add(
@@ -214,8 +222,8 @@ namespace Hitorus.Web.Pages {
 
         private void ExitEditMode() {
             _isEditing = false;
-            for (int i = 0; i < _selections.Length; i++) {
-                _selections[i] = false;
+            for (int i = 0; i < BrowseConfigurationService.Selections.Length; i++) {
+                BrowseConfigurationService.Selections[i] = false;
             }
         }
     }

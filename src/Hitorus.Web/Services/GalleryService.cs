@@ -3,10 +3,6 @@ using System.Net.Http.Json;
 
 namespace Hitorus.Web.Services {
     public class GalleryService(HttpClient httpClient) {
-        public async Task<int> GetCount() {
-            return await httpClient.GetFromJsonAsync<int>("count");
-        }
-
         public async Task<DownloadGalleryDTO?> GetDownloadGalleryDTO(int id) {
             try {
                 HttpResponseMessage response = await httpClient.GetAsync($"download?id={id}");
@@ -20,6 +16,11 @@ namespace Hitorus.Web.Services {
             }
         }
 
+        public async Task<List<BrowseGalleryDTO>> GetBrowseGalleryDTOs(IEnumerable<int> ids) {
+            HttpResponseMessage response = await httpClient.PostAsJsonAsync("browse", ids);
+            return (await response.Content.ReadFromJsonAsync<List<BrowseGalleryDTO>>())!;
+        }
+        
         public async Task<ViewGalleryDTO?> GetViewGalleryDTO(int id) {
             try {
                 HttpResponseMessage response = await httpClient.GetAsync($"view?id={id}");
@@ -40,7 +41,7 @@ namespace Hitorus.Web.Services {
         /// <param name="itemsPerPage"></param>
         /// <returns></returns>
         public async Task<BrowseQueryResult> GetBrowseQueryResult(int pageIndex, int configId) {
-            return (await httpClient.GetFromJsonAsync<BrowseQueryResult>($"browse-galleries?pageIndex={pageIndex}&configId={configId}"))!;
+            return (await httpClient.GetFromJsonAsync<BrowseQueryResult>($"browse-ids?pageIndex={pageIndex}&configId={configId}"))!;
         }
 
         public async Task<bool> DeleteGalleries(IEnumerable<int> ids) {

@@ -93,6 +93,7 @@ namespace Hitorus.Api.Services {
             Console.Write("{0,-" + _totalLeftAlignment + "}", "Adding gallery language and types...");
             string[][] languages = [.. File.ReadAllLines(LANGUAGES_FILE_PATH).Select(pair => pair.Split(delimiter))];
             context.GalleryLanguages.Add(new GalleryLanguage() {
+                Id = 1, // manually set Id to 1 to make sure
                 IsAll = true,
                 EnglishName = "",
                 LocalName = ""
@@ -103,6 +104,7 @@ namespace Hitorus.Api.Services {
             // add gallery types
             string[] types = [.. File.ReadAllLines(TYPES_FILE_PATH)];
             context.GalleryTypes.Add(new GalleryType() {
+                Id = 1, // manually set Id to 1 to make sure
                 IsAll = true,
                 Value = ""
             });

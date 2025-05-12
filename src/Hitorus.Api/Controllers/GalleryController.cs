@@ -21,6 +21,21 @@ namespace Hitorus.Api.Controllers {
             return Ok(gallery.ToDownloadDTO(context.Entry(gallery).Collection(g => g.Images).Query().Count()));
         }
 
+        [HttpPost("browse")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public ActionResult<List<BrowseGalleryDTO>> GetBrowseGalleryDTOs([FromBody] ICollection<int> ids) {
+            List<BrowseGalleryDTO> galleries = new(ids.Count);
+            foreach (int id in ids) {
+                Gallery? gallery = context.Galleries.Find(id);
+                if (gallery != null) {
+                    context.Entry(gallery).Collection(g => g.Tags).Load();
+                    context.Entry(gallery).Collection(g => g.Images).Load();
+                    galleries.Add(gallery.ToBrowseDTO());
+                }
+            }
+            return Ok(galleries);
+        }
+
         [HttpGet("view")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -59,7 +74,7 @@ namespace Hitorus.Api.Controllers {
         /// <param name="pageIndex"></param>
         /// <param name="configId"></param>
         /// <returns></returns>
-        [HttpGet("browse-galleries")]
+        [HttpGet("browse-ids")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public ActionResult<BrowseQueryResult> GetBrowseQueryResult(int pageIndex, int configId) {
@@ -70,27 +85,22 @@ namespace Hitorus.Api.Controllers {
             if (config == null) {
                 return NotFound($"Browse configuration with ID {configId} not found.");
             }
-            context.Entry(config).Reference(c => c.SelectedLanguage).Load();
-            context.Entry(config).Reference(c => c.SelectedType).Load();
-            context.Entry(config).Collection(c => c.Tags).Load();
+            IEnumerable<int> selectedTagIds = config.Tags.Select(t => t.Id);
             context.Entry(config).Collection(c => c.Sorts).Load();
             IEnumerable<Gallery> galleries =
                 context.Galleries.AsNoTracking()
-                .Include(g => g.Language)
-                .Include(g => g.Type)
-                .Include(g => g.Tags)
-                .Include(g => g.Images);
-            if (!config.SelectedLanguage.IsAll) {
-                galleries = galleries.Where(g => g.Language.Id == config.SelectedLanguage.Id);
+                .Include(g => g.Tags);
+            if (config.SelectedLanguageId != 1) { // not IsAll
+                galleries = galleries.Where(g => g.Language.Id == config.SelectedLanguageId);
             }
-            if (!config.SelectedType.IsAll) {
-                galleries = galleries.Where(g => g.Type.Id == config.SelectedType.Id);
+            if (config.SelectedTypeId != 1) { // not IsAll
+                galleries = galleries.Where(g => g.Type.Id == config.SelectedTypeId);
             }
             if (!string.IsNullOrEmpty(config.TitleSearchKeyword)) {
                 galleries = galleries.Where(g => g.Title.Contains(config.TitleSearchKeyword, StringComparison.InvariantCultureIgnoreCase));
             }
-            foreach (Tag tag in config.Tags) {
-                galleries = galleries.Where(g => g.Tags.Any(t => t.Id == tag.Id));
+            foreach (int tagId in selectedTagIds) {
+                galleries = galleries.Where(g => g.Tags.Any(t => t.Id == tagId));
             }
             GallerySort[] activeSorts = [.. config.Sorts.Where(s => s.IsActive).OrderBy(s => s.RankIndex)];
             if (activeSorts.Length > 0) {
@@ -100,12 +110,13 @@ namespace Hitorus.Api.Controllers {
                 }
                 galleries = orderedGalleries;
             }
+            int filteredCount = galleries.Count();
             BrowseQueryResult result = new() {
-                TotalGalleryCount = galleries.Count(),
-                Galleries = galleries
+                TotalGalleryCount = filteredCount,
+                GalleryIds = galleries
                     .Skip(pageIndex * config.ItemsPerPage)
                     .Take(config.ItemsPerPage)
-                    .Select(g => g.ToBrowseDTO())
+                    .Select(g => g.Id)
             };
             return Ok(result);
         }

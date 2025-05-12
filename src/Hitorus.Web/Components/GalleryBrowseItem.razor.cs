@@ -1,6 +1,7 @@
 ﻿using BlazorPro.BlazorSize;
 using Hitorus.Data.DTOs;
 using Hitorus.Data.Entities;
+using Hitorus.Web.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.Localization;
@@ -11,9 +12,10 @@ namespace Hitorus.Web.Components {
     public partial class GalleryBrowseItem : ComponentBase, IDisposable {
         [Inject] private IJSRuntime JSRuntime { get; set; } = default!;
         [Inject] private IResizeListener ResizeListener { get; set; } = default!;
-        [Inject] IConfiguration HostConfiguration { get; set; } = default!;
-        [Inject] IStringLocalizer<SharedResource> SharedLocalizer { get; set; } = default!;
-        [Inject] IStringLocalizer<GalleryBrowseItem> Localizer { get; set; } = default!;
+        [Inject] private IConfiguration HostConfiguration { get; set; } = default!;
+        [Inject] private IStringLocalizer<SharedResource> SharedLocalizer { get; set; } = default!;
+        [Inject] private IStringLocalizer<GalleryBrowseItem> Localizer { get; set; } = default!;
+        [Inject] private LanguageTypeService LanguageTypeService { get; set; } = default!;
         [Parameter, EditorRequired] public BrowseGalleryDTO Gallery { get; set; } = default!;
         [Parameter, EditorRequired] public bool IsEditing { get; set; }
         [Parameter, EditorRequired] public bool IsSelected { get; set; }

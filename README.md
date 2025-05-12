@@ -1,6 +1,7 @@
 # Hitorus
 
-(TODO show shields.io badges here)
+[![GitHub latest release](https://img.shields.io/github/release/kaismic/Hitorus.svg?logo=github)](https://github.com/kaismic/Hitorus/releases/latest)
+[![GitHub downloads count total](https://img.shields.io/github/downloads/kaismic/Hitorus/total.svg?logo=github)](https://github.com/kaismic/Hitorus/releases)
 
 Hitorus is a local desktop web browser-based application designed to enhance your experience with the website hitomi.la. It offers the following features:
 

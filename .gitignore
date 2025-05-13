@@ -7,7 +7,7 @@ src/Hitorus.Api/Galleries
 **/Localization
 
 # Database initialize flag
-db-init-flag.*
+db-init.*
 
 # ignore downloaded tag text files (which are in the subfolders)
 **/DatabaseResources/*/

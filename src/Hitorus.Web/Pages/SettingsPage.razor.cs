@@ -2,7 +2,6 @@
 using Hitorus.Web.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Localization;
-using System.Globalization;
 
 namespace Hitorus.Web.Pages {
     public partial class SettingsPage {

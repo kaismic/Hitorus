@@ -164,7 +164,7 @@ namespace Hitorus.Api.Controllers {
             }
             string randomString = Guid.NewGuid().ToString("N")[..8];
             List<TagFilter> newTagFilters = new(buildDtos.Count);
-            HashSet<string> tfNames = [.. context.TagFilters.Where(tf => tf.SearchConfiguration.Id == configId).Select(tf => tf.Name)];
+            HashSet<string> tfNames = [.. context.TagFilters.Where(tf => tf.SearchConfigurationId == configId).Select(tf => tf.Name)];
             foreach (TagFilterBuildDTO buildDto in buildDtos) {
                 TagFilter newTagFilter = new() {
                     Name = buildDto.Name + '-' +(tfNames.Contains(buildDto.Name) ? randomString : null),
@@ -192,16 +192,16 @@ namespace Hitorus.Api.Controllers {
 
         [HttpPost("export")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public ActionResult ExportTagFilters([FromBody] ICollection<int> ids) {
+        public ActionResult<IEnumerable<TagFilterBuildDTO>> ExportTagFilters(int configId, [FromBody] ICollection<int> ids) {
             List<TagFilterBuildDTO> result = new(ids.Count);
             foreach (int id in ids) {
-                TagFilter? tagFilter = context.TagFilters.Find(id);
+                TagFilter? tagFilter = context.TagFilters.FirstOrDefault(tf => tf.SearchConfigurationId == configId && tf.Id == id);
                 if (tagFilter != null) {
                     context.Entry(tagFilter).Collection(tf => tf.Tags).Load();
                     result.Add(tagFilter.ToBuildDTO());
                 }
             }
-            return File(JsonSerializer.SerializeToUtf8Bytes(result), "application/json");
+            return Ok(result);
         }
     }
 }

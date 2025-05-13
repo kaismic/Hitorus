@@ -81,37 +81,20 @@ function startDeleteAnimation(elementId, galleryId, dotNetObject) {
 }
 
 /**
-* 
-* @param {string} url
-* @param {number[]} ids
-*/
-function exportTagFilters(url, ids) {
-    fetch(url, {
-        method: 'POST',
-        body: JSON.stringify(ids), // Send the array within a JSON object
-        headers: {
-            "Content-Type": "application/json",
-        }
-    })
-        .then(response => {
-            if (!response.ok) {
-                console.error(response);
-                return;
-            }
-            return response.blob();
-        })
-        .then(blob => {
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.style.display = 'none';
-            a.href = url;
-            a.download = `tag-filters-${new Date().toISOString()}.json`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
-        })
-        .catch(error => {
-            console.error('There was a problem with the fetch operation:', error);
-        });
+ * 
+ * @param {object} data
+ * @param {string} fileName
+ * @param {string} fileFormat
+ */
+function exportData(data, fileName, fileFormat) {
+    const blob = new Blob([JSON.stringify(data)], { type: "application/" + fileFormat });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.style.display = 'none';
+    a.href = url;
+    a.download = fileName + '.' + fileFormat;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
 }

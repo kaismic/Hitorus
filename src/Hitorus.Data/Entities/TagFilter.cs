@@ -10,6 +10,7 @@ namespace Hitorus.Data.Entities {
         [MaxLength(TAG_FILTER_NAME_MAX_LEN), Required]
         public required string Name { get; set; }
         public ICollection<Tag> Tags { get; set; } = default!;
+        public int SearchConfigurationId { get; set; }
         [Required] public SearchConfiguration SearchConfiguration { get; set; } = default!;
 
         public TagFilterDTO ToDTO() => new() {

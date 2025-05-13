@@ -431,6 +431,9 @@ namespace Hitorus.Web.Pages {
 
         private const long MB_IN_BYTES = 1_000_000;
         private const long MAX_FILE_SIZE = MB_IN_BYTES * 10;
+        private static readonly JsonSerializerOptions DEFAULT_JSON_SERIALIZER_OPTIONS = new() {
+            PropertyNameCaseInsensitive = true
+        };
         private async Task ImportTagFilters(InputFileChangeEventArgs args) {
             if (args.File.Size > MAX_FILE_SIZE) {
                 Snackbar.Add(
@@ -447,7 +450,10 @@ namespace Hitorus.Web.Pages {
             using Stream fileStream = args.File.OpenReadStream(MAX_FILE_SIZE);
             List<TagFilterBuildDTO>? imported;
             try {
-                imported = await JsonSerializer.DeserializeAsync<List<TagFilterBuildDTO>>(fileStream);
+                imported = await JsonSerializer.DeserializeAsync<List<TagFilterBuildDTO>>(
+                    fileStream,
+                    DEFAULT_JSON_SERIALIZER_OPTIONS
+                );
             } catch (JsonException e) {
                 Snackbar.Add(
                     string.Format(Localizer["Snackbar_ImportInvalidFormat"], e.Message),
@@ -503,7 +509,8 @@ namespace Hitorus.Web.Pages {
             if (!result.Canceled) {
                 IReadOnlyCollection<ChipModel<TagFilterDTO>> selected = (IReadOnlyCollection<ChipModel<TagFilterDTO>>)result.Data!;
                 IEnumerable<int> ids = selected.Select(m => m.Value.Id);
-                await JS.InvokeVoidAsync("exportTagFilters", TagFilterService.GetExportTagFiltersUrl(), ids);
+                List<TagFilterBuildDTO> exportingTFs = await TagFilterService.ExportTagFilters(ids);
+                await JS.InvokeVoidAsync("exportData", exportingTFs, "tag-filters-" + DateTime.Now.ToString("yyyy-MM-ddThh:mm:ss"), "json");
             }
         }
     }

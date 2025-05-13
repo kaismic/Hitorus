@@ -11,10 +11,7 @@ namespace Hitorus.Data.Entities {
         public required string Name { get; set; }
         public ICollection<Tag> Tags { get; set; } = default!;
         [Required] public SearchConfiguration SearchConfiguration { get; set; } = default!;
-        public TagFilterSyncDTO ToSyncDTO() => new() {
-            Name = Name,
-            TagIds = Tags.Select(tag => tag.Id)
-        };
+
         public TagFilterDTO ToDTO() => new() {
             Id = Id,
             Name = Name,

@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using Hitorus.Web.Services;
+using System.Globalization;
 
 namespace Hitorus.Web {
     public class Utilities {
@@ -7,9 +8,10 @@ namespace Hitorus.Web {
         /// </summary>
         /// <param name="value"></param>
         public static void SetAppLanguage(string value) {
-            Console.WriteLine("Setting app language to " + value);
-            CultureInfo.DefaultThreadCurrentCulture = CultureInfo.GetCultureInfo(value);
-            CultureInfo.DefaultThreadCurrentUICulture= CultureInfo.GetCultureInfo(value);
+            try {
+                CultureInfo.DefaultThreadCurrentCulture = CultureInfo.GetCultureInfo(value);
+                CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.GetCultureInfo(value);
+            } catch (CultureNotFoundException) {}
         }
     }
 }

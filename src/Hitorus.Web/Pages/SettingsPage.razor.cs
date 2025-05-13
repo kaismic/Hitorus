@@ -21,13 +21,9 @@ namespace Hitorus.Web.Pages {
         }
 
         private async Task OnAppLanguageChanged(string value) {
-            try {
-                AppConfigurationService.Config.AppLanguage = value;
-                AppConfigurationService.ChangeAppLanguage(value);
-                await AppConfigurationService.UpdateAppLanguage(value);
-            } catch (CultureNotFoundException e) {
-                Console.WriteLine(e.Message);
-            }
+            AppConfigurationService.Config.AppLanguage = value;
+            AppConfigurationService.ChangeAppLanguage(value);
+            await AppConfigurationService.UpdateAppLanguage(value);
             // Refresh the page if the new value does not match the initial app language or
             // is not english (default) since blazor uses satellite assembly and
             // the new language's satellite assembly must not have been loaded

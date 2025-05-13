@@ -4,7 +4,7 @@
     {
         public required string Name { get; set; }
         public required IEnumerable<TagDTO> Tags { get; set; }
-        public required int SearchConfigurationId { get; set; }
+        public int SearchConfigurationId { get; set; }
 
         public TagFilterDTO ToDTO() => new() {
             Name = Name,

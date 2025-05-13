@@ -17,5 +17,10 @@ namespace Hitorus.Data.Entities {
             Name = Name,
             SearchConfigurationId = SearchConfiguration.Id
         };
+
+        public TagFilterBuildDTO ToBuildDTO() => new() {
+            Name = Name,
+            Tags = Tags.Select(t => t.ToDTO())
+        };
     }
 }

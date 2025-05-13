@@ -52,5 +52,12 @@ namespace Hitorus.Web.Services {
             var response = await httpClient.PostAsJsonAsync($"tags-union?configId={searchConfigurationService.Config.Id}", tagFilterIds);
             return (await response.Content.ReadFromJsonAsync<IEnumerable<TagDTO>>())!;
         }
+
+        public async Task<List<TagFilterDTO>> ImportTagFilters(IEnumerable<TagFilterBuildDTO> value) {
+            var response = await httpClient.PostAsJsonAsync($"import?configId={searchConfigurationService.Config.Id}", value);
+            return (await response.Content.ReadFromJsonAsync<List<TagFilterDTO>>())!;
+        }
+
+        public string GetExportTagFiltersUrl() => httpClient.BaseAddress + "export";
     }
 }

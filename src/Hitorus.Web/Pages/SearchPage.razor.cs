@@ -7,11 +7,13 @@ using Hitorus.Web.Components.Dialogs;
 using Hitorus.Web.Models;
 using Hitorus.Web.Services;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.Extensions.Localization;
 using Microsoft.JSInterop;
 using MudBlazor;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Text.Json;
 
 namespace Hitorus.Web.Pages {
     public partial class SearchPage {
@@ -21,7 +23,7 @@ namespace Hitorus.Web.Pages {
         [Inject] AppConfigurationService AppConfigurationService { get; set; } = default!;
         [Inject] ISnackbar Snackbar { get; set; } = default!;
         [Inject] IDialogService DialogService { get; set; } = default!;
-        [Inject] IJSRuntime JsRuntime { get; set; } = default!;
+        [Inject] IJSRuntime JS { get; set; } = default!;
         [Inject] IConfiguration HostConfiguration { get; set; } = default!;
         [Inject] IStringLocalizer<SearchPage> Localizer { get; set; } = default!;
         [Inject] IStringLocalizer<SharedResource> SharedLocalizer { get; set; } = default!;
@@ -147,7 +149,7 @@ namespace Hitorus.Web.Pages {
 
         protected override async Task OnAfterRenderAsync(bool firstRender) {
             if (firstRender) {
-                await JsRuntime.InvokeVoidAsync("setFillHeightResizeObserver", "tag-search-panel-collection", "class", "search-page-left-container", "id");
+                await JS.InvokeVoidAsync("setFillHeightResizeObserver", "tag-search-panel-collection", "class", "search-page-left-container", "id");
                 _isRendered = true;
                 OnInitRenderComplete();
             }
@@ -218,7 +220,7 @@ namespace Hitorus.Web.Pages {
 
         private async Task CreateTagFilter() {
             // to prevent enter key acting on the last clicked button
-            await JsRuntime.InvokeVoidAsync("document.body.focus");
+            await JS.InvokeVoidAsync("document.body.focus");
             DialogParameters<TextFieldDialog> parameters = new() {
                 { d => d.TextFieldLabel, Localizer["TagFilterName"] }
             };
@@ -237,7 +239,7 @@ namespace Hitorus.Web.Pages {
                 TagFilters.Add(tagFilter);
                 _tagFilterEditor.CurrentTagFilter = tagFilter;
                 Snackbar.Add(
-                    string.Format(Localizer["Snackbar_Msg_CreateTagFilter_Success"], name),
+                    string.Format(Localizer["Snackbar_CreateTagFilter_Success"], name),
                     Severity.Success,
                     UiConstants.DEFAULT_SNACKBAR_OPTIONS
                 );
@@ -246,7 +248,7 @@ namespace Hitorus.Web.Pages {
 
         private async Task RenameTagFilter() {
             // to prevent enter key acting on the last clicked button
-            await JsRuntime.InvokeVoidAsync("document.body.focus");
+            await JS.InvokeVoidAsync("document.body.focus");
             string oldName = _tagFilterEditor.CurrentTagFilter!.Name;
             DialogParameters<TextFieldDialog> parameters = new() {
                 { d => d.TextFieldLabel, Localizer["TagFilterName"] },
@@ -261,13 +263,13 @@ namespace Hitorus.Web.Pages {
                 if (success) {
                     _tagFilterEditor.CurrentTagFilter.Name = name;
                     Snackbar.Add(
-                        string.Format(Localizer["Snackbar_Msg_RenameTagFilter_Success"], oldName, name),
+                        string.Format(Localizer["Snackbar_RenameTagFilter_Success"], oldName, name),
                         Severity.Success,
                         UiConstants.DEFAULT_SNACKBAR_OPTIONS
                     );
                 } else {
                     Snackbar.Add(
-                        string.Format(Localizer["Snackbar_Msg_RenameTagFilter_Failure"], oldName, name),
+                        string.Format(Localizer["Snackbar_RenameTagFilter_Failure"], oldName, name),
                         Severity.Error,
                         UiConstants.DEFAULT_SNACKBAR_OPTIONS
                     );
@@ -290,13 +292,13 @@ namespace Hitorus.Web.Pages {
                 );
                 if (success) {
                     Snackbar.Add(
-                        string.Format(Localizer["Snackbar_Msg_SaveTagFilter_Success"], tagFilter.Name),
+                        string.Format(Localizer["Snackbar_SaveTagFilter_Success"], tagFilter.Name),
                         Severity.Success,
                         UiConstants.DEFAULT_SNACKBAR_OPTIONS
                     );
                 } else {
                     Snackbar.Add(
-                        string.Format(Localizer["Snackbar_Msg_SaveTagFilter_Failure"], tagFilter.Name),
+                        string.Format(Localizer["Snackbar_SaveTagFilter_Failure"], tagFilter.Name),
                         Severity.Error,
                         UiConstants.DEFAULT_SNACKBAR_OPTIONS
                     );
@@ -317,7 +319,7 @@ namespace Hitorus.Web.Pages {
                 if (success) {
                     TagFilters = [.. TagFilters.ExceptBy(ids, tf => tf.Id)];
                     Snackbar.Add(
-                        string.Format(Localizer["Snackbar_Msg_DeleteTagFilter_Success"], selected.Count),
+                        string.Format(Localizer["Snackbar_DeleteTagFilter_Success"], selected.Count),
                         Severity.Success,
                         UiConstants.DEFAULT_SNACKBAR_OPTIONS
                     );
@@ -326,7 +328,7 @@ namespace Hitorus.Web.Pages {
                     }
                 } else {
                     Snackbar.Add(
-                        string.Format(Localizer["Snackbar_Msg_DeleteTagFilter_Failure"]),
+                        string.Format(Localizer["Snackbar_DeleteTagFilter_Failure"]),
                         Severity.Error,
                         UiConstants.DEFAULT_SNACKBAR_OPTIONS
                     );
@@ -391,7 +393,7 @@ namespace Hitorus.Web.Pages {
             };
             SearchFilterDTO dto = builder.Build();
             SearchFilters.Add(dto);
-            await JsRuntime.InvokeVoidAsync("navigator.clipboard.writeText", dto.SearchLink);
+            await JS.InvokeVoidAsync("navigator.clipboard.writeText", dto.SearchLink);
             int id = await SearchFilterService.CreateAsync(dto);
             dto.Id = id;
         }
@@ -402,7 +404,7 @@ namespace Hitorus.Web.Pages {
                 SearchFilters.Remove(dto);
             } else {
                 Snackbar.Add(
-                    string.Format(Localizer["Snackbar_Msg_DeleteSearchLink_Failure"]),
+                    string.Format(Localizer["Snackbar_DeleteSearchLink_Failure"]),
                     Severity.Error,
                     UiConstants.DEFAULT_SNACKBAR_OPTIONS
                 );
@@ -425,6 +427,84 @@ namespace Hitorus.Web.Pages {
 
         private string GetWalkthroughHighlightStyle(int step) {
             return _showWalkthrough && _walkthroughStep == step ? "z-index: calc(var(--mud-zindex-popover) + 1); pointer-events: none;" : "";
+        }
+
+        private const long MB_IN_BYTES = 1_000_000;
+        private const long MAX_FILE_SIZE = MB_IN_BYTES * 10;
+        private async Task ImportTagFilters(InputFileChangeEventArgs args) {
+            if (args.File.Size > MAX_FILE_SIZE) {
+                Snackbar.Add(
+                    string.Format(
+                        Localizer["Snackbar_ImportFileTooLarge"],
+                        ((double)args.File.Size / MB_IN_BYTES) + "mb",
+                        (MAX_FILE_SIZE / MB_IN_BYTES) + "mb"
+                    ),
+                    Severity.Error,
+                    UiConstants.DEFAULT_SNACKBAR_OPTIONS
+                );
+                return;
+            }
+            using Stream fileStream = args.File.OpenReadStream(MAX_FILE_SIZE);
+            List<TagFilterBuildDTO>? imported;
+            try {
+                imported = await JsonSerializer.DeserializeAsync<List<TagFilterBuildDTO>>(fileStream);
+            } catch (JsonException e) {
+                Snackbar.Add(
+                    string.Format(Localizer["Snackbar_ImportInvalidFormat"], e.Message),
+                    Severity.Error,
+                    UiConstants.DEFAULT_SNACKBAR_OPTIONS
+                );
+                return;
+            }
+            if (imported == null) {
+                Snackbar.Add(
+                    string.Format(Localizer["Snackbar_ImportUnknownError"]),
+                    Severity.Error,
+                    UiConstants.DEFAULT_SNACKBAR_OPTIONS
+                );
+                return;
+            }
+            if (imported.Count == 0) {
+                Snackbar.Add(
+                    string.Format(Localizer["Snackbar_ImportEmptyFile"]),
+                    Severity.Error,
+                    UiConstants.DEFAULT_SNACKBAR_OPTIONS
+                );
+                return;
+            }
+            Dictionary<string, TagFilterBuildDTO> importedDict = imported.ToDictionary(dto => dto.Name, dto => dto);
+            DialogParameters<TagFilterSelectorDialog> parameters = new() {
+                { d => d.ChipModels, [.. imported.Select(tf => tf.ToDTO()).Select(tf => new ChipModel<TagFilterDTO>() { Value = tf, Selected = true })] }
+            };
+            IDialogReference dialogRef = await DialogService.ShowAsync<TagFilterSelectorDialog>(Localizer["Dialog_Title_Import"], parameters);
+            DialogResult result = (await dialogRef.Result)!;
+            if (!result.Canceled) {
+                IReadOnlyCollection<ChipModel<TagFilterDTO>> selected = (IReadOnlyCollection<ChipModel<TagFilterDTO>>)result.Data!;
+                IEnumerable<string> names = selected.Select(m => m.Value.Name);
+                IEnumerable<TagFilterBuildDTO> selectedImported = names.Select(name => importedDict[name]);
+                List<TagFilterDTO> importedTagFilters = await TagFilterService.ImportTagFilters(selectedImported);
+                foreach (TagFilterDTO tf in importedTagFilters) {
+                    TagFilters.Add(tf);
+                }
+                Snackbar.Add(
+                    string.Format(Localizer["Snackbar_ImportSuccess"], importedTagFilters.Count),
+                    Severity.Success,
+                    UiConstants.DEFAULT_SNACKBAR_OPTIONS
+                );
+            }
+        }
+
+        private async Task ExportTagFilters() {
+            DialogParameters<TagFilterSelectorDialog> parameters = new() {
+                { d => d.ChipModels, [.. TagFilters.Select(tf => new ChipModel<TagFilterDTO>() { Value = tf })] }
+            };
+            IDialogReference dialogRef = await DialogService.ShowAsync<TagFilterSelectorDialog>(Localizer["Dialog_Title_Export"], parameters);
+            DialogResult result = (await dialogRef.Result)!;
+            if (!result.Canceled) {
+                IReadOnlyCollection<ChipModel<TagFilterDTO>> selected = (IReadOnlyCollection<ChipModel<TagFilterDTO>>)result.Data!;
+                IEnumerable<int> ids = selected.Select(m => m.Value.Id);
+                await JS.InvokeVoidAsync("exportTagFilters", TagFilterService.GetExportTagFiltersUrl(), ids);
+            }
         }
     }
 }

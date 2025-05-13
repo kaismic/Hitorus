@@ -17,27 +17,40 @@
                                  OnSaveButtonClicked="@(() => SaveTagFilter(_tagFilterEditor.CurrentTagFilter))"
                                  OnDeleteButtonClicked="@DeleteTagFilters"
                                  SelectPlaceholder=@Localizer["SelectPlaceholder"] />
-                <div class="d-flex">
-                    <div class="d-flex gap-4">
-                        <MudButton Color="Color.Primary"
-                                   EndIcon="@Icons.Material.Filled.Refresh"
-                                   OnClick="LoadTags"
-                                   Disabled="@(_tagFilterEditor?.CurrentTagFilter == null)">
-                            @Localizer["Reload"]
-                        </MudButton>
-                        <MudButton Color="Color.Primary"
-                                   EndIcon="@Icons.Material.Filled.Clear"
-                                   OnClick="ClearAllTags"
-                                   Disabled="@(_tagFilterEditor?.CurrentTagFilter == null)">
-                            @Localizer["ClearAll"]
-                        </MudButton>
-                    </div>
-                    <MudSpacer />
+                <div class="d-flex gap-2">
+                    <MudButton Color="Color.Primary"
+                                EndIcon="@Icons.Material.Filled.Refresh"
+                                OnClick="LoadTags"
+                                Disabled="@(_tagFilterEditor?.CurrentTagFilter == null)">
+                        @Localizer["Reload"]
+                    </MudButton>
+                    <MudButton Color="Color.Primary"
+                                EndIcon="@Icons.Material.Filled.Clear"
+                                OnClick="ClearAllTags"
+                                Disabled="@(_tagFilterEditor?.CurrentTagFilter == null)">
+                        @Localizer["ClearAll"]
+                    </MudButton>
                     <MudSwitch T="bool"
                                Label=@Localizer["AutoSave"]
                                Color="Color.Primary"
                                Value="SearchConfigurationService.Config.AutoSaveEnabled"
                                ValueChanged=@OnAutoSaveEnabledChanged />
+                    <MudSpacer />
+                    <MudFileUpload T="IBrowserFile" Accept=".json" OnFilesChanged="@ImportTagFilters">
+                        <ActivatorContent>
+                            <MudButton Variant="Variant.Outlined"
+                                       Color="Color.Primary"
+                                       StartIcon="@Icons.Material.Filled.FileDownload">
+                                @Localizer["Import"]
+                            </MudButton>
+                        </ActivatorContent>
+                    </MudFileUpload>
+                    <MudButton Variant="Variant.Outlined"
+                               Color="Color.Primary"
+                               StartIcon="@Icons.Material.Filled.FileUpload"
+                               OnClick="@ExportTagFilters">
+                        @Localizer["Export"]
+                    </MudButton>
                 </div>
                 <TagSearchPanelCollection TagSearchPanelChipModels="@_tagSearchPanelChipModels" />
             </MudPaper>

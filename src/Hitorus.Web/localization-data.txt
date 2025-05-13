@@ -70,15 +70,24 @@ Dialog_Title_RenameTagFilter|Rename tag filter|태그 필터 이름 바꾸기
 Dialog_Title_DeleteTagFilter|Select tag filters to delete:|삭제할 태그 필터를 선택하세요:
 Dialog_Title_DupliacteTags|Duplicate Tags|중복 태그
 Dialog_Header_DuplicateTags|The following tags are conflicting:|아래에 충돌하는 태그들이 있습니다:
-Snackbar_Msg_CreateTagFilter_Success|Created "{0}".|"{0}" 생성 완료.
-Snackbar_Msg_RenameTagFilter_Success|Renamed "{0}" to "{1}".|"{0}"에서 "{1}"(으)로 이름을 변경했습니다.
-Snackbar_Msg_RenameTagFilter_Failure|Failed to rename "{0}" to "{1}".|"{0}"에서 "{1}"(으)로 이름 변경을 실패했습니다.
-Snackbar_Msg_SaveTagFilter_Success|Saved "{0}".|"{0}" 저장 완료.
-Snackbar_Msg_SaveTagFilter_Failure|Failed to save "{0}".|"{0}" 저장 실패.
-Snackbar_Msg_DeleteTagFilter_Success|Deleted {0} tag filters.|{0}개의 태그 필터를 삭제했습니다.
-Snackbar_Msg_DeleteTagFilter_Failure|Failed to delete tag filters.|태그 필터를 삭제하는데 실패했습니다.
-Snackbar_Msg_DeleteSearchLink_Failure|Failed to delete search link.|검색 링크를 삭제하는데 실패했습니다.
+Snackbar_CreateTagFilter_Success|Created "{0}".|"{0}" 생성 완료.
+Snackbar_RenameTagFilter_Success|Renamed "{0}" to "{1}".|"{0}"에서 "{1}"(으)로 이름을 변경했습니다.
+Snackbar_RenameTagFilter_Failure|Failed to rename "{0}" to "{1}".|"{0}"에서 "{1}"(으)로 이름 변경을 실패했습니다.
+Snackbar_SaveTagFilter_Success|Saved "{0}".|"{0}" 저장 완료.
+Snackbar_SaveTagFilter_Failure|Failed to save "{0}".|"{0}" 저장 실패.
+Snackbar_DeleteTagFilter_Success|Deleted {0} tag filters.|{0}개의 태그 필터를 삭제했습니다.
+Snackbar_DeleteTagFilter_Failure|Failed to delete tag filters.|태그 필터를 삭제하는데 실패했습니다.
+Snackbar_DeleteSearchLink_Failure|Failed to delete search link.|검색 링크를 삭제하는데 실패했습니다.
 Validation_Msg_Duplicate|"{0}" already exists.|"{0}"이(가) 이미 존재합니다.
+Snackbar_ImportFileTooLarge|File size is too large: {0}. Maximum file size: {1}.|파일 크기가 너무 큽니다: {0}. 최대 파일 크기: {1}.
+Snackbar_ImportInvalidFormat|File format is invalid: {0}|파일 형식이 유효하지 않습니다: {0}
+Snackbar_ImportUnknownError|An unknown error has occurred while importing the file.|파일을 불러오는 도중 알 수 없는 오류가 발생했습니다.
+Snackbar_ImportEmptyFile|There are no data in the file.|파일에 데이터가 없습니다.
+Snackbar_ImportSuccess|Imported {0} tag filters.|{0}개의 태그 필터를 불러왔습니다.
+Dialog_Title_Import|Select tag filters to import:|불러올 태그 필터를 선택해주세요:
+Dialog_Title_Export|Select tag filters to export:|내보낼 태그 필터를 선택해주세요:
+Import|Import|불러오기
+Export|Export|내보내기
 ---
 Pages\DownloadPage
 InputPlaceholder|Enter Gallery ID or URL here (e.g. 2058075, https://hitomi.la/...). You can enter multiple id or URLs at once.|여기에 갤러리 아이디 또는 URL을 입력하세요 (예시: 2058075, https://hitomi.la/...). 한번에 여러개의 입력이 가능합니다.
@@ -105,12 +114,12 @@ ItemsPerPage|Items per Page|페이지 당 항목 개수
 AutoRefresh|Auto Refresh|자동 새로고침
 NoGalleriesFound|No galleries found. Try again after removing search filters.|아무런 갤러리를 찾지 못했습니다. 검색 필터를 제거한 후 다시 시도해보세요.
 Dialog_Title_SortGalleries|Sort Galleries|갤러리 정렬
-Snackbar_Msg_SortSaveSuccess|Save sucess.|저장 완료.
-Snackbar_Msg_SortSaveFailure|Save failed.|저장 실패.
-Snackbar_Msg_MultiGalleryDeleteSuccess|Deleted {0} galleries.|{0}개의 갤러리를 삭제했습니다.
-Snackbar_Msg_MultiGalleryDeleteFailure|Failed to delete galleries.|갤러리 삭제를 실패했습니다.
-Snackbar_Msg_SingleGalleryDeleteSuccess|Deleted "{0}".|"{0}"을(를) 삭제했습니다.
-Snackbar_Msg_SingleGalleryDeleteFailure|Failed to delete "{0}".|"{0}"을(를) 삭제하는데 실패했습니다.
+Snackbar_SortSaveSuccess|Save sucess.|저장 완료.
+Snackbar_SortSaveFailure|Save failed.|저장 실패.
+Snackbar_MultiGalleryDeleteSuccess|Deleted {0} galleries.|{0}개의 갤러리를 삭제했습니다.
+Snackbar_MultiGalleryDeleteFailure|Failed to delete galleries.|갤러리 삭제를 실패했습니다.
+Snackbar_SingleGalleryDeleteSuccess|Deleted "{0}".|"{0}"을(를) 삭제했습니다.
+Snackbar_SingleGalleryDeleteFailure|Failed to delete "{0}".|"{0}"을(를) 삭제하는데 실패했습니다.
 ---
 Pages\SettingsPage
 GlobalSettings|Global Settings|전체 설정

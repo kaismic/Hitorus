@@ -2,6 +2,7 @@
 using Hitorus.Data.DTOs;
 using Hitorus.Data.Entities;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace Hitorus.Api.Controllers {
     [ApiController]
@@ -152,6 +153,55 @@ namespace Hitorus.Api.Controllers {
                 return NoContent();
             }
             return Ok(tags);
+        }
+
+        [HttpPost("import")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public ActionResult<IEnumerable<TagFilterDTO>> ImportTagFilters(int configId, [FromBody] List<TagFilterBuildDTO> buildDtos) {
+            SearchConfiguration? config = context.SearchConfigurations.Find(configId);
+            if (config == null) {
+                return NotFound();
+            }
+            string randomString = Guid.NewGuid().ToString("N")[..8];
+            List<TagFilter> newTagFilters = new(buildDtos.Count);
+            HashSet<string> tfNames = [.. context.TagFilters.Where(tf => tf.SearchConfiguration.Id == configId).Select(tf => tf.Name)];
+            foreach (TagFilterBuildDTO buildDto in buildDtos) {
+                TagFilter newTagFilter = new() {
+                    Name = buildDto.Name + '-' +(tfNames.Contains(buildDto.Name) ? randomString : null),
+                    Tags = []
+                };
+                foreach (TagDTO tagDto in buildDto.Tags) {
+                    Tag? tag = context.Tags.FirstOrDefault(t => t.Category == tagDto.Category && t.Value == tagDto.Value);
+                    if (tag == null) {
+                        tag = new() {
+                            Category = tagDto.Category,
+                            Value = tagDto.Value,
+                            GalleryCount = tagDto.GalleryCount
+                        };
+                        context.Tags.Add(tag);
+                        context.SaveChanges();
+                    }
+                    newTagFilter.Tags.Add(tag);
+                }
+                config.TagFilters.Add(newTagFilter);
+                newTagFilters.Add(newTagFilter);
+            }
+            context.SaveChanges();
+            return Ok(newTagFilters.Select(tf => tf.ToDTO()));
+        }
+
+        [HttpPost("export")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public ActionResult ExportTagFilters([FromBody] ICollection<int> ids) {
+            List<TagFilterBuildDTO> result = new(ids.Count);
+            foreach (int id in ids) {
+                TagFilter? tagFilter = context.TagFilters.Find(id);
+                if (tagFilter != null) {
+                    context.Entry(tagFilter).Collection(tf => tf.Tags).Load();
+                    result.Add(tagFilter.ToBuildDTO());
+                }
+            }
+            return File(JsonSerializer.SerializeToUtf8Bytes(result), "application/json");
         }
     }
 }

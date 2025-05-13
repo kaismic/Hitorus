@@ -170,10 +170,10 @@ namespace Hitorus.Web.Pages {
             if (success) {
                 BrowseConfigurationService.Config.Sorts = sorts;
                 BrowseConfigurationService.ActiveSorts = [.. sorts.Where(s => s.IsActive)];
-                Snackbar.Add(Localizer["Snackbar_Msg_SortSaveSuccess"], Severity.Success, UiConstants.DEFAULT_SNACKBAR_OPTIONS);
+                Snackbar.Add(Localizer["Snackbar_SortSaveSuccess"], Severity.Success, UiConstants.DEFAULT_SNACKBAR_OPTIONS);
                 await LoadGalleries();
             } else {
-                Snackbar.Add(Localizer["Snackbar_Msg_SortSaveFailure"], Severity.Error, UiConstants.DEFAULT_SNACKBAR_OPTIONS);
+                Snackbar.Add(Localizer["Snackbar_SortSaveFailure"], Severity.Error, UiConstants.DEFAULT_SNACKBAR_OPTIONS);
             }
         }
 
@@ -187,14 +187,14 @@ namespace Hitorus.Web.Pages {
             bool success = await GalleryService.DeleteGalleries(ids);
             if (success) {
                 Snackbar.Add(
-                    string.Format(Localizer["Snackbar_Msg_MultiGalleryDeleteSuccess"], ids.Count),
+                    string.Format(Localizer["Snackbar_MultiGalleryDeleteSuccess"], ids.Count),
                     Severity.Success,
                     UiConstants.DEFAULT_SNACKBAR_OPTIONS
                 );
                 await LoadGalleries();
             } else {
                 Snackbar.Add(
-                    string.Format(Localizer["Snackbar_Msg_MultiGalleryDeleteFailure"]),
+                    string.Format(Localizer["Snackbar_MultiGalleryDeleteFailure"]),
                     Severity.Error,
                     UiConstants.DEFAULT_SNACKBAR_OPTIONS
                 );
@@ -206,14 +206,14 @@ namespace Hitorus.Web.Pages {
             bool success = await GalleryService.DeleteGalleries([gallery.Id]);
             if (success) {
                 Snackbar.Add(
-                    string.Format(Localizer["Snackbar_Msg_SingleGalleryDeleteSuccess"], gallery.Title),
+                    string.Format(Localizer["Snackbar_SingleGalleryDeleteSuccess"], gallery.Title),
                     Severity.Success,
                     UiConstants.DEFAULT_SNACKBAR_OPTIONS
                 );
                 await LoadGalleries();
             } else {
                 Snackbar.Add(
-                    string.Format(Localizer["Snackbar_Msg_SingleGalleryDeleteFailure"], gallery.Title),
+                    string.Format(Localizer["Snackbar_SingleGalleryDeleteFailure"], gallery.Title),
                     Severity.Error,
                     UiConstants.DEFAULT_SNACKBAR_OPTIONS
                 );

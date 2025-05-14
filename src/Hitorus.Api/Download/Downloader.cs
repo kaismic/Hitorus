@@ -6,6 +6,7 @@ using Hitorus.Data.DbContexts;
 using Hitorus.Data.DTOs;
 using Hitorus.Data.Entities;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
 using System.Net;
 using System.Text.Json;
 
@@ -52,11 +53,11 @@ namespace Hitorus.Api.Download {
                     DownloadManagerService.DeleteDownloader(GalleryId, true);
                     break;
                 case DownloadStatus.Deleted:
-                    _logger.LogInformation("{GalleryId}: Deleting...", GalleryId);
+                    _logger.LogInformation("{GalleryId}: Deleted", GalleryId);
                     DownloadManagerService.DeleteDownloader(GalleryId, false);
                     break;
                 case DownloadStatus.Paused:
-                    _logger.LogInformation("{GalleryId}: Pausing...", GalleryId);
+                    _logger.LogInformation("{GalleryId}: Paused", GalleryId);
                     break;
                 case DownloadStatus.Failed:
                     _logger.LogInformation("{GalleryId}: Download failed: {message}.", GalleryId, message);
@@ -165,25 +166,27 @@ namespace Hitorus.Api.Download {
             if (originalDictArr == null) {
                 return [];
             }
-            using HitomiContext dbContext = new();
             IEnumerable<TagDTO> tagDtos = originalDictArr.Select(dict => {
                 string value = dict[OriginalGalleryInfoDTO.CATEGORY_PROP_KEY_DICT[category]];
                 return new TagDTO() { Category = category, Value = value };
             });
             List<Tag> existingTags = [];
             List<TagDTO> newTags = [];
-            foreach (TagDTO dto in tagDtos) {
-                Tag? tag = dbContext.Tags.FirstOrDefault(tag => tag.Category == dto.Category && tag.Value == dto.Value);
-                if (tag == null) {
-                    newTags.Add(dto);
-                } else {
-                    existingTags.Add(tag);
+            using (HitomiContext dbContext = new()) {
+                foreach (TagDTO dto in tagDtos) {
+                    Tag? tag = dbContext.Tags.AsNoTracking().FirstOrDefault(tag => tag.Category == dto.Category && tag.Value == dto.Value);
+                    if (tag == null) {
+                        newTags.Add(dto);
+                    } else {
+                        existingTags.Add(tag);
+                    }
                 }
             }
             if (newTags.Count > 0) {
-                await TagUtility.FetchUpdateNonMFTTags(dbContext, category, newTags);
+                await TagUtility.FetchUpdateNonMFTTags(category, newTags);
+                using HitomiContext dbContext = new();
                 foreach (TagDTO dto in newTags) {
-                    Tag? tag = dbContext.Tags.FirstOrDefault(tag => tag.Category == dto.Category && tag.Value == dto.Value);
+                    Tag? tag = dbContext.Tags.AsNoTracking().FirstOrDefault(tag => tag.Category == dto.Category && tag.Value == dto.Value);
                     if (tag != null) {
                         existingTags.Add(tag);
                     }
@@ -199,22 +202,24 @@ namespace Hitorus.Api.Download {
         /// <param name="category"></param>
         /// <returns></returns>
         private static async Task<IEnumerable<Tag>> GetMTFTags(OriginalGalleryInfoDTO.CompositeTag[] compositeTags) {
-            using HitomiContext dbContext = new();
             List<Tag> existingTags = [];
             List<TagDTO> newTags = [];
-            foreach (OriginalGalleryInfoDTO.CompositeTag compositeTag in compositeTags) {
-                TagCategory category = compositeTag.Male == 1 ? TagCategory.Male : compositeTag.Female == 1 ? TagCategory.Female : TagCategory.Tag;
-                Tag? tag = dbContext.Tags.FirstOrDefault(tag => tag.Category == category && tag.Value == compositeTag.Tag);
-                if (tag == null) {
-                    newTags.Add(new() { Category = category, Value = compositeTag.Tag });
-                } else {
-                    existingTags.Add(tag);
+            using (HitomiContext dbContext = new()) {
+                foreach (OriginalGalleryInfoDTO.CompositeTag compositeTag in compositeTags) {
+                    TagCategory category = compositeTag.Male == 1 ? TagCategory.Male : compositeTag.Female == 1 ? TagCategory.Female : TagCategory.Tag;
+                    Tag? tag = dbContext.Tags.AsNoTracking().FirstOrDefault(tag => tag.Category == category && tag.Value == compositeTag.Tag);
+                    if (tag == null) {
+                        newTags.Add(new() { Category = category, Value = compositeTag.Tag });
+                    } else {
+                        existingTags.Add(tag);
+                    }
                 }
             }
             if (newTags.Count > 0) {
-                await TagUtility.FetchUpdateMFTTags(dbContext, newTags);
+                await TagUtility.FetchUpdateMFTTags(newTags);
+                using HitomiContext dbContext = new();
                 foreach (TagDTO dto in newTags) {
-                    Tag? tag = dbContext.Tags.FirstOrDefault(tag => tag.Category == dto.Category && tag.Value == dto.Value);
+                    Tag? tag = dbContext.Tags.AsNoTracking().FirstOrDefault(tag => tag.Category == dto.Category && tag.Value == dto.Value);
                     if (tag != null) {
                         existingTags.Add(tag);
                     }

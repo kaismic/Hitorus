@@ -32,7 +32,7 @@ namespace Hitorus.Api.Utilities {
         private const char MALE_SYMBOL = '♂';
         private const char FEMALE_SYMBOL = '♀';
 
-        public static async Task FetchUpdateNonMFTTags(HitomiContext dbContext, TagCategory category, IEnumerable<TagDTO> tags) {
+        public static async Task FetchUpdateNonMFTTags(TagCategory category, IEnumerable<TagDTO> tags) {
             if (category is TagCategory.Male or TagCategory.Female or TagCategory.Tag) {
                 throw new ArgumentException("Category must be Artist, Group, Character, or Series");
             }
@@ -54,6 +54,7 @@ namespace Hitorus.Api.Utilities {
                     if (contentMatch.Success) {
                         string content = contentMatch.Groups[1].Value;
                         MatchCollection tagInfoMatches = TagInfoRegex().Matches(content);
+                        using HitomiContext dbContext = new();
                         foreach (Match match in tagInfoMatches) {
                             string tagValue = match.Groups[1].Value;
                             int galleryCount = int.Parse(match.Groups[2].Value);
@@ -74,7 +75,7 @@ namespace Hitorus.Api.Utilities {
             }
         }
         
-        public static async Task FetchUpdateMFTTags(HitomiContext dbContext, IEnumerable<TagDTO> tags) {
+        public static async Task FetchUpdateMFTTags(IEnumerable<TagDTO> tags) {
             _httpClient ??= new();
             HashSet<char> firstChars = [];
             foreach (var tag in tags) {
@@ -89,6 +90,7 @@ namespace Hitorus.Api.Utilities {
                     if (contentMatch.Success) {
                         string content = contentMatch.Groups[1].Value;
                         MatchCollection tagInfoMatches = TagInfoRegex().Matches(content);
+                        using HitomiContext dbContext = new();
                         foreach (Match match in tagInfoMatches) {
                             string tagValueWithSymbol = match.Groups[1].Value;
                             string tagValue;

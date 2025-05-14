@@ -502,7 +502,7 @@ namespace Hitorus.Web.Pages {
 
         private async Task ExportTagFilters() {
             DialogParameters<TagFilterSelectorDialog> parameters = new() {
-                { d => d.ChipModels, [.. TagFilters.Select(tf => new ChipModel<TagFilterDTO>() { Value = tf })] }
+                { d => d.ChipModels, [.. TagFilters.Select(tf => new ChipModel<TagFilterDTO>() { Value = tf, Selected = true })] }
             };
             IDialogReference dialogRef = await DialogService.ShowAsync<TagFilterSelectorDialog>(Localizer["Dialog_Title_Export"], parameters);
             DialogResult result = (await dialogRef.Result)!;

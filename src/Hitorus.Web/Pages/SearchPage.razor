@@ -6,7 +6,7 @@
 <div style="height: 100%;" class="d-flex pa-8 gap-4">
     <div id="search-page-left-container" style="flex: 3;" class="d-flex flex-column gap-2">
         <div style=@($"height: 60%; {GetWalkthroughHighlightStyle(0)}")>
-            <MudPaper id="tag-filter-editor-control-panel"
+            <MudPaper id="tag-filter-editor-control-panel" Outlined
                       Class="pa-8 gap-2"
                       Style="height: 100%; display: grid; grid-template-rows: repeat(3, min-content)">
                 <TagFilterEditor @ref="@_tagFilterEditor"
@@ -64,7 +64,7 @@
                               Class="mt-4" />
             }
         </div>
-        <MudPaper Class="d-flex gap-4 pa-4 overflow-y-auto" Style=@($"height: 40%; {GetWalkthroughHighlightStyle(1)}")>
+        <MudPaper Class="d-flex gap-4 pa-4 overflow-y-auto" Style=@($"height: 40%; {GetWalkthroughHighlightStyle(1)}") Outlined>
             <PairedTagFilterSelector @ref="_includePairedTagFilterSelector"
                                      ChipModels="@_includeTagFilterChipModels"
                                      SelectedChipModelsChanged="@(collection => OnSelectedTagFilterCollectionChanged(collection, true))"
@@ -109,7 +109,7 @@
                               Class="ml-n4" />
             }
         </div>
-        <MudPaper class="d-flex flex-column pa-4 gap-2" style=@($"flex: 1; {GetWalkthroughHighlightStyle(3)}")>
+        <MudPaper class="d-flex flex-column pa-4 gap-2" style=@($"flex: 1; {GetWalkthroughHighlightStyle(3)}") Outlined>
             <MudStack Row Spacing="2" StretchItems="StretchItems.Start" Class="my-2" Style="word-break: keep-all">
                 <MudButton Style="font-size: medium"
                            FullWidth

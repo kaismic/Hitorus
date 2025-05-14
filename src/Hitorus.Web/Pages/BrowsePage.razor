@@ -14,19 +14,19 @@
                        TitleSearchKeywordChanged="@OnTitleSearchKeywordChanged" />
     </div>
     @if (_isEditing) {
-        <div class="d-flex justify-end align-center gap-4">
-            <MudButton Color="Color.Primary"
-                       Variant="Variant.Text"
-                       StartIcon="@Icons.Material.Filled.Cancel"
-                       OnClick=@ExitEditMode>
-                @SharedLocalizer["Cancel"]
-            </MudButton>
+        <div class="d-flex justify-start align-center gap-4 my-4">
             <MudButton Color="Color.Error"
                        Variant="Variant.Filled"
                        StartIcon="@Icons.Material.Filled.Delete"
                        OnClick="@DeleteGalleries"
                        Disabled="@(!BrowseConfigurationService.Selections.Any(s => s))">
                 @Localizer["DeleteSelection"]
+            </MudButton>
+            <MudButton Color="Color.Primary"
+                       Variant="Variant.Text"
+                       StartIcon="@Icons.Material.Filled.Cancel"
+                       OnClick=@ExitEditMode>
+                @SharedLocalizer["Cancel"]
             </MudButton>
         </div>
     } else {
@@ -91,8 +91,7 @@
                     <MudItem sm="12" md="6" lg="4" xl="3" xxl="2" Style="overflow-x: clip;">
                         <GalleryBrowseItem Gallery="@BrowseConfigurationService.Galleries[localIndex]"
                                            @bind-IsSelected="@BrowseConfigurationService.Selections[localIndex]"
-                                           IsEditing="@_isEditing"
-                                           DeleteRequested="@(() => DeleteGallery(localIndex))" />
+                                           IsEditing="@_isEditing" />
                     </MudItem>
                 }
             </MudGrid>

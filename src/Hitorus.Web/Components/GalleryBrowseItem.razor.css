@@ -8,6 +8,7 @@
 
 .editing:hover {
     cursor: pointer;
+    border: 1px solid var(--mud-palette-primary)
 }
 
 .gallery-browse-item.selected {
@@ -48,4 +49,8 @@ td:last-child {
 .image-overlay:hover {
     opacity: 1;
     backdrop-filter: blur(2px);
+}
+
+span {
+    user-select: all;
 }

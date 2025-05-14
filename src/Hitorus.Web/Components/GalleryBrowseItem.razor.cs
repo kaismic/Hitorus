@@ -20,7 +20,6 @@ namespace Hitorus.Web.Components {
         [Parameter, EditorRequired] public bool IsEditing { get; set; }
         [Parameter, EditorRequired] public bool IsSelected { get; set; }
         [Parameter] public EventCallback<bool> IsSelectedChanged { get; set; }
-        [Parameter, EditorRequired] public EventCallback<int> DeleteRequested { get; set; }
 
         private string _imageContainerId = "";
         private const int THUMBNAIL_IMAGE_HEIGHT = 120; // px
@@ -29,7 +28,6 @@ namespace Hitorus.Web.Components {
         private int _maxImageCount = 1;
         private string _baseImageUrl = "";
         private readonly List<KeyValuePair<TagCategory, List<TagDTO>>> _tagCollections = [];
-        private MudMenu _contextMenu = default!;
 
         protected override void OnInitialized() {
             _imageContainerId = "thumbnail-image-container-" + Gallery.Id;
@@ -61,10 +59,6 @@ namespace Hitorus.Web.Components {
                 IsSelected = !IsSelected;
                 IsSelectedChanged.InvokeAsync(IsSelected);
             }
-        }
-
-        private async Task OpenContextMenu(MouseEventArgs args) {
-            await _contextMenu.OpenMenuAsync(args);
         }
 
         private void OnResize(object? sender, BrowserWindowSize size) {

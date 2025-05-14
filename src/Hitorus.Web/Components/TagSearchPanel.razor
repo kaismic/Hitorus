@@ -1,4 +1,4 @@
-﻿<div style="display: grid; grid-template-rows: auto 1fr;">
+﻿<div class="d-flex flex-column" style="height: 100%;">
     <MudAutocomplete T="TagDTO"
                      Label=@SharedLocalizer[Category.ToString()]
                      DebounceInterval="500"
@@ -10,10 +10,10 @@
                      OpenOnFocus="false"
                      Value="@SearchValue"
                      ValueChanged="@OnSearchValueChanged"
-                     Style="width: 90%; margin: auto; grid-row: 1;">
+                     Style="width: 90%; margin: auto;">
     </MudAutocomplete>
     <MudChipSet T="@(ChipModel<TagDTO>)"
-                Style="overflow-y: auto; grid-row: 2;"
+                Style="overflow-y: auto; flex: 1;"
                 SelectionMode="@SelectionMode.MultiSelection"
                 SelectedColor="@Color.Primary"
                 @bind-SelectedValues="@_selectedChipModels"

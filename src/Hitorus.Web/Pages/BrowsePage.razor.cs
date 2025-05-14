@@ -59,9 +59,6 @@ namespace Hitorus.Web.Pages {
         private async Task OnAutoRefreshChanged(bool value) {
             BrowseConfigurationService.Config.AutoRefresh = value;
             await BrowseConfigurationService.UpdateAutoRefreshAsync(value);
-            if (BrowseConfigurationService.Config.AutoRefresh) {
-                await LoadGalleries();
-            }
         }
 
         private bool _isInitialized = false;

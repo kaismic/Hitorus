@@ -18,7 +18,7 @@ a {
     border: 3px solid rgb(0, 0, 0, 0.00)
 }
     a:hover {
-        border: 3px solid var(--mud-palette-secondary);
+        border: 3px solid var(--mud-palette-primary);
         background-color: var(--mud-palette-action-default-hover);
     }
 

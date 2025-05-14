@@ -23,6 +23,7 @@ namespace Hitorus.Web.Services {
             }
             Config = (await httpClient.GetFromJsonAsync<BrowseConfigurationDTO>(""))!;
             GalleryCache = new(GALLERY_CACHE_SIZE_FACTOR * Config.ItemsPerPage);
+            ActiveSorts = [.. Config.Sorts.Where(s => s.IsActive)];
             _isLoaded = true;
         }
 

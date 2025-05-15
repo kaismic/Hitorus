@@ -8,6 +8,7 @@ using MudBlazor;
 namespace Hitorus.Web.Layout {
     public partial class MainLayout : LayoutComponentBase, IAsyncDisposable {
         [Inject] LanguageTypeService LanguageTypeService { get; set; } = default!;
+        [Inject] AppConfigurationService AppConfigurationService { get; set; } = default!;
         [Inject] IConfiguration HostConfiguration { get; set; } = default!;
         [Inject] IStringLocalizer<SharedResource> SharedLocalizer { get; set; } = default!;
 
@@ -55,6 +56,7 @@ namespace Hitorus.Web.Layout {
                     if (!LanguageTypeService.IsLoaded) {
                         await LanguageTypeService.Load();
                     }
+                    await AppConfigurationService.Load();
                     _statusMessage = "Initialization complete";
                     StateHasChanged();
                     _isInitialized = true;

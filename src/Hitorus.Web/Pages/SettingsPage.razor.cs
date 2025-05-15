@@ -2,6 +2,7 @@
 using Hitorus.Web.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Localization;
+using MudBlazor.Utilities;
 
 namespace Hitorus.Web.Pages {
     public partial class SettingsPage {
@@ -14,9 +15,12 @@ namespace Hitorus.Web.Pages {
 
         private static readonly string[] SUPPORTED_LANGUAGES = ["en", "ko"];
 
+        private MudColor _appThemeColor = default!;
+
         protected override async Task OnInitializedAsync() {
             await AppConfigurationService.Load();
             await ViewConfigurationService.Load();
+            _appThemeColor = new('#' + AppConfigurationService.Config.AppThemeColor);
         }
 
         private async Task OnAppLanguageChanged(string value) {
@@ -76,6 +80,19 @@ namespace Hitorus.Web.Pages {
         private async Task OnInvertKeyboardNavigationChanged(bool value) {
             ViewConfigurationService.Config.InvertKeyboardNavigation = value;
             await ViewConfigurationService.UpdateInvertKeyboardNavigationAsync(value);
+        }
+
+        /// <summary>
+        /// The parameter <paramref name="value"/> is in the format of "#RRGGBBAA", e.g. "#22AA66FF".
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        private async Task OnAppThemeColorChanged(string value) {
+            // MudColor.Value uses rgba format whereas TonePalette uses argb format so we need to convert it appropriately.
+            AppConfigurationService.Config.AppThemeColor = value[1..^2];
+            AppConfigurationService.SetAppThemeColors();
+            LayoutStateHasChanged();
+            await AppConfigurationService.UpdateAppThemeColor(AppConfigurationService.Config.AppThemeColor);
         }
     }
 }

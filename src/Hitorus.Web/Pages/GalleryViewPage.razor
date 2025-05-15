@@ -3,7 +3,7 @@
 
 <PageTitle>@((_gallery == null ? "" : _gallery.Title + " - ") + GalleryId.ToString())</PageTitle>
 
-<MudThemeProvider @ref="@_mudThemeProvider" @bind-IsDarkMode="@_isDarkMode" Theme="UiConstants.APP_THEME" />
+<MudThemeProvider @ref="@_mudThemeProvider" @bind-IsDarkMode="@_isDarkMode" Theme="AppConfigurationService.AppTheme" />
 <MudPopoverProvider />
 
 @if (_gallery != null) {

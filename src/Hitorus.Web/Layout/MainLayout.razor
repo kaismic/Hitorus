@@ -2,7 +2,7 @@
 @using Microsoft.AspNetCore.SignalR.Client
 @inherits LayoutComponentBase
 
-<MudThemeProvider @ref="@_mudThemeProvider" @bind-IsDarkMode="@_isDarkMode" Theme="UiConstants.APP_THEME" />
+<MudThemeProvider @ref="@_mudThemeProvider" @bind-IsDarkMode="@_isDarkMode" Theme="AppConfigurationService.AppTheme" />
 <MudPopoverProvider />
 <MudSnackbarProvider />
 <MudDialogProvider MaxWidth="MaxWidth.Small" FullWidth="true" />

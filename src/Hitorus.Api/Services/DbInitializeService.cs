@@ -159,6 +159,7 @@ namespace Hitorus.Api.Services {
                 IsFirstLaunch = true,
                 AppLanguage = "",
                 LastUpdateCheckTime = DateTimeOffset.UtcNow,
+                AppThemeColor = "#00ffcc"
             });
 
             Console.WriteLine("  Complete");

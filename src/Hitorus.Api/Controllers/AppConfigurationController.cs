@@ -52,5 +52,18 @@ namespace Hitorus.Api.Controllers {
             context.SaveChanges();
             return Ok();
         }
+
+        [HttpPatch("app-theme-color")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult UpdateAppThemeColor(int configId, [FromBody] string color) {
+            AppConfiguration? config = context.AppConfigurations.Find(configId);
+            if (config == null) {
+                return NotFound();
+            }
+            config.AppThemeColor = color;
+            context.SaveChanges();
+            return Ok();
+        }
     }
 }

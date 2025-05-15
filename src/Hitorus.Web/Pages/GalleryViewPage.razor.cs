@@ -17,6 +17,7 @@ namespace Hitorus.Web.Pages {
         [Inject] IStringLocalizer<GalleryViewPage> Localizer { get; set; } = default!;
         [Inject] IStringLocalizer<SharedResource> SharedLocalizer { get; set; } = default!;
         [Inject] GalleryService GalleryService { get; set; } = default!;
+        [Inject] AppConfigurationService AppConfigurationService { get; set; } = default!;
         [Inject] ViewConfigurationService ViewConfigurationService { get; set; } = default!;
         [Parameter] public int GalleryId { get; set; }
 

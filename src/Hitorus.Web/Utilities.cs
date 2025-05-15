@@ -10,7 +10,15 @@ namespace Hitorus.Web {
             try {
                 CultureInfo.DefaultThreadCurrentCulture = CultureInfo.GetCultureInfo(value);
                 CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.GetCultureInfo(value);
-            } catch (CultureNotFoundException) {}
+            } catch (CultureNotFoundException) { }
+        }
+
+        public static uint ArgbToRgba(uint value) {
+            return (value - 0xFF000000) * 0x100 + 0xFF;
+        }
+
+        public static uint RgbToArgb(string value) {
+            return 0xFF000000 + Convert.ToUInt32(value, 16);
         }
     }
 }

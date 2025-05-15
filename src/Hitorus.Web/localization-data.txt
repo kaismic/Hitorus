@@ -25,6 +25,7 @@ Group|Group|그룹
 Character|Character|캐릭터
 Series|Series|시리즈
 Cancel|Cancel|취소
+Confirm|Confirm|확인
 Open|Open|열기
 Close|Close|닫기
 Save|Save|저장
@@ -123,6 +124,7 @@ Snackbar_SingleGalleryDeleteFailure|Failed to delete "{0}".|"{0}"을(를) 삭제
 ---
 Pages\SettingsPage
 GlobalSettings|Global Settings|전체 설정
+AppThemeColor|App Theme Color|앱 테마 색상
 DefaultGalleryViewPageSettings|Default Gallery View Page Settings|기본 갤러리 보기 설정
 LoopDesc|Go back to the first page when you have reach the end of the page.|마지막 페이지에 도달하면 첫번째 페이지로 돌아갑니다.
 InvertClickNav|Invert Click Navigation|클릭 내비게이션 반전
@@ -149,9 +151,6 @@ MaxImagesPerPage|Maximum Images per Page|페이지 당 최대 이미지 개수
 Components\TagFilterEditor
 CreateTooltip|Create new|새로 만들기
 RenameTooltip|Rename|이름 바꾸기
----
-Components\Dialogs\SimpleDialogActions
-Confirm|Confirm|확인
 ---
 Components\Dialogs\GallerySortEditDialog
 NoSorts|No Sorts|정렬 없음

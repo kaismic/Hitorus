@@ -16,6 +16,18 @@
             }
         </MudSelect>
     </SettingsCard>
+    <SettingsCard Icon="@Icons.Material.Filled.Palette"
+                  Header=@Localizer["AppThemeColor"]>
+        <MudColorPicker @bind-Value=@_appThemeColor ShowAlpha="false" ShowColorField="false" ShowInputs="false" ShowPreview="false">
+            <PickerActions>
+                <MudButton Color="Color.Primary"
+                           Variant="Variant.Filled"
+                           OnClick="@(() => OnAppThemeColorChanged(_appThemeColor.Value))">
+                    @SharedLocalizer["Confirm"]
+                </MudButton>
+            </PickerActions>
+        </MudColorPicker>
+    </SettingsCard>
     <MudText Typo="Typo.h4">@Localizer["DefaultGalleryViewPageSettings"]</MudText>
     <SettingsCard Icon="@(ViewConfigurationService.Config.ViewMode == ViewMode.Default ? Icons.Material.Rounded.Rectangle : Icons.Material.Filled.TableRows)"
                   Header=@SharedLocalizer["ViewMode"]>

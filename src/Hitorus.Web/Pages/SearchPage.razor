@@ -18,16 +18,14 @@
                                  OnDeleteButtonClicked="@DeleteTagFilters"
                                  SelectPlaceholder=@Localizer["SelectPlaceholder"] />
                 <div class="d-flex gap-2">
-                    <MudButton Color="Color.Primary"
-                                EndIcon="@Icons.Material.Filled.Refresh"
-                                OnClick="LoadTags"
-                                Disabled="@(_tagFilterEditor?.CurrentTagFilter == null)">
+                    <MudButton StartIcon="@Icons.Material.Filled.Refresh"
+                               OnClick="LoadTags"
+                               Disabled="@(_tagFilterEditor?.CurrentTagFilter == null)">
                         @Localizer["Reload"]
                     </MudButton>
-                    <MudButton Color="Color.Primary"
-                                EndIcon="@Icons.Material.Filled.Clear"
-                                OnClick="ClearAllTags"
-                                Disabled="@(_tagFilterEditor?.CurrentTagFilter == null)">
+                    <MudButton Color="Color.Error"
+                               OnClick="ClearAllTags"
+                               Disabled="@(_tagFilterEditor?.CurrentTagFilter == null)">
                         @Localizer["ClearAll"]
                     </MudButton>
                     <MudSwitch T="bool"
@@ -39,14 +37,12 @@
                     <MudFileUpload T="IBrowserFile" Accept=".json" OnFilesChanged="@ImportTagFilters">
                         <ActivatorContent>
                             <MudButton Variant="Variant.Outlined"
-                                       Color="Color.Primary"
                                        StartIcon="@Icons.Material.Filled.FileDownload">
                                 @Localizer["Import"]
                             </MudButton>
                         </ActivatorContent>
                     </MudFileUpload>
                     <MudButton Variant="Variant.Outlined"
-                               Color="Color.Primary"
                                StartIcon="@Icons.Material.Filled.FileUpload"
                                OnClick="@ExportTagFilters">
                         @Localizer["Export"]
@@ -119,7 +115,7 @@
                            StartIcon="@Icons.Material.Filled.Search">
                     @Localizer["Button_Text_CreateSearchLink"]
                 </MudButton>
-                <MudButton Color="Color.Primary"
+                <MudButton Color="Color.Error"
                            OnClick="@SearchFilters.Clear"
                            Disabled="@(SearchFilters.Count == 0)">
                     @Localizer["ClearAll"]

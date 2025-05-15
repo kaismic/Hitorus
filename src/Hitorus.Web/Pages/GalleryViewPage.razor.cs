@@ -11,13 +11,13 @@ using System.Text;
 
 namespace Hitorus.Web.Pages {
     public partial class GalleryViewPage : IDisposable {
-        [Inject] private IJSRuntime JSRuntime { get; set; } = default!;
-        [Inject] private IResizeListener ResizeListener { get; set; } = default!;
-        [Inject] private IConfiguration HostConfiguration { get; set; } = default!;
+        [Inject] IJSRuntime JSRuntime { get; set; } = default!;
+        [Inject] IResizeListener ResizeListener { get; set; } = default!;
+        [Inject] IConfiguration HostConfiguration { get; set; } = default!;
         [Inject] IStringLocalizer<GalleryViewPage> Localizer { get; set; } = default!;
         [Inject] IStringLocalizer<SharedResource> SharedLocalizer { get; set; } = default!;
-        [Inject] private GalleryService GalleryService { get; set; } = default!;
-        [Inject] private ViewConfigurationService ViewConfigurationService { get; set; } = default!;
+        [Inject] GalleryService GalleryService { get; set; } = default!;
+        [Inject] ViewConfigurationService ViewConfigurationService { get; set; } = default!;
         [Parameter] public int GalleryId { get; set; }
 
         private const string DEFAULT_TOOLBAR_HEIGHT = "80px";
@@ -25,7 +25,6 @@ namespace Hitorus.Web.Pages {
         private const string JAVASCRIPT_FILE = $"./Pages/{nameof(GalleryViewPage)}.razor.js";
         private IJSObjectReference? _jsModule;
         private MudThemeProvider _mudThemeProvider = null!;
-        private readonly MudTheme _theme = new();
         private bool _isDarkMode;
 
         private ViewGalleryDTO? _gallery;

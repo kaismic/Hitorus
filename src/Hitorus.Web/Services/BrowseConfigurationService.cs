@@ -1,5 +1,7 @@
 ﻿using BitFaster.Caching.Lru;
+using Hitorus.Data;
 using Hitorus.Data.DTOs;
+using MudBlazor;
 using System.Net.Http.Json;
 
 namespace Hitorus.Web.Services {
@@ -15,7 +17,6 @@ namespace Hitorus.Web.Services {
         public int TotalPages { get; set; } = 1;
         public List<BrowseGalleryDTO> Galleries { get; set; } = [];
         public bool[] Selections { get; set; } = [];
-        public List<GallerySortDTO> ActiveSorts { get; set; } = [];
 
         public async Task Load() {
             if (_isLoaded) {
@@ -23,7 +24,6 @@ namespace Hitorus.Web.Services {
             }
             Config = (await httpClient.GetFromJsonAsync<BrowseConfigurationDTO>(""))!;
             GalleryCache = new(GALLERY_CACHE_SIZE_FACTOR * Config.ItemsPerPage);
-            ActiveSorts = [.. Config.Sorts.Where(s => s.IsActive)];
             _isLoaded = true;
         }
 
@@ -68,8 +68,13 @@ namespace Hitorus.Web.Services {
             return response.IsSuccessStatusCode;
         }
 
-        public async Task<bool> UpdateGallerySorts(IEnumerable<GallerySortDTO> value) {
-            var response = await httpClient.PatchAsync($"gallery-sorts?configId={Config.Id}", JsonContent.Create(value));
+        public async Task<bool> UpdateSelectedSortPropertyAsync(GalleryProperty value) {
+            var response = await httpClient.PatchAsync($"sort-property?configId={Config.Id}", JsonContent.Create(value));
+            return response.IsSuccessStatusCode;
+        }
+
+        public async Task<bool> UpdateSelectedSortDirectionAsync(SortDirection value) {
+            var response = await httpClient.PatchAsync($"sort-direction?configId={Config.Id}", JsonContent.Create(value));
             return response.IsSuccessStatusCode;
         }
     }

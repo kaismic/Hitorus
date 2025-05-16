@@ -1,4 +1,5 @@
 using Hitorus.Api.Utilities;
+using Hitorus.Data;
 using Hitorus.Data.DbContexts;
 using Hitorus.Data.DTOs;
 using Hitorus.Data.Entities;
@@ -48,26 +49,6 @@ namespace Hitorus.Api.Controllers {
             return Ok(gallery.ToViewDTO());
         }
 
-        private static IOrderedEnumerable<Gallery> SortGallery(IEnumerable<Gallery> galleries, GallerySort sort) =>
-            sort.SortDirection == SortDirection.Ascending ?
-                galleries.OrderBy(GetSortKey(sort)) :
-                galleries.OrderByDescending(GetSortKey(sort));
-
-        private static IOrderedEnumerable<Gallery> ThenSortGallery(IOrderedEnumerable<Gallery> galleries, GallerySort sort) =>
-            sort.SortDirection == SortDirection.Ascending ?
-                galleries.ThenBy(GetSortKey(sort)) :
-                galleries.ThenByDescending(GetSortKey(sort));
-
-        private static Func<Gallery, object> GetSortKey(GallerySort sort) {
-            return sort.Property switch {
-                GalleryProperty.Id => g => g.Id,
-                GalleryProperty.Title => g => g.Title,
-                GalleryProperty.UploadTime => g => g.Date,
-                GalleryProperty.LastDownloadTime => g => g.LastDownloadTime,
-                _ => throw new NotImplementedException(),
-            };
-        }
-
         /// <summary>
         /// <paramref name="pageIndex"/> is 0-based 
         /// </summary>
@@ -86,15 +67,14 @@ namespace Hitorus.Api.Controllers {
                 return NotFound($"Browse configuration with ID {configId} not found.");
             }
             IEnumerable<int> selectedTagIds = config.Tags.Select(t => t.Id);
-            context.Entry(config).Collection(c => c.Sorts).Load();
             IEnumerable<Gallery> galleries =
                 context.Galleries.AsNoTracking()
                 .Include(g => g.Tags);
-            if (config.SelectedLanguageId != 1) { // not IsAll
-                galleries = galleries.Where(g => g.Language.Id == config.SelectedLanguageId);
+            if (config.SelectedLanguage != null) {
+                galleries = galleries.Where(g => g.Language.Id == config.SelectedLanguage.Id);
             }
-            if (config.SelectedTypeId != 1) { // not IsAll
-                galleries = galleries.Where(g => g.Type.Id == config.SelectedTypeId);
+            if (config.SelectedType != null) {
+                galleries = galleries.Where(g => g.Type.Id == config.SelectedType.Id);
             }
             if (!string.IsNullOrEmpty(config.TitleSearchKeyword)) {
                 galleries = galleries.Where(g => g.Title.Contains(config.TitleSearchKeyword, StringComparison.InvariantCultureIgnoreCase));
@@ -102,14 +82,18 @@ namespace Hitorus.Api.Controllers {
             foreach (int tagId in selectedTagIds) {
                 galleries = galleries.Where(g => g.Tags.Any(t => t.Id == tagId));
             }
-            GallerySort[] activeSorts = [.. config.Sorts.Where(s => s.IsActive).OrderBy(s => s.RankIndex)];
-            if (activeSorts.Length > 0) {
-                IOrderedEnumerable<Gallery> orderedGalleries = SortGallery(galleries, activeSorts[0]);
-                for (int i = 1; i < activeSorts.Length; i++) {
-                    orderedGalleries = ThenSortGallery(orderedGalleries, activeSorts[i]);
-                }
-                galleries = orderedGalleries;
-            }
+
+            Func<Gallery, object> sortKeyFunc = config.SelectedSortProperty switch {
+                GalleryProperty.Id => g => g.Id,
+                GalleryProperty.Title => g => g.Title,
+                GalleryProperty.UploadTime => g => g.Date,
+                GalleryProperty.LastDownloadTime => g => g.LastDownloadTime,
+                _ => throw new NotImplementedException(),
+            };
+            galleries = config.SelectedSortDirection == SortDirection.Ascending ?
+                galleries.OrderBy(sortKeyFunc) :
+                galleries.OrderByDescending(sortKeyFunc);
+
             int filteredCount = galleries.Count();
             BrowseQueryResult result = new() {
                 TotalGalleryCount = filteredCount,

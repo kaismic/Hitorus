@@ -8,3 +8,10 @@
     height: auto !important;
     white-space: normal !important;
 }
+
+/*
+    Fix height of MudButton in MudFileUpload to the correct height
+*/
+.mud-input-control.mud-file-upload :is(div, button) {
+    height: 100%;
+}

@@ -9,8 +9,8 @@ namespace Hitorus.Data.Builders
         private const string BASE_URL = "https://hitomi.la/";
         private const string SEARCH_PATH = "search.html?";
 
-        public required GalleryLanguageDTO Language { get; init; }
-        public required GalleryTypeDTO Type { get; init; }
+        public required GalleryLanguageDTO? Language { get; init; }
+        public required GalleryTypeDTO? Type { get; init; }
         public required string TitleSearchKeyword { get; init; }
         public required IEnumerable<TagDTO> IncludeTags { get; init; }
         public required IEnumerable<TagDTO> ExcludeTags { get; init; }
@@ -34,13 +34,12 @@ namespace Hitorus.Data.Builders
             }
 
             List<string> searchParams = [];
-            if (!Language.IsAll) {
+            if (Language != null) {
                 searchParams.Add("language:" + Language.EnglishName);
             }
-            if (!Type.IsAll) {
+            if (Type != null) {
                 searchParams.Add("type:" + Type.Value);
             }
-            // TODO check if there are conflicting (duplicate) tags and notify user if there are any
             foreach (LabeledTagCollectionDTO ltc in labeledTagCollections) {
                 if (ltc.IncludeTagValues.Any()) {
                     searchParams.Add(string.Join(' ', ltc.IncludeTagValues.Select(v => ltc.Category.ToString().ToLower() + ':' + v.Replace(' ', '_'))));

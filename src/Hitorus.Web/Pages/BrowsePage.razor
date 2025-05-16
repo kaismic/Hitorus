@@ -14,7 +14,13 @@
                        TitleSearchKeywordChanged="@OnTitleSearchKeywordChanged" />
     </div>
     @if (_isEditing) {
-        <div class="d-flex justify-start align-center gap-4 my-4">
+        <div class="d-flex justify-end align-center gap-4 my-4">
+            <MudButton Color="Color.Primary"
+                       Variant="Variant.Text"
+                       StartIcon="@Icons.Material.Filled.Cancel"
+                       OnClick=@ExitEditMode>
+                @SharedLocalizer["Cancel"]
+            </MudButton>
             <MudButton Color="Color.Error"
                        Variant="Variant.Filled"
                        StartIcon="@Icons.Material.Filled.Delete"
@@ -22,47 +28,56 @@
                        Disabled="@(!BrowseConfigurationService.Selections.Any(s => s))">
                 @Localizer["DeleteSelection"]
             </MudButton>
-            <MudButton Color="Color.Primary"
-                       Variant="Variant.Text"
-                       StartIcon="@Icons.Material.Filled.Cancel"
-                       OnClick=@ExitEditMode>
-                @SharedLocalizer["Cancel"]
-            </MudButton>
         </div>
     } else {
-        <div class="d-flex justify-space-between align-center" style="position: relative;">
+        <div class="d-flex align-center">
             <div class="d-flex align-center gap-4">
-                <MudNumericField T="int"
+                <MudNumericField T="int" Margin="Margin.Dense"
                                  Label=@Localizer["ItemsPerPage"]
                                  Variant="Variant.Outlined"
                                  Min="1" Max="24"
                                  Style="max-width: 160px"
                                  Value="@BrowseConfigurationService.Config.ItemsPerPage"
                                  ValueChanged="@OnItemsPerPageChanged" />
+                <div class="d-flex align-center">
+                    <div id="sort-property-select">
+                        <MudSelect T="GalleryProperty" FitContent
+                                   Margin="Margin.Dense"
+                                   Label=@Localizer["SortBy"]
+                                   Variant="Variant.Outlined"
+                                   ToStringFunc="@(p => SharedLocalizer[p.ToString()])"
+                                   Value="@BrowseConfigurationService.Config.SelectedSortProperty"
+                                   ValueChanged="@OnSelectedSortPropertyChanged"
+                                   Style="">
+                            <MudSelectItem Value="GalleryProperty.Id" />
+                            <MudSelectItem Value="GalleryProperty.Title" />
+                            <MudSelectItem Value="GalleryProperty.UploadTime" />
+                            <MudSelectItem Value="GalleryProperty.LastDownloadTime" />
+                        </MudSelect>
+                    </div>
+                    <div id="sort-direction-select">
+                        <MudSelect T="SortDirection" FitContent
+                                   Margin="Margin.Dense"
+                                   Label=@Localizer["SortDirection"]
+                                   Variant="Variant.Outlined"
+                                   ToStringFunc="@(sd => Localizer[sd.ToString()])"
+                                   Value="@BrowseConfigurationService.Config.SelectedSortDirection"
+                                   ValueChanged="@OnSelectedSortDirectionChanged">
+                            <MudSelectItem Value="SortDirection.Ascending" />
+                            <MudSelectItem Value="SortDirection.Descending" />
+                        </MudSelect>
+                    </div>
+                </div>
+            </div>
+            <MudSpacer />
+            <div id="right-control-panel" class="d-flex align-center gap-4">
                 <MudButton Color="Color.Default"
                            Variant="Variant.Outlined"
                            StartIcon="@Icons.Material.Filled.Edit"
                            OnClick="@(() => _isEditing = true)">
                     @Localizer["Edit"]
                 </MudButton>
-                <MudButton Variant="Variant.Outlined"
-                           Color="@(BrowseConfigurationService.ActiveSorts.Count == 0 ? Color.Default : Color.Primary)"
-                           StartIcon="@Icons.Material.Filled.Sort"
-                           OnClick="@ShowSortEditDialog">
-                    @(
-                        BrowseConfigurationService.ActiveSorts.Count == 0 ? Localizer["Sort"] :
-                        BrowseConfigurationService.ActiveSorts.Count == 1 ? Localizer["SingleSort"] :
-                        string.Format(Localizer["MultiSort"], BrowseConfigurationService.ActiveSorts.Count)
-                    )
-                </MudButton>
-            </div>
-            <MudPagination ShowFirstButton ShowLastButton
-                           MiddleCount="8"
-                           Count="@BrowseConfigurationService.TotalPages"
-                           Selected="@BrowseConfigurationService.PageNum"
-                           SelectedChanged="@OnPageNumChanged"
-                           Style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);" />
-            <div class="d-flex align-center gap-4">
+                <MudDivider Vertical id="edit-button-next-divider"/>
                 <MudSwitch T="bool"
                            Label=@Localizer["AutoRefresh"]
                            Color="Color.Primary"
@@ -76,6 +91,12 @@
                 </MudButton>
             </div>
         </div>
+        <MudPagination ShowFirstButton ShowLastButton
+                       MiddleCount="8"
+                       Count="@BrowseConfigurationService.TotalPages"
+                       Selected="@BrowseConfigurationService.PageNum"
+                       SelectedChanged="@OnPageNumChanged"
+                       Style="margin: auto;" />
     }
     @if (_isLoading) {
         <div class="d-flex justify-center mt-16">

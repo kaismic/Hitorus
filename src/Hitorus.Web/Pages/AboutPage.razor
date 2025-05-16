@@ -1,9 +1,8 @@
 ﻿@page "/about"
 
-<div class="d-flex flex-column gap-4 pa-8">
+<div class="d-flex flex-column gap-4 pa-8" style="width: min-content;">
     <MudText Typo="Typo.h4">@SharedLocalizer["AppInfo"]</MudText>
-    
-    <table style="width: min-content;">
+    <table>
         <tbody>
             <tr>
                 <th>@Localizer["Version"]</th>
@@ -29,8 +28,7 @@
     <MudButton Href="https://github.com/kaismic/Hitorus/releases"
                Target="_blank"
                Variant="Variant.Outlined"
-               Color="Color.Primary"
-               Style="max-width: 240px">
+               Color="Color.Primary">
         @Localizer["CheckForUpdates"]
     </MudButton>
 </div>

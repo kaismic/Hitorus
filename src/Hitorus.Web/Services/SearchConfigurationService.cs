@@ -5,16 +5,7 @@ namespace Hitorus.Web.Services {
     public class SearchConfigurationService(HttpClient httpClient) {
         private bool _isLoaded = false;
         public bool IsInitTagFilterNull { get; private set; } = false;
-        public SearchConfigurationDTO Config { get; private set; } = new() {
-            SearchFilters = [],
-            TitleSearchKeyword = "",
-            SelectedExcludeTagFilterIds = [],
-            SelectedIncludeTagFilterIds = [],
-            SelectedTagFilterId = 0,
-            SelectedLanguage = new() { EnglishName = "", Id = 0, IsAll = true, LocalName = "" },
-            SelectedType = new() { Id = 0, IsAll = true, Value = "" },
-            TagFilters = []
-        };
+        public SearchConfigurationDTO Config { get; private set; } = new();
 
         public async Task Load() {
             if (_isLoaded) {

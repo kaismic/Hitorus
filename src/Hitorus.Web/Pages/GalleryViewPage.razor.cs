@@ -21,7 +21,7 @@ namespace Hitorus.Web.Pages {
         [Inject] ViewConfigurationService ViewConfigurationService { get; set; } = default!;
         [Parameter] public int GalleryId { get; set; }
 
-        private const string DEFAULT_TOOLBAR_HEIGHT = "80px";
+        private const string DEFAULT_TOOLBAR_HEIGHT = "60px";
 
         private const string JAVASCRIPT_FILE = $"./Pages/{nameof(GalleryViewPage)}.razor.js";
         private IJSObjectReference? _jsModule;
@@ -44,7 +44,7 @@ namespace Hitorus.Web.Pages {
         private BrowserWindowSize _browserWindowSize = new();
         private bool _isAutoScrolling = false;
         private CancellationTokenSource? _autoPageTurnCts;
-        private FitMode _fitMode = FitMode.Auto;
+        private FitMode _fitMode = FitMode.Automatic;
         private int _imagesPerPage = 2;
         private DotNetObjectReference<GalleryViewPage>? _dotNetObjectRef;
         private bool _preventDefaultKeyDown = false;

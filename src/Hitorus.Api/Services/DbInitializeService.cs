@@ -4,6 +4,7 @@ using Hitorus.Data;
 using Hitorus.Data.DbContexts;
 using Hitorus.Data.Entities;
 using Microsoft.AspNetCore.SignalR;
+using MudBlazor;
 
 namespace Hitorus.Api.Services {
     public class DbInitializeService(IHubContext<DbInitializeHub, IDbStatusClient> hubContext) : BackgroundService {
@@ -92,23 +93,13 @@ namespace Hitorus.Api.Services {
             hubContext.Clients.All.ReceiveStatus(DbInitStatus.InProgress, "Adding gallery language and types...");
             Console.Write("{0,-" + _totalLeftAlignment + "}", "Adding gallery language and types...");
             string[][] languages = [.. File.ReadAllLines(LANGUAGES_FILE_PATH).Select(pair => pair.Split(delimiter))];
-            context.GalleryLanguages.Add(new GalleryLanguage() {
-                Id = 1, // manually set Id to 1 to make sure
-                IsAll = true,
-                EnglishName = "",
-                LocalName = ""
-            });
-            context.GalleryLanguages.AddRange(languages.Select((pair, i) => new GalleryLanguage() {
-                Id = i + 2, IsAll = false, EnglishName = pair[0], LocalName = pair[1]
+            context.GalleryLanguages.AddRange(languages.Select(pair => new GalleryLanguage() {
+                EnglishName = pair[0],
+                LocalName = pair[1]
             }));
             // add gallery types
             string[] types = [.. File.ReadAllLines(TYPES_FILE_PATH)];
-            context.GalleryTypes.Add(new GalleryType() {
-                Id = 1, // manually set Id to 1 to make sure
-                IsAll = true,
-                Value = ""
-            });
-            context.GalleryTypes.AddRange(types.Select((t, i) => new GalleryType() { Id = i + 2, IsAll = false, Value = t }));
+            context.GalleryTypes.AddRange(types.Select(value => new GalleryType() { Value = value }));
             Console.WriteLine("  Complete");
             Console.Write("{0,-" + _totalLeftAlignment + "}", "Saving changes...");
             context.SaveChanges();
@@ -119,27 +110,13 @@ namespace Hitorus.Api.Services {
             hubContext.Clients.All.ReceiveStatus(DbInitStatus.InProgress, "Adding configurations... ");
             context.SearchConfigurations.Add(new() {
                 ExampleTagFiltersCreated = false,
-                AutoSaveEnabled = true,
-                SelectedLanguage = context.GalleryLanguages.First(gl => gl.IsAll),
-                SelectedType = context.GalleryTypes.First(gt => gt.IsAll)
+                AutoSaveEnabled = true
             });
 
-            List<GallerySort> sorts = [..Enum.GetValues<GalleryProperty>().Select(s => new GallerySort() {
-                Property = s,
-                SortDirection = MudBlazor.SortDirection.Ascending,
-                IsActive = false
-            })];
-            // default GallerySort as LastDownloadTime Descending
-            GallerySort lastDownloadTimeSort = sorts.First(s => s.Property == GalleryProperty.LastDownloadTime);
-            lastDownloadTimeSort.IsActive = true;
-            lastDownloadTimeSort.SortDirection = MudBlazor.SortDirection.Descending;
-            lastDownloadTimeSort.RankIndex = 0;
-
             context.BrowseConfigurations.Add(new() {
-                SelectedLanguage = context.GalleryLanguages.First(gl => gl.IsAll),
-                SelectedType = context.GalleryTypes.First(gt => gt.IsAll),
                 ItemsPerPage = 8,
-                Sorts = sorts
+                SelectedSortProperty = GalleryProperty.LastDownloadTime,
+                SelectedSortDirection = SortDirection.Descending
             });
 
             context.DownloadConfigurations.Add(new() { ThreadNum = 1 });
@@ -159,7 +136,7 @@ namespace Hitorus.Api.Services {
                 IsFirstLaunch = true,
                 AppLanguage = "",
                 LastUpdateCheckTime = DateTimeOffset.UtcNow,
-                AppThemeColor = "#00ffcc"
+                AppThemeColor = "00ffcc"
             });
 
             Console.WriteLine("  Complete");

@@ -5,5 +5,6 @@
 th {
     font-weight: bold;
     white-space: nowrap;
-    padding: 4px 16px;
+    padding: 4px 16px 4px 0px;
+    text-align: left;
 }

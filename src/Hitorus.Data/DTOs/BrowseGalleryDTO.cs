@@ -1,6 +1,4 @@
-﻿using Hitorus.Data.Entities;
-
-namespace Hitorus.Data.DTOs
+﻿namespace Hitorus.Data.DTOs
 {
     public class BrowseGalleryDTO {
         public int Id { get; set; }

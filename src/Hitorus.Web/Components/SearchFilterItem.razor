@@ -3,11 +3,11 @@
         <tbody>
             <tr>
                 <th>@SharedLocalizer["Language"]</th>
-                <td>@(Model.Language.IsAll ? SharedLocalizer["All"] : Model.Language.LocalName)</td>
+                <td>@(Model.Language == null ? SharedLocalizer["All"] : Model.Language.LocalName)</td>
             </tr>
             <tr>
                 <th>@SharedLocalizer["Type"]</th>
-                <td>@(Model.Type.IsAll ? SharedLocalizer["All"] : SharedLocalizer[Model.Type.Value])</td>
+                <td>@(Model.Type == null ? SharedLocalizer["All"] : SharedLocalizer[Model.Type.Value])</td>
             </tr>
             @foreach (LabeledTagCollectionDTO collection in Model.LabeledTagCollections)
             {

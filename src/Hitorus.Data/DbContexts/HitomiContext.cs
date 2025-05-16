@@ -11,7 +11,6 @@ namespace Hitorus.Data.DbContexts {
         public DbSet<Tag> Tags { get; set; }
         public DbSet<GalleryLanguage> GalleryLanguages { get; set; }
         public DbSet<GalleryType> GalleryTypes { get; set; }
-        public DbSet<GallerySort> GallerySorts { get; set; }
         public DbSet<SearchConfiguration> SearchConfigurations { get; set; }
         public DbSet<BrowseConfiguration> BrowseConfigurations { get; set; }
         public DbSet<DownloadConfiguration> DownloadConfigurations { get; set; }

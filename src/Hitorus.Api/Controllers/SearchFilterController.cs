@@ -16,17 +16,23 @@ namespace Hitorus.Api.Controllers {
             if (config == null) {
                 return NotFound();
             }
-            GalleryLanguage? l = context.GalleryLanguages.Find(dto.Language.Id);
-            if (l == null) {
-                return NotFound("Language id is not valid.");
+            GalleryLanguage? language = null;
+            if (dto.Language != null) {
+                language = context.GalleryLanguages.Find(dto.Language.Id);
+                if (language == null) {
+                    return NotFound("Language id is not valid.");
+                }
             }
-            GalleryType? t = context.GalleryTypes.Find(dto.Type.Id);
-            if (t == null) {
-                return NotFound("Type id is not valid.");
+            GalleryType? type = null;
+            if (dto.Type != null) {
+                type = context.GalleryTypes.Find(dto.Type.Id);
+                if (type == null) {
+                    return NotFound("Type id is not valid.");
+                }
             }
             SearchFilter sf = dto.ToEntity();
-            sf.Language = l;
-            sf.Type = t;
+            sf.Language = language;
+            sf.Type = type;
             config.SearchFilters.Add(sf);
             context.SaveChanges();
             return Ok(sf.Id);

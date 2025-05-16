@@ -18,7 +18,7 @@ namespace Hitorus.Web {
         }
 
         public static uint RgbToArgb(string value) {
-            return 0xFF000000 + Convert.ToUInt32(value, 16);
+            return 0xFF000000 + uint.Parse(value, NumberStyles.HexNumber);
         }
     }
 }

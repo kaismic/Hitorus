@@ -1,13 +1,14 @@
-﻿using Hitorus.Data.DbContexts;
+﻿using Hitorus.Data;
+using Hitorus.Data.DbContexts;
 using Hitorus.Data.DTOs;
 using Hitorus.Data.Entities;
 using Microsoft.AspNetCore.Mvc;
+using MudBlazor;
 
 namespace Hitorus.Api.Controllers {
     [ApiController]
     [Route("api/browse-config")]
     public class BrowseConfigurationController(HitomiContext context) : ControllerBase {
-
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public ActionResult<BrowseConfigurationDTO> GetConfiguration() {
@@ -15,7 +16,6 @@ namespace Hitorus.Api.Controllers {
             context.Entry(config).Reference(c => c.SelectedLanguage).Load();
             context.Entry(config).Reference(c => c.SelectedType).Load();
             context.Entry(config).Collection(c => c.Tags).Load();
-            context.Entry(config).Collection(c => c.Sorts).Load();
             return Ok(config.ToDTO());
         }
 
@@ -126,21 +126,28 @@ namespace Hitorus.Api.Controllers {
             return Ok();
         }
 
-        [HttpPatch("gallery-sorts")]
+        [HttpPatch("sort-property")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult UpdateGallerySorts(int configId, [FromBody] IEnumerable<GallerySortDTO> sorts) {
+        public ActionResult UpdateSelectedSortProperty(int configId, [FromBody] GalleryProperty value) {
             BrowseConfiguration? config = context.BrowseConfigurations.Find(configId);
             if (config == null) {
                 return NotFound();
             }
-            context.Entry(config).Collection(c => c.Sorts).Load();
-            foreach (GallerySortDTO dto in sorts) {
-                GallerySort sort = config.Sorts.First(s => s.Property == dto.Property);
-                sort.IsActive = dto.IsActive;
-                sort.RankIndex = dto.RankIndex;
-                sort.SortDirection = dto.SortDirection;
+            config.SelectedSortProperty = value;
+            context.SaveChanges();
+            return Ok();
+        }
+
+        [HttpPatch("sort-direction")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult UpdateSelectedSortDirection(int configId, [FromBody] SortDirection value) {
+            BrowseConfiguration? config = context.BrowseConfigurations.Find(configId);
+            if (config == null) {
+                return NotFound();
             }
+            config.SelectedSortDirection = value;
             context.SaveChanges();
             return Ok();
         }

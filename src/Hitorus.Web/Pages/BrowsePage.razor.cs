@@ -1,7 +1,7 @@
-﻿using Hitorus.Data.DTOs;
+﻿using Hitorus.Data;
+using Hitorus.Data.DTOs;
 using Hitorus.Data.Entities;
 using Hitorus.Data.Events;
-using Hitorus.Web.Components.Dialogs;
 using Hitorus.Web.Models;
 using Hitorus.Web.Services;
 using Microsoft.AspNetCore.Components;
@@ -11,10 +11,9 @@ using MudBlazor;
 
 namespace Hitorus.Web.Pages {
     public partial class BrowsePage : ComponentBase {
-        [Inject] private BrowseConfigurationService BrowseConfigurationService { get; set; } = default!;
-        [Inject] private GalleryService GalleryService {get;set;} = default!;
-        [Inject] private IJSRuntime JsRuntime {get;set;} = default!;
-        [Inject] IDialogService DialogService { get; set; } = default!;
+        [Inject] BrowseConfigurationService BrowseConfigurationService { get; set; } = default!;
+        [Inject] GalleryService GalleryService {get;set;} = default!;
+        [Inject] IJSRuntime JsRuntime {get;set;} = default!;
         [Inject] ISnackbar Snackbar { get; set; } = default!;
         [Inject] IStringLocalizer<BrowsePage> Localizer { get; set; } = default!;
         [Inject] IStringLocalizer<SharedResource> SharedLocalizer { get; set; } = default!;
@@ -56,6 +55,22 @@ namespace Hitorus.Web.Pages {
             }
         }
 
+        private async Task OnSelectedSortPropertyChanged(GalleryProperty value) {
+            BrowseConfigurationService.Config.SelectedSortProperty = value;
+            await BrowseConfigurationService.UpdateSelectedSortPropertyAsync(value);
+            if (BrowseConfigurationService.Config.AutoRefresh) {
+                await LoadGalleries();
+            }
+        }
+
+        private async Task OnSelectedSortDirectionChanged(SortDirection value) {
+            BrowseConfigurationService.Config.SelectedSortDirection = value;
+            await BrowseConfigurationService.UpdateSelectedSortDirectionAsync(value);
+            if (BrowseConfigurationService.Config.AutoRefresh) {
+                await LoadGalleries();
+            }
+        }
+
         private async Task OnAutoRefreshChanged(bool value) {
             BrowseConfigurationService.Config.AutoRefresh = value;
             await BrowseConfigurationService.UpdateAutoRefreshAsync(value);
@@ -73,6 +88,7 @@ namespace Hitorus.Web.Pages {
         protected override async Task OnAfterRenderAsync(bool firstRender) {
             if (firstRender) {
                 await JsRuntime.InvokeVoidAsync("setHeightToSourceHeight", "tag-search-panel-collection", "class", "ltk-search-view", "class");
+                await JsRuntime.InvokeVoidAsync("setHeightToSourceHeight", "edit-button-next-divider", "id", "right-control-panel", "id");
                 _isRendered = true;
                 _ = OnInitRenderComplete();
             }
@@ -156,24 +172,6 @@ namespace Hitorus.Web.Pages {
             StateHasChanged();
         }
 
-        private async Task ShowSortEditDialog() {
-            IDialogReference dialogRef = await DialogService.ShowAsync<GallerySortEditDialog>(Localizer["Dialog_Title_SortGalleries"]);
-            DialogResult result = (await dialogRef.Result)!;
-            if (result.Canceled) {
-                return;
-            }
-            ICollection<GallerySortDTO> sorts = (ICollection<GallerySortDTO>)result.Data!;
-            bool success = await BrowseConfigurationService.UpdateGallerySorts(sorts);
-            if (success) {
-                BrowseConfigurationService.Config.Sorts = sorts;
-                BrowseConfigurationService.ActiveSorts = [.. sorts.Where(s => s.IsActive)];
-                Snackbar.Add(Localizer["Snackbar_SortSaveSuccess"], Severity.Success, UiConstants.DEFAULT_SNACKBAR_OPTIONS);
-                await LoadGalleries();
-            } else {
-                Snackbar.Add(Localizer["Snackbar_SortSaveFailure"], Severity.Error, UiConstants.DEFAULT_SNACKBAR_OPTIONS);
-            }
-        }
-
         private async Task DeleteGalleries() {
             List<int> ids = [];
             for (int i = 0; i < BrowseConfigurationService.Selections.Length; i++) {
@@ -192,25 +190,6 @@ namespace Hitorus.Web.Pages {
             } else {
                 Snackbar.Add(
                     string.Format(Localizer["Snackbar_MultiGalleryDeleteFailure"]),
-                    Severity.Error,
-                    UiConstants.DEFAULT_SNACKBAR_OPTIONS
-                );
-            }
-        }
-
-        private async Task DeleteGallery(int index) {
-            BrowseGalleryDTO gallery = BrowseConfigurationService.Galleries[index];
-            bool success = await GalleryService.DeleteGalleries([gallery.Id]);
-            if (success) {
-                Snackbar.Add(
-                    string.Format(Localizer["Snackbar_SingleGalleryDeleteSuccess"], gallery.Title),
-                    Severity.Success,
-                    UiConstants.DEFAULT_SNACKBAR_OPTIONS
-                );
-                await LoadGalleries();
-            } else {
-                Snackbar.Add(
-                    string.Format(Localizer["Snackbar_SingleGalleryDeleteFailure"], gallery.Title),
                     Severity.Error,
                     UiConstants.DEFAULT_SNACKBAR_OPTIONS
                 );

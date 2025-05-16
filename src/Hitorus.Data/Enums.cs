@@ -40,8 +40,12 @@
     }
 
     public enum FitMode {
-        Auto,
+        Automatic,
         Horizontal,
         Vertical
+    }
+
+    public enum GalleryProperty {
+        Id, Title, UploadTime, LastDownloadTime
     }
 }

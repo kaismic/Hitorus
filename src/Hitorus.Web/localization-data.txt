@@ -108,15 +108,13 @@ DownloadStatus_ConnectionLost|Connection lost|연결 끊김
 Pages\BrowsePage
 DeleteSelection|Delete selected items|선택 항목 지우기
 Edit|Edit|수정
-Sort|Sort|정렬
-SingleSort|1 Sort|1 정렬
-MultiSort|{0} Sorts|{0} 정렬
+SortBy|Sort by|정렬
+SortDirection|Sort Direction|정렬 방향
+Ascending|Ascending|오름차순
+Descending|Descending|내림차순
 ItemsPerPage|Items per Page|페이지 당 항목 개수
 AutoRefresh|Auto Refresh|자동 새로고침
 NoGalleriesFound|No galleries found. Try again after removing search filters.|아무런 갤러리를 찾지 못했습니다. 검색 필터를 제거한 후 다시 시도해보세요.
-Dialog_Title_SortGalleries|Sort Galleries|갤러리 정렬
-Snackbar_SortSaveSuccess|Save sucess.|저장 완료.
-Snackbar_SortSaveFailure|Save failed.|저장 실패.
 Snackbar_MultiGalleryDeleteSuccess|Deleted {0} galleries.|{0}개의 갤러리를 삭제했습니다.
 Snackbar_MultiGalleryDeleteFailure|Failed to delete galleries.|갤러리 삭제를 실패했습니다.
 Snackbar_SingleGalleryDeleteSuccess|Deleted "{0}".|"{0}"을(를) 삭제했습니다.
@@ -151,17 +149,6 @@ MaxImagesPerPage|Maximum Images per Page|페이지 당 최대 이미지 개수
 Components\TagFilterEditor
 CreateTooltip|Create new|새로 만들기
 RenameTooltip|Rename|이름 바꾸기
----
-Components\Dialogs\GallerySortEditDialog
-NoSorts|No Sorts|정렬 없음
-AddSort|Add Sort|정렬 추가
-Priority|Priority|우선순위
-High|High|높음
-Low|Low|낮음
----
-Components\GallerySortItemView
-Ascending|Ascending|오름차순
-Descending|Descending|내림차순
 ---
 Components\GalleryBrowseItem
 OpenGallery|Open Gallery|갤러리 열기

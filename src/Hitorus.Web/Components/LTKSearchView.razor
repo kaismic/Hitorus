@@ -2,22 +2,24 @@
     <MudPaper Class="ltk-search-view d-flex flex-column pa-4 gap-2" Outlined>
         <MudSelect Label=@SharedLocalizer["Language"]
                    T="GalleryLanguageDTO"
-                   ToStringFunc="@(l => l.IsAll ? SharedLocalizer["All"] : l.LocalName)"
+                   ToStringFunc="@(l => l == null ? SharedLocalizer["All"] : l.LocalName)"
                    FullWidth
                    Variant="Variant.Outlined"
                    Value="@SelectedLanguage"
                    ValueChanged="@SelectedLanguageChanged">
+            <MudSelectItem T="GalleryLanguageDTO" Value="null" />
             @foreach (GalleryLanguageDTO l in LanguageTypeService.Languages) {
                 <MudSelectItem Value="@l" />
             }
         </MudSelect>
         <MudSelect Label=@SharedLocalizer["Type"]
                    T="GalleryTypeDTO"
-                   ToStringFunc="@(t => t.IsAll ? SharedLocalizer["All"] : SharedLocalizer[t.Value])"
+                   ToStringFunc="@(t => t == null ? SharedLocalizer["All"] : SharedLocalizer[t.Value])"
                    FullWidth
                    Variant="Variant.Outlined"
                    Value="SelectedType"
                    ValueChanged="@SelectedTypeChanged">
+            <MudSelectItem T="GalleryTypeDTO" Value="null" />
             @foreach (GalleryTypeDTO t in LanguageTypeService.Types) {
                 <MudSelectItem Value="@t" />
             }

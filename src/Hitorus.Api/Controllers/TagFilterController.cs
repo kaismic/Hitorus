@@ -162,12 +162,12 @@ namespace Hitorus.Api.Controllers {
             if (config == null) {
                 return NotFound();
             }
-            string randomString = Guid.NewGuid().ToString("N")[..8];
+            string randomString = '-' + Guid.NewGuid().ToString("N")[..8];
             List<TagFilter> newTagFilters = new(buildDtos.Count);
             HashSet<string> tfNames = [.. context.TagFilters.Where(tf => tf.SearchConfigurationId == configId).Select(tf => tf.Name)];
             foreach (TagFilterBuildDTO buildDto in buildDtos) {
                 TagFilter newTagFilter = new() {
-                    Name = buildDto.Name + '-' +(tfNames.Contains(buildDto.Name) ? randomString : null),
+                    Name = buildDto.Name + (tfNames.Contains(buildDto.Name) ? randomString : null),
                     Tags = []
                 };
                 foreach (TagDTO tagDto in buildDto.Tags) {

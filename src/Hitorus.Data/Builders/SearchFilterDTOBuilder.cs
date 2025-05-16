@@ -1,6 +1,5 @@
 ﻿using Hitorus.Data.DTOs;
 using Hitorus.Data.Entities;
-using System.Web;
 
 namespace Hitorus.Data.Builders
 {
@@ -63,7 +62,7 @@ namespace Hitorus.Data.Builders
                 Language = Language,
                 Type = Type,
                 TitleSearchKeyword = TitleSearchKeyword,
-                SearchLink = HttpUtility.UrlPathEncode(searchLink)
+                SearchLink = searchLink
             };
         }
     }

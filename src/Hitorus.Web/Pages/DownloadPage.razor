@@ -36,6 +36,23 @@
                              Min="1" Max="16"
                              Value="@DownloadConfigurationService.Config.ThreadNum"
                              ValueChanged="@OnThreadNumChanged" />
+            <MudSpacer/>
+            <MudButton Disabled="@(DownloadManager.Downloads.Count == 0)"
+                       StartIcon="@Icons.Material.Filled.PlayArrow"
+                       OnClick="@DownloadManager.StartAllDownloads">
+                @Localizer["StartAllDownloads"]
+            </MudButton>
+            <MudButton Disabled="@(DownloadManager.Downloads.Count == 0)"
+                       StartIcon="@Icons.Material.Filled.Pause"
+                       OnClick="@DownloadManager.PauseAllDownloads">
+                @Localizer["PauseAllDownloads"]
+            </MudButton>
+            <MudButton Disabled="@(DownloadManager.Downloads.Count == 0)"
+                       StartIcon="@Icons.Material.Filled.Delete"
+                       OnClick="@DownloadManager.DeleteAllDownloads"
+                       Color="Color.Error">
+                @Localizer["DeleteAllDownloads"]
+            </MudButton>
         </div>
         <MudPaper Class="d-flex flex-column gap-4 overflow-y-auto overflow-x-hidden pa-4"
                   Style="flex: 1" Outlined>

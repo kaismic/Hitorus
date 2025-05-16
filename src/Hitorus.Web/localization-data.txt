@@ -30,6 +30,8 @@ Open|Open|열기
 Close|Close|닫기
 Save|Save|저장
 Delete|Delete|삭제
+Start|Start|시작
+Pause|Pause|일시정지
 Id|Id|아이디
 Title|Title|제목
 UploadTime|Upload Time|업로드 시간
@@ -97,12 +99,15 @@ ServerUnavilable|Unable to connect to server|서버에 연결할 수 없습니�
 ConcurrentDownload|Concurrent Download|동시 다운로드
 ThreadsPerDownload|Threads per Download|다운로드 당 스레드
 InvalidInput|No valid IDs or URLs found in the input text.|입력된 텍스트에서 유효한 아이디 또는 URL을 찾지 못했습니다.
+StartAllDownloads|Start all downloads|전체 다운로드 시작
+PauseAllDownloads|Pause all downloads|전체 다운로드 일시정지
+DeleteAllDownloads|Delete all downloads|전체 다운로드 삭제
 ---
 Services\DownloadClientManagerService
 DownloadStatus_Starting|Starting download...|다운로드를 시작하는 중...
 DownloadStatus_Downloading|Downloading...|다운로드 중...
 DownloadStatus_Completed|Download complete|다운로드 완료
-DownloadStatus_Paused|Download paused|다운로드 일시 정지됨
+DownloadStatus_Paused|Download paused|다운로드 일시정지됨
 DownloadStatus_ConnectionLost|Connection lost|연결 끊김
 ---
 Pages\BrowsePage

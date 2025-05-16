@@ -157,6 +157,36 @@ namespace Hitorus.Web.Services {
             }
         }
 
+        public async Task StartAllDownloads() {
+            List<int> ids = new(Downloads.Count);
+            foreach (DownloadModel d in Downloads.Values) {
+                if (d.Status is DownloadStatus.Paused or DownloadStatus.Failed) {
+                    ids.Add(d.GalleryId);
+                }
+            }
+            await _downloadService.StartDownloaders(ids);
+        }
+
+        public async Task PauseAllDownloads() {
+            List<int> ids = new(Downloads.Count);
+            foreach (DownloadModel d in Downloads.Values) {
+                if (d.Status is DownloadStatus.Downloading) {
+                    ids.Add(d.GalleryId);
+                }
+            }
+            await _downloadService.PauseDownloaders(ids);
+        }
+
+        public async Task DeleteAllDownloads() {
+            List<int> ids = new(Downloads.Count);
+            foreach (DownloadModel d in Downloads.Values) {
+                if (d.Status is not DownloadStatus.Completed or DownloadStatus.Deleted) {
+                    ids.Add(d.GalleryId);
+                }
+            }
+            await _downloadService.DeleteDownloaders(ids);
+        }
+
         [JSInvokable]
         public void OnDeleteAnimationFinished(int galleryId) {
             Downloads.Remove(galleryId);

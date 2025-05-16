@@ -16,11 +16,15 @@
         </div>
     </div>
     <div style="width: 120px;" class="d-flex gap-4 align-center">
-        <MudIconButton Icon=@ControlButtonIcon
-                       Disabled=@(Model.Status is DownloadStatus.Completed or DownloadStatus.Deleted || !DownloadManager.IsHubConnectionOpen || Model.WaitingResponse)
-                       OnClick=@OnActionButtonClick />
-        <MudIconButton Icon=@Icons.Material.Filled.Delete
-                       Disabled=@(Model.Status is DownloadStatus.Completed or DownloadStatus.Deleted || !DownloadManager.IsHubConnectionOpen || Model.WaitingResponse)
-                       OnClick="@OnDeleteButtonClick" />
+        <MudTooltip Text="@(Model.Status == DownloadStatus.Downloading ? SharedLocalizer["Pause"] : SharedLocalizer["Start"])">
+            <MudIconButton Icon=@ControlButtonIcon
+                           Disabled=@(Model.Status is DownloadStatus.Completed or DownloadStatus.Deleted || !DownloadManager.IsHubConnectionOpen || Model.WaitingResponse)
+                           OnClick=@OnActionButtonClick />
+        </MudTooltip>
+        <MudTooltip Text="@(SharedLocalizer["Delete"])">
+            <MudIconButton Icon=@Icons.Material.Filled.Delete
+                           Disabled=@(Model.Status is DownloadStatus.Completed or DownloadStatus.Deleted || !DownloadManager.IsHubConnectionOpen || Model.WaitingResponse)
+                           OnClick="@OnDeleteButtonClick" />
+        </MudTooltip>
     </div>
 </MudPaper>

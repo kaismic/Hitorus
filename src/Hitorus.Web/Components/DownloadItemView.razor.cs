@@ -2,13 +2,15 @@
 using Hitorus.Web.Models;
 using Hitorus.Web.Services;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Localization;
 using MudBlazor;
 
 namespace Hitorus.Web.Components {
     public partial class DownloadItemView : ComponentBase, IDisposable {
-        [Inject] private DownloadService DownloadService { get; set; } = null!;
-        [Inject] private DownloadClientManagerService DownloadManager { get; set; } = default!;
-        [Parameter, EditorRequired] public DownloadModel Model { get; set; } = null!;
+        [Inject] IStringLocalizer<SharedResource> SharedLocalizer { get; set; } = default!;
+        [Inject] DownloadService DownloadService { get; set; } = default!;
+        [Inject] DownloadClientManagerService DownloadManager { get; set; } = default!;
+        [Parameter, EditorRequired] public DownloadModel Model { get; set; } = default!;
 
         private string ControlButtonIcon => Model.Status switch {
             DownloadStatus.Downloading => Icons.Material.Filled.Pause,

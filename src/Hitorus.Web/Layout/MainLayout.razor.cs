@@ -28,7 +28,7 @@ namespace Hitorus.Web.Layout {
             try {
                 _statusMessage = "Connecting to local server...";
                 _hubConnection = new HubConnectionBuilder()
-                    .WithUrl(HostConfiguration["ApiUrl"] + HostConfiguration["DbInitializeHubPath"])
+                    .WithUrl(HostConfiguration["ApiUrl"] + HostConfiguration["DbStatusHubPath"])
                     .Build();
                 _hubConnection.On<DbInitStatus, string>("ReceiveStatus", UpdateStatus);
                 await _hubConnection.StartAsync();

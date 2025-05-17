@@ -1,12 +1,12 @@
 # Hitorus
 
-<div align="center">
+<h1 align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="content/banner-dark.png">
     <source media="(prefers-color-scheme: light)" srcset="content/banner-light.png">
     <img alt="Hitorus" src="content/banner-light.png">
   </picture>
-</div>
+</h1>
 
 [![GitHub latest release](https://img.shields.io/github/release/kaismic/Hitorus.svg?logo=github)](https://github.com/kaismic/Hitorus/releases/latest)
 [![GitHub downloads count total](https://img.shields.io/github/downloads/kaismic/Hitorus/total.svg?logo=github)](https://github.com/kaismic/Hitorus/releases)

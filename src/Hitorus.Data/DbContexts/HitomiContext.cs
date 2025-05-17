@@ -3,9 +3,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Hitorus.Data.DbContexts {
     public class HitomiContext : DbContext {
-        public static readonly string MAIN_DATABASE_PATH = "main.db";
         public HitomiContext() {}
-
+        public HitomiContext(DbContextOptions<HitomiContext> options) : base(options) { }
         public DbSet<Gallery> Galleries { get; set; }
         public DbSet<GalleryImage> GalleryImages { get; set; }
         public DbSet<Tag> Tags { get; set; }
@@ -19,11 +18,5 @@ namespace Hitorus.Data.DbContexts {
         public DbSet<SearchFilter> SearchFilters { get; set; }
         public DbSet<LabeledTagCollection> LabeledTagCollections { get; set; }
         public DbSet<AppConfiguration> AppConfigurations { get; set; }
-        
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
-            optionsBuilder
-                .UseSqlite($"Data Source={MAIN_DATABASE_PATH}")
-                .EnableSensitiveDataLogging();
-        }
     }
 }

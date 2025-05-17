@@ -3,7 +3,7 @@ using Hitorus.Data;
 using Microsoft.AspNetCore.SignalR;
 
 namespace Hitorus.Api.Hubs {
-    public class DbInitializeHub : Hub<IDbStatusClient> {
+    public class DbStatusHub : Hub<IDbStatusClient> {
         public override async Task OnConnectedAsync() {
             await base.OnConnectedAsync();
             if (DbInitializeService.IsInitialized) {

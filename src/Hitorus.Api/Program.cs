@@ -3,6 +3,7 @@ using Hitorus.Api.Hubs;
 using Hitorus.Api.Services;
 using Hitorus.Data;
 using Hitorus.Data.DbContexts;
+using Microsoft.EntityFrameworkCore;
 
 namespace Hitorus.Api {
     public class Program {
@@ -10,7 +11,9 @@ namespace Hitorus.Api {
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddControllers();
-            builder.Services.AddDbContext<HitomiContext>();
+            builder.Services.AddDbContextFactory<HitomiContext>(options => {
+                options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
+            });
             //builder.Services.AddDbContext<ApplicationDbContext>();
             builder.Services.AddSignalR();
             string webAppUrl = builder.Configuration["WebAppUrl"]!;
@@ -28,9 +31,13 @@ namespace Hitorus.Api {
             //    .AddEntityFrameworkStores<ApplicationDbContext>();
 
             builder.Services.AddHttpClient();
-            builder.Services.AddHostedService<DbInitializeService>();
-            builder.Services.AddSingleton<DownloadManagerService>();
-            builder.Services.AddHostedService(sp => sp.GetRequiredService<DownloadManagerService>());
+            builder.Services.AddScoped<TagUtilityService>();
+            if (builder.Environment.IsDevelopment()) {
+                builder.Services.AddHostedService<DbInitializeService>();
+            } else {
+                DbInitializeService.IsInitialized = true;
+            }
+            builder.Services.AddHostedService<DownloadManagerService>();
             builder.Services.AddSingleton<IEventBus<DownloadEventArgs>, DownloadEventBus>();
 
             var app = builder.Build();
@@ -57,7 +64,7 @@ namespace Hitorus.Api {
             // app.UseSession();
             // app.UseResponseCompression(
 
-            app.MapHub<DbInitializeHub>("api/db-initialize-hub");
+            app.MapHub<DbStatusHub>("api/db-status-hub");
             app.MapHub<DownloadHub>("api/download-hub");
             app.MapControllers();
 

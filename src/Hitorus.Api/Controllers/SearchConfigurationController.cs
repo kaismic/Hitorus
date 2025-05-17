@@ -1,5 +1,4 @@
 ﻿using Hitorus.Api.Localization;
-using Hitorus.Api.Utilities;
 using Hitorus.Data.DbContexts;
 using Hitorus.Data.DTOs;
 using Hitorus.Data.Entities;
@@ -121,6 +120,10 @@ namespace Hitorus.Api.Controllers {
             return Ok();
         }
 
+        private static Tag GetTag(IQueryable<Tag> tags, string value, TagCategory category) {
+            return tags.First(t => t.Value == value && t.Category == category);
+        }
+
         [HttpPost("create-examples")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -134,33 +137,32 @@ namespace Hitorus.Api.Controllers {
                 new() {
                     Name = ExampleTagFilterNames.Name1,
                     Tags = [
-                        TagUtility.GetTag(context.Tags, "full color", TagCategory.Tag)!,
-                        TagUtility.GetTag(context.Tags, "very long hair", TagCategory.Female)!,
+                        GetTag(context.Tags.AsNoTracking(), "full color", TagCategory.Tag),
+                        GetTag(context.Tags.AsNoTracking(), "very long hair", TagCategory.Female),
                     ]
                 },
                 new() {
                     Name = ExampleTagFilterNames.Name2,
                     Tags = [
-                        TagUtility.GetTag(context.Tags, "glasses", TagCategory.Female)!,
-                        TagUtility.GetTag(context.Tags, "sole male", TagCategory.Male)!,
+                        GetTag(context.Tags.AsNoTracking(), "glasses", TagCategory.Female),
+                        GetTag(context.Tags.AsNoTracking(), "sole male", TagCategory.Male),
                     ]
                 },
                 new() {
                     Name = ExampleTagFilterNames.Name3,
                     Tags = [
-                        TagUtility.GetTag(context.Tags, "naruto", TagCategory.Series)!,
-                        TagUtility.GetTag(context.Tags, "big breasts", TagCategory.Female)!,
+                        GetTag(context.Tags.AsNoTracking(), "naruto", TagCategory.Series),
+                        GetTag(context.Tags.AsNoTracking(), "big breasts", TagCategory.Female),
                     ]
                 },
                 new() {
                     Name = ExampleTagFilterNames.Name4,
                     Tags = [
-                        TagUtility.GetTag(context.Tags, "non-h imageset", TagCategory.Tag)!
+                        GetTag(context.Tags.AsNoTracking(), "non-h imageset", TagCategory.Tag)
                     ]
                 }
             ];
             searchConfig.TagFilters.AddRange(examples);
-            context.SaveChanges();
             searchConfig.ExampleTagFiltersCreated = true;
             context.SaveChanges();
             return Ok(examples.Select(tf => tf.ToDTO()));

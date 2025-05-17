@@ -21,6 +21,7 @@ namespace Hitorus.Api.Download {
         private readonly IConfiguration _appConfiguration;
         private readonly ILogger<Downloader> _logger;
         private readonly IHubContext<DownloadHub, IDownloadClient> _hubContext;
+        private readonly IDbContextFactory<HitomiContext> _dbContextFactory;
         private readonly HttpClient _httpClient;
         private CancellationTokenSource? _cts;
         private Gallery? _gallery;
@@ -33,6 +34,7 @@ namespace Hitorus.Api.Download {
             _appConfiguration = _serviceScope.ServiceProvider.GetRequiredService<IConfiguration>();
             _logger = _serviceScope.ServiceProvider.GetRequiredService<ILogger<Downloader>>();
             _hubContext = _serviceScope.ServiceProvider.GetRequiredService<IHubContext<DownloadHub, IDownloadClient>>();
+            _dbContextFactory = _serviceScope.ServiceProvider.GetRequiredService<IDbContextFactory<HitomiContext>>();
             _httpClient = _serviceScope.ServiceProvider.GetRequiredService<IHttpClientFactory>().CreateClient();
             _httpClient.DefaultRequestHeaders.Referrer = new Uri("https://" + _appConfiguration["HitomiClientDomain"]!);
         }
@@ -73,8 +75,7 @@ namespace Hitorus.Api.Download {
             _cts?.Dispose();
             _cts = new();
             _failureCount = 0;
-
-            using (HitomiContext dbContext = new()) {
+            using (HitomiContext dbContext = _dbContextFactory.CreateDbContext()) {
                 _gallery ??= dbContext.Galleries.Find(GalleryId);
             }
             if (_gallery == null) {
@@ -91,7 +92,7 @@ namespace Hitorus.Api.Download {
                         DownloadManagerService.OnDownloaderIdChange(GalleryId, ogi.Id);
                         GalleryFileUtility.RenameDirectory(GalleryId, ogi.Id);
                         GalleryId = ogi.Id;
-                        using HitomiContext dbContext = new();
+                        using HitomiContext dbContext = _dbContextFactory.CreateDbContext();
                         _gallery = dbContext.Galleries.Find(GalleryId);
                     }
                     _gallery ??= await CreateGallery(ogi);
@@ -109,9 +110,8 @@ namespace Hitorus.Api.Download {
                 }
             }
             if (_gallery.Images == null) {
-                using (HitomiContext dbContext = new()) {
-                    dbContext.Entry(_gallery).Collection(g => g.Images).Load();
-                }
+                using HitomiContext dbContext = _dbContextFactory.CreateDbContext();
+                dbContext.Entry(_gallery).Collection(g => g.Images).Load();
                 if (_gallery.Images == null) {
                     throw new InvalidOperationException("_gallery.GalleryImages is null after loading images");
                 }
@@ -162,7 +162,7 @@ namespace Hitorus.Api.Download {
         /// <param name="originalDictArr"></param>
         /// <param name="category"></param>
         /// <returns></returns>
-        private static async Task<IEnumerable<Tag>> GetNonMTFTags(Dictionary<string, string>[]? originalDictArr, TagCategory category) {
+        private async Task<IEnumerable<Tag>> GetNonMTFTags(Dictionary<string, string>[]? originalDictArr, TagCategory category) {
             if (originalDictArr == null) {
                 return [];
             }
@@ -172,7 +172,7 @@ namespace Hitorus.Api.Download {
             });
             List<Tag> existingTags = [];
             List<TagDTO> newTags = [];
-            using (HitomiContext dbContext = new()) {
+            using (HitomiContext dbContext = _dbContextFactory.CreateDbContext()) {
                 foreach (TagDTO dto in tagDtos) {
                     Tag? tag = dbContext.Tags.AsNoTracking().FirstOrDefault(tag => tag.Category == dto.Category && tag.Value == dto.Value);
                     if (tag == null) {
@@ -183,8 +183,11 @@ namespace Hitorus.Api.Download {
                 }
             }
             if (newTags.Count > 0) {
-                await TagUtility.FetchUpdateNonMFTTags(category, newTags);
-                using HitomiContext dbContext = new();
+                using (var scope = _serviceScope.ServiceProvider.CreateScope()) {
+                    TagUtilityService util = scope.ServiceProvider.GetRequiredService<TagUtilityService>();
+                    await util.FetchUpdateNonMFTTags(category, newTags);
+                }
+                using HitomiContext dbContext = _dbContextFactory.CreateDbContext();
                 foreach (TagDTO dto in newTags) {
                     Tag? tag = dbContext.Tags.AsNoTracking().FirstOrDefault(tag => tag.Category == dto.Category && tag.Value == dto.Value);
                     if (tag != null) {
@@ -201,10 +204,10 @@ namespace Hitorus.Api.Download {
         /// <param name="originalDictArr"></param>
         /// <param name="category"></param>
         /// <returns></returns>
-        private static async Task<IEnumerable<Tag>> GetMTFTags(OriginalGalleryInfoDTO.CompositeTag[] compositeTags) {
+        private async Task<IEnumerable<Tag>> GetMTFTags(OriginalGalleryInfoDTO.CompositeTag[] compositeTags) {
             List<Tag> existingTags = [];
             List<TagDTO> newTags = [];
-            using (HitomiContext dbContext = new()) {
+            using (HitomiContext dbContext = _dbContextFactory.CreateDbContext()) {
                 foreach (OriginalGalleryInfoDTO.CompositeTag compositeTag in compositeTags) {
                     TagCategory category = compositeTag.Male == 1 ? TagCategory.Male : compositeTag.Female == 1 ? TagCategory.Female : TagCategory.Tag;
                     Tag? tag = dbContext.Tags.AsNoTracking().FirstOrDefault(tag => tag.Category == category && tag.Value == compositeTag.Tag);
@@ -216,8 +219,11 @@ namespace Hitorus.Api.Download {
                 }
             }
             if (newTags.Count > 0) {
-                await TagUtility.FetchUpdateMFTTags(newTags);
-                using HitomiContext dbContext = new();
+                using (var scope = _serviceScope.ServiceProvider.CreateScope()) {
+                    TagUtilityService util = scope.ServiceProvider.GetRequiredService<TagUtilityService>();
+                    await util.FetchUpdateMFTTags(newTags);
+                }
+                using HitomiContext dbContext = _dbContextFactory.CreateDbContext();
                 foreach (TagDTO dto in newTags) {
                     Tag? tag = dbContext.Tags.AsNoTracking().FirstOrDefault(tag => tag.Category == dto.Category && tag.Value == dto.Value);
                     if (tag != null) {
@@ -240,7 +246,7 @@ namespace Hitorus.Api.Download {
             await Task.WhenAll(tagTasks);
             IEnumerable<Tag> tags = tagTasks.SelectMany(t => t.Result);
 
-            using HitomiContext dbContext = new();
+            using HitomiContext dbContext = _dbContextFactory.CreateDbContext();
             dbContext.Tags.AttachRange(tags);
             GalleryLanguage? language = dbContext.GalleryLanguages.FirstOrDefault(l => l.EnglishName == original.Language);
             if (language == null) {
@@ -293,9 +299,8 @@ namespace Hitorus.Api.Download {
                  4     10    17
                  5     11
             */
-            HitomiContext dbContext = new();
-            int threadNum = dbContext.DownloadConfigurations.First().ThreadNum;
-            dbContext.Dispose();
+            using HitomiContext dbContext = _dbContextFactory.CreateDbContext();
+            int threadNum = dbContext.DownloadConfigurations.AsNoTracking().First().ThreadNum;
             int quotient = galleryImages.Length / threadNum;
             int remainder = galleryImages.Length % threadNum;
             Task[] tasks = new Task[threadNum];

@@ -2,6 +2,7 @@ import re
 import requests
 import string
 import os
+import datetime
 
 cwd = os.getcwd()
 with open(os.path.join(cwd, "delimiter.txt"), "r") as delimiter_file:
@@ -44,5 +45,8 @@ for letterOr123 in alphabetsWith123:
         print(f"Writing to {file_names[i]}...")
         with open(os.path.join(dir_paths[i], file_names[i]), "w") as file:
             file.write('\n'.join(outputs_list[i]))
+
+with open(os.path.join(cwd, "last-mft-tags-update-time.txt"), "w") as file:
+    file.write(str(datetime.datetime.now()))
 
 print("All Done.")

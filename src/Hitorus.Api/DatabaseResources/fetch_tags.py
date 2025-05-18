@@ -2,6 +2,7 @@ import re
 import requests
 import string
 import os
+import datetime
 
 cwd = os.getcwd()
 with open(os.path.join(cwd, "delimiter.txt"), "r") as delimiter_file:
@@ -22,8 +23,8 @@ for category in categories:
     # iterate over 123 and alphabets
     for letterOr123 in alphabetsWith123:
         file_path = os.path.join(dirPath, f"{category}-{letterOr123}.txt")
-        if os.path.isfile(file_path):
-            continue
+        # if os.path.isfile(file_path):
+        #     continue
         html = requests.get(f'https://hitomi.la/all{category}-{letterOr123}.html').text
         content = re.findall(r"""<div class="content">(.+?)</div>""", html)[0]
         tagInfoTuples: list[tuple[str, str]] = re.findall(r"""<a href="[^"]+">(.+?)</a> \((\d+)\)""", content)
@@ -31,5 +32,8 @@ for category in categories:
         print(f"Writing to {file_path}...")
         with open(file_path, "w") as file:
             file.write('\n'.join(tagInfoStrs))
+
+with open(os.path.join(cwd, "last-tags-update-time.txt"), "w") as file:
+    file.write(str(datetime.datetime.now()))
 
 print("All Done.")

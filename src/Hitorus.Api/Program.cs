@@ -12,7 +12,12 @@ namespace Hitorus.Api {
 
             builder.Services.AddControllers();
             builder.Services.AddDbContextFactory<HitomiContext>(options => {
-                options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
+                options.UseSqlite(
+                    builder.Configuration.GetConnectionString("DefaultConnection"),
+                    optionsBuilder => {
+                        optionsBuilder.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
+                    }
+                );
             });
             //builder.Services.AddDbContext<ApplicationDbContext>();
             builder.Services.AddSignalR();

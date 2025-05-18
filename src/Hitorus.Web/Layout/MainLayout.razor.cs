@@ -1,6 +1,7 @@
 ﻿using Hitorus.Data;
 using Hitorus.Web.Services;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Localization;
 using MudBlazor;
@@ -10,6 +11,7 @@ namespace Hitorus.Web.Layout {
         [Inject] LanguageTypeService LanguageTypeService { get; set; } = default!;
         [Inject] AppConfigurationService AppConfigurationService { get; set; } = default!;
         [Inject] IConfiguration HostConfiguration { get; set; } = default!;
+        [Inject] IWebAssemblyHostEnvironment HostEnvironment { get; set; } = default!;
         [Inject] IStringLocalizer<SharedResource> SharedLocalizer { get; set; } = default!;
 
         private MudThemeProvider _mudThemeProvider = null!;
@@ -25,16 +27,18 @@ namespace Hitorus.Web.Layout {
         private void DrawerToggle() => _drawerOpen = !_drawerOpen;
 
         protected override async Task OnInitializedAsync() {
-            try {
-                _statusMessage = "Connecting to local server...";
-                _hubConnection = new HubConnectionBuilder()
-                    .WithUrl(HostConfiguration["ApiUrl"] + HostConfiguration["DbStatusHubPath"])
-                    .Build();
-                _hubConnection.On<DbInitStatus, string>("ReceiveStatus", UpdateStatus);
-                await _hubConnection.StartAsync();
-            } catch (HttpRequestException) {
-                _connectionError = true;
-                _statusMessage = "Connection error. Please reload after starting the local server.";
+            if (HostEnvironment.IsDevelopment()) {
+                try {
+                    _statusMessage = "Connecting to local server...";
+                    _hubConnection = new HubConnectionBuilder()
+                        .WithUrl(HostConfiguration["ApiUrl"] + HostConfiguration["DbStatusHubPath"])
+                        .Build();
+                    _hubConnection.On<DbInitStatus, string>("ReceiveStatus", UpdateStatus);
+                    await _hubConnection.StartAsync();
+                } catch (HttpRequestException) {
+                    _connectionError = true;
+                    _statusMessage = "Connection error. Please reload after starting the local server.";
+                }
             }
         }
 

@@ -119,6 +119,7 @@ public class DbInitializeService(
 
         dbContext.BrowseConfigurations.Add(new() {
             ItemsPerPage = 8,
+            AutoRefresh = true,
             SelectedSortProperty = GalleryProperty.LastDownloadTime,
             SelectedSortDirection = SortDirection.Descending
         });

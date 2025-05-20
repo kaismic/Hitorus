@@ -51,6 +51,9 @@ namespace Hitorus.Web.Services {
             GitHubClient client = new(new ProductHeaderValue(repoName));
             try {
                 IReadOnlyList<Release> releases = await client.Repository.Release.GetAll(owner, repoName, new() { PageSize = 1, PageCount = 1 });
+                if (releases.Count == 0) {
+                    return null;
+                }
                 string latestTagName = releases[0].TagName;
                 Match match = AppVersionRegex().Match(latestTagName);
                 if (match.Success) {
@@ -102,23 +105,39 @@ namespace Hitorus.Web.Services {
             };
         }
 
-        public async Task<bool> UpdateIsFirstLaunch(bool value) {
-            var response = await httpClient.PatchAsync($"is-first-launch?configId={Config.Id}", JsonContent.Create(value));
-            return response.IsSuccessStatusCode;
-        }
-
         public async Task<bool> UpdateAppLanguage(string value) {
+            Config.AppLanguage = value;
             var response = await httpClient.PatchAsync($"app-language?configId={Config.Id}", JsonContent.Create(value));
             return response.IsSuccessStatusCode;
         }
 
-        public async Task<bool> UpdateAutoUpdateCheckTime(DateTimeOffset value) {
+        public async Task<bool> UpdateAppThemeColor(string color) {
+            Config.AppThemeColor = color;
+            var response = await httpClient.PatchAsync($"app-theme-color?configId={Config.Id}", JsonContent.Create(color));
+            return response.IsSuccessStatusCode;
+        }
+
+        public async Task<bool> IncrementAppLaunchCount() {
+            Config.AppLaunchCount++;
+            var response = await httpClient.PatchAsync($"app-launch-count?configId={Config.Id}", JsonContent.Create(Config.AppLaunchCount));
+            return response.IsSuccessStatusCode;
+        }
+
+        public async Task<bool> UpdateShowSurveyPrompt(bool value) {
+            Config.ShowSurveyPrompt = value;
+            var response = await httpClient.PatchAsync($"show-survey-prompt?configId={Config.Id}", JsonContent.Create(value));
+            return response.IsSuccessStatusCode;
+        }
+
+        public async Task<bool> UpdateLastUpdateCheckTime(DateTimeOffset value) {
+            Config.LastUpdateCheckTime = value;
             var response = await httpClient.PatchAsync($"last-update-check-time?configId={Config.Id}", JsonContent.Create(value));
             return response.IsSuccessStatusCode;
         }
         
-        public async Task<bool> UpdateAppThemeColor(string color) {
-            var response = await httpClient.PatchAsync($"app-theme-color?configId={Config.Id}", JsonContent.Create(color));
+        public async Task<bool> UpdateShowSearchPageWalkthrough(bool value) {
+            Config.ShowSearchPageWalkthrough = value;
+            var response = await httpClient.PatchAsync($"show-search-page-walkthrough?configId={Config.Id}", JsonContent.Create(value));
             return response.IsSuccessStatusCode;
         }
     }

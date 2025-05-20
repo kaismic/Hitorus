@@ -2,7 +2,7 @@
 @using Microsoft.AspNetCore.SignalR.Client
 @inherits LayoutComponentBase
 
-<MudThemeProvider @ref="@_mudThemeProvider" @bind-IsDarkMode="@_isDarkMode" Theme="AppConfigurationService.AppTheme" />
+<MudThemeProvider @ref="@_mudThemeProvider" @bind-IsDarkMode="@_isDarkMode" Theme="AppConfigService.AppTheme" />
 <MudPopoverProvider />
 <MudSnackbarProvider />
 <MudDialogProvider MaxWidth="MaxWidth.Small" FullWidth="true" />
@@ -38,10 +38,11 @@
                         justify-content: center; gap: 2dvh;">
                 @if (_connectionError) {
                     <MudIcon Icon="@Icons.Material.Filled.Error" Size="Size.Large" Color="Color.Primary" Style="font-size: 4rem" />
+                    <span>@Localizer["ConnectionError"]</span>
                 } else {
                     <MudProgressCircular Indeterminate="true" Size="Size.Large" Color="Color.Primary" Style="font-size: 4rem" />
+                    <span>@Localizer["Starting"]</span>
                 }
-                <span>@_statusMessage</span>
             </div>
         </div>
     }

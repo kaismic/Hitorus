@@ -1,81 +1,92 @@
-﻿using Hitorus.Data;
+﻿using Hitorus.Data.DTOs;
+using Hitorus.Web.Components.Dialogs;
 using Hitorus.Web.Services;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Localization;
 using MudBlazor;
 
 namespace Hitorus.Web.Layout {
-    public partial class MainLayout : LayoutComponentBase, IAsyncDisposable {
-        [Inject] LanguageTypeService LanguageTypeService { get; set; } = default!;
-        [Inject] AppConfigurationService AppConfigurationService { get; set; } = default!;
+    public partial class MainLayout : LayoutComponentBase {
+        [Inject] LanguageTypeService LTService { get; set; } = default!;
+        [Inject] AppConfigurationService AppConfigService { get; set; } = default!;
+        [Inject] SearchConfigurationService SearchConfigurationService { get; set; } = default!;
+        [Inject] IDialogService DialogService { get; set; } = default!;
+        [Inject] ISnackbar Snackbar { get; set; } = default!;
         [Inject] IConfiguration HostConfiguration { get; set; } = default!;
-        [Inject] IWebAssemblyHostEnvironment HostEnvironment { get; set; } = default!;
+        [Inject] IStringLocalizer<MainLayout> Localizer { get; set; } = default!;
         [Inject] IStringLocalizer<SharedResource> SharedLocalizer { get; set; } = default!;
 
         private MudThemeProvider _mudThemeProvider = null!;
 
         private bool _isDarkMode;
         private bool _drawerOpen = true;
-
-        private HubConnection? _hubConnection;
         private bool _isInitialized = false;
+        private bool _hasRendered = false;
         private bool _connectionError = false;
-        private string _statusMessage = "";
 
         private void DrawerToggle() => _drawerOpen = !_drawerOpen;
 
         protected override async Task OnInitializedAsync() {
-            if (HostEnvironment.IsDevelopment()) {
-                try {
-                    _statusMessage = "Connecting to local server...";
-                    _hubConnection = new HubConnectionBuilder()
-                        .WithUrl(HostConfiguration["ApiUrl"] + HostConfiguration["DbStatusHubPath"])
-                        .Build();
-                    _hubConnection.On<DbInitStatus, string>("ReceiveStatus", UpdateStatus);
-                    await _hubConnection.StartAsync();
-                } catch (HttpRequestException) {
-                    _connectionError = true;
-                    _statusMessage = "Connection error. Please reload after starting the local server.";
+            try {
+                await LTService.Load();
+                await AppConfigService.Load();
+                await SearchConfigurationService.Load();
+                if (AppConfigService.Config.AppLaunchCount == 0) {
+                    IEnumerable<TagFilterDTO> examples = await SearchConfigurationService.CreateExampleTagFilters(AppConfigService.DefaultBrowserLanguage);
+                    foreach (TagFilterDTO dto in examples) {
+                        SearchConfigurationService.Config.TagFilters.Add(dto);
+                    }
+                    await AppConfigService.UpdateLastUpdateCheckTime(DateTimeOffset.UtcNow);
                 }
+                await AppConfigService.IncrementAppLaunchCount();
+                _isInitialized = true;
+            } catch (HttpRequestException) {
+                _connectionError = true;
             }
+            StateHasChanged();
+            _ = OnInitRenderComplete();
         }
 
-        protected override async Task OnAfterRenderAsync(bool firstRender) {
+        protected override void OnAfterRender(bool firstRender) {
             if (firstRender) {
+                _hasRendered = true;
+                _ = OnInitRenderComplete();
+            }
+        }
+
+        private async Task OnInitRenderComplete() {
+            if (_isInitialized && _hasRendered) {
                 _isDarkMode = await _mudThemeProvider.GetSystemPreference();
-            }
-        }
-
-        private async Task UpdateStatus(DbInitStatus status, string message) {
-            switch (status) {
-                case DbInitStatus.InProgress:
-                    _statusMessage = message;
-                    StateHasChanged();
-                    break;
-                case DbInitStatus.Complete:
-                    _statusMessage = "Fetching data from database...";
-                    StateHasChanged();
-                    if (!LanguageTypeService.IsLoaded) {
-                        await LanguageTypeService.Load();
+                if (AppConfigService.Config.LastUpdateCheckTime.AddDays(HostConfiguration.GetValue<int>("UpdateCheckInterval")) < DateTimeOffset.UtcNow) {
+                    Version? recentVersion = await AppConfigService.GetRecentVersion();
+                    if (recentVersion != null && recentVersion > AppConfigurationService.CURRENT_APP_VERSION) {
+                        Snackbar.Add(
+                            string.Format(Localizer["NewVersionAvailable"], $"{recentVersion.Major}.{recentVersion.Minor}.{recentVersion.Build}"),
+                            Severity.Success,
+                            options => {
+                                options.ShowCloseIcon = true;
+                                options.CloseAfterNavigation = false;
+                                options.ShowTransitionDuration = 0;
+                                options.HideTransitionDuration = 500;
+                                options.VisibleStateDuration = 10000;
+                            }
+                        );
                     }
-                    await AppConfigurationService.Load();
-                    _statusMessage = "Initialization complete";
-                    StateHasChanged();
-                    _isInitialized = true;
-                    if (_hubConnection is not null) {
-                        await _hubConnection.DisposeAsync();
+                }
+                int surveyPromptShowInterval = HostConfiguration.GetValue<int>("SurveyPromptShowInterval");
+                if (AppConfigService.Config.ShowSurveyPrompt &&
+                    AppConfigService.Config.AppLaunchCount >= surveyPromptShowInterval &&
+                    AppConfigService.Config.AppLaunchCount % surveyPromptShowInterval == 0) {
+                    DialogOptions dialogOptions = new() {
+                        BackdropClick = false
+                    };
+                    IDialogReference dialogRef = await DialogService.ShowAsync<SurveyPromptDialog>(null, dialogOptions);
+                    DialogResult result = (await dialogRef.Result)!;
+                    bool doNotShowAgain = (bool)result.Data!;
+                    if (doNotShowAgain) {
+                        await AppConfigService.UpdateShowSurveyPrompt(false);
                     }
-                    StateHasChanged();
-                    break;
-            }
-        }
-
-        public async ValueTask DisposeAsync() {
-            GC.SuppressFinalize(this);
-            if (_hubConnection != null) {
-                await _hubConnection.DisposeAsync();
+                }
             }
         }
     }

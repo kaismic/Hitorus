@@ -5,6 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <ServiceWorkerAssetsManifest>service-worker-assets.js</ServiceWorkerAssetsManifest>
 	<NoWarn>$(NoWarn);IDE0079</NoWarn>
+	<GenerateSatelliteAssembliesForCore>true</GenerateSatelliteAssembliesForCore>
 	<BlazorWebAssemblyLoadAllGlobalizationData>true</BlazorWebAssemblyLoadAllGlobalizationData>
 	<Version>1.0.0.0</Version>
   </PropertyGroup>

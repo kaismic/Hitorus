@@ -37,13 +37,13 @@
                     <MudFileUpload T="IBrowserFile" Accept=".json" OnFilesChanged="@ImportTagFilters">
                         <ActivatorContent>
                             <MudButton Variant="Variant.Outlined"
-                                       StartIcon="@Icons.Material.Filled.FileDownload">
+                                       StartIcon="@Icons.Material.Filled.FileUpload">
                                 @Localizer["Import"]
                             </MudButton>
                         </ActivatorContent>
                     </MudFileUpload>
                     <MudButton Variant="Variant.Outlined"
-                               StartIcon="@Icons.Material.Filled.FileUpload"
+                               StartIcon="@Icons.Material.Filled.FileDownload"
                                OnClick="@ExportTagFilters">
                         @Localizer["Export"]
                     </MudButton>

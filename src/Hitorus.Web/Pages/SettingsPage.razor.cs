@@ -24,9 +24,8 @@ namespace Hitorus.Web.Pages {
         }
 
         private async Task OnAppLanguageChanged(string value) {
-            AppConfigurationService.Config.AppLanguage = value;
-            AppConfigurationService.ChangeAppLanguage(value);
             await AppConfigurationService.UpdateAppLanguage(value);
+            AppConfigurationService.ChangeAppLanguage(value);
             // Refresh the page if the new value does not match the initial app language or
             // is not english (default) since blazor uses satellite assembly and
             // the new language's satellite assembly must not have been loaded
@@ -89,10 +88,9 @@ namespace Hitorus.Web.Pages {
         /// <returns></returns>
         private async Task OnAppThemeColorChanged(string value) {
             // MudColor.Value uses rgba format whereas TonePalette uses argb format so we need to convert it appropriately.
-            AppConfigurationService.Config.AppThemeColor = value[1..^2];
+            await AppConfigurationService.UpdateAppThemeColor(value[1..^2]);
             AppConfigurationService.SetAppThemeColors();
             LayoutStateHasChanged();
-            await AppConfigurationService.UpdateAppThemeColor(AppConfigurationService.Config.AppThemeColor);
         }
     }
 }

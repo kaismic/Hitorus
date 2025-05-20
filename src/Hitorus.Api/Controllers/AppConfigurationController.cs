@@ -13,19 +13,6 @@ namespace Hitorus.Api.Controllers {
             AppConfiguration config = context.AppConfigurations.First();
             return Ok(config.ToDTO());
         }
-
-        [HttpPatch("is-first-launch")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult UpdateIsFirstLaunch(int configId, [FromBody] bool value) {
-            AppConfiguration? config = context.AppConfigurations.Find(configId);
-            if (config == null) {
-                return NotFound();
-            }
-            config.IsFirstLaunch = value;
-            context.SaveChanges();
-            return Ok();
-        }
         
         [HttpPatch("app-language")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -39,7 +26,46 @@ namespace Hitorus.Api.Controllers {
             context.SaveChanges();
             return Ok();
         }
-        
+
+        [HttpPatch("app-theme-color")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult UpdateAppThemeColor(int configId, [FromBody] string color) {
+            AppConfiguration? config = context.AppConfigurations.Find(configId);
+            if (config == null) {
+                return NotFound();
+            }
+            config.AppThemeColor = color;
+            context.SaveChanges();
+            return Ok();
+        }
+
+        [HttpPatch("app-launch-count")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult UpdateAppLaunchCount(int configId, [FromBody] int value) {
+            AppConfiguration? config = context.AppConfigurations.Find(configId);
+            if (config == null) {
+                return NotFound();
+            }
+            config.AppLaunchCount = value;
+            context.SaveChanges();
+            return Ok();
+        }
+
+        [HttpPatch("show-survey-prompt")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult UpdateShowSurveyPrompt(int configId, [FromBody] bool value) {
+            AppConfiguration? config = context.AppConfigurations.Find(configId);
+            if (config == null) {
+                return NotFound();
+            }
+            config.ShowSurveyPrompt = value;
+            context.SaveChanges();
+            return Ok();
+        }
+
         [HttpPatch("last-update-check-time")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -53,15 +79,15 @@ namespace Hitorus.Api.Controllers {
             return Ok();
         }
 
-        [HttpPatch("app-theme-color")]
+        [HttpPatch("show-search-page-walkthrough")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult UpdateAppThemeColor(int configId, [FromBody] string color) {
+        public ActionResult UpdateShowSearchPageWalkthrough(int configId, [FromBody] bool value) {
             AppConfiguration? config = context.AppConfigurations.Find(configId);
             if (config == null) {
                 return NotFound();
             }
-            config.AppThemeColor = color;
+            config.ShowSearchPageWalkthrough = value;
             context.SaveChanges();
             return Ok();
         }

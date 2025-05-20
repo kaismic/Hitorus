@@ -3,18 +3,21 @@ using System.Net.Http.Json;
 
 namespace Hitorus.Web.Services {
     public class LanguageTypeService(HttpClient httpClient) {
-        public bool IsLoaded { get; private set; } = false;
+        private bool _isLoaded = false;
         public List<GalleryTypeDTO> Types { get; private set; } = [];
         private Dictionary<int, string> _typeValueDict = [];
         public List<GalleryLanguageDTO> Languages { get; private set; } = [];
         private Dictionary<int, string> _languageLocalNameDict = [];
 
         public async Task Load() {
+            if (_isLoaded) {
+                return;
+            }
             Types = (await httpClient.GetFromJsonAsync<List<GalleryTypeDTO>>("types"))!;
             Languages = (await httpClient.GetFromJsonAsync<List<GalleryLanguageDTO>>("languages"))!;
             _typeValueDict = Types.ToDictionary(type => type.Id, type => type.Value);
             _languageLocalNameDict = Languages.ToDictionary(lang => lang.Id, lang => lang.LocalName);
-            IsLoaded = true;
+            _isLoaded = true;
         }
 
         public string GetTypeValue(int id) {

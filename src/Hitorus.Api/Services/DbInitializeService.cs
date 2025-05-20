@@ -1,17 +1,12 @@
-﻿using Hitorus.Api.Hubs;
-using Hitorus.Api.Utilities;
+﻿using Hitorus.Api.Utilities;
 using Hitorus.Data;
 using Hitorus.Data.DbContexts;
 using Hitorus.Data.Entities;
-using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor;
 
 namespace Hitorus.Api.Services;
-public class DbInitializeService(
-    IDbContextFactory<HitomiContext> dbContextFactory,
-    IHubContext<DbStatusHub, IDbStatusClient> hubContext
-) : BackgroundService {
+public class DbInitializeService(IDbContextFactory<HitomiContext> dbContextFactory) : BackgroundService {
     private const string DB_INIT_FLAG_PATH = "db-init.flag";
     private static readonly string[] ALPHABETS_WITH_123 =
         ["123", .. Enumerable.Range('a', 26).Select(intValue => Convert.ToChar(intValue).ToString())];
@@ -39,8 +34,6 @@ public class DbInitializeService(
         { TagCategory.Series, "Series" }
     };
 
-    public static bool IsInitialized { get; set; } = false;
-
     protected override Task ExecuteAsync(CancellationToken stoppingToken) {
         bool flagExists = File.Exists(DB_INIT_FLAG_PATH);
         if (!flagExists) {
@@ -54,20 +47,17 @@ public class DbInitializeService(
         return CompleteInitialization(flagExists);
     }
 
-    private async Task CompleteInitialization(bool fileExists) {
+    private static async Task CompleteInitialization(bool fileExists) {
         if (!fileExists) {
             await File.WriteAllTextAsync(DB_INIT_FLAG_PATH, "Delete this file to re-initialize database.");
         }
-        IsInitialized = true;
-        await hubContext.Clients.All.ReceiveStatus(DbInitStatus.Complete, "");
     }
 
     private const int MAX_DESC_TEXT_LENGTH = 40;
     private static readonly ProgressBar _progressBar = new(10);
     private static readonly int _totalLeftAlignment = MAX_DESC_TEXT_LENGTH + _progressBar.TotalLength;
 
-    private void AddDefaultDataAsync(HitomiContext dbContext) {
-        hubContext.Clients.All.ReceiveStatus(DbInitStatus.InProgress, "Adding tags...");
+    private static void AddDefaultDataAsync(HitomiContext dbContext) {
         string delimiter = File.ReadAllText(DELIMITER_FILE_PATH);
         foreach (TagCategory category in Tag.TAG_CATEGORIES) {
             Console.Write("{0,-" + MAX_DESC_TEXT_LENGTH + "}", $"Adding {category} tags... ");
@@ -94,7 +84,6 @@ public class DbInitializeService(
         }
 
         // add gallery languages and its local names
-        hubContext.Clients.All.ReceiveStatus(DbInitStatus.InProgress, "Adding gallery language and types...");
         Console.Write("{0,-" + _totalLeftAlignment + "}", "Adding gallery language and types...");
         string[][] languages = [.. File.ReadAllLines(LANGUAGES_FILE_PATH).Select(pair => pair.Split(delimiter))];
         dbContext.GalleryLanguages.AddRange(languages.Select(pair => new GalleryLanguage() {
@@ -111,7 +100,6 @@ public class DbInitializeService(
 
         // add configurations
         Console.Write("{0,-" + _totalLeftAlignment + "}", "Adding configurations... ");
-        hubContext.Clients.All.ReceiveStatus(DbInitStatus.InProgress, "Adding configurations... ");
         dbContext.SearchConfigurations.Add(new() {
             ExampleTagFiltersCreated = false,
             AutoSaveEnabled = true
@@ -138,10 +126,11 @@ public class DbInitializeService(
         });
 
         dbContext.AppConfigurations.Add(new() {
-            IsFirstLaunch = true,
             AppLanguage = "",
+            AppThemeColor = "00ffcc",
+            AppLaunchCount = 0,
             LastUpdateCheckTime = DateTimeOffset.UtcNow,
-            AppThemeColor = "00ffcc"
+            ShowSearchPageWalkthrough = true
         });
 
         Console.WriteLine("  Complete");

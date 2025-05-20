@@ -39,8 +39,6 @@ namespace Hitorus.Api {
             builder.Services.AddScoped<TagUtilityService>();
             if (builder.Environment.IsDevelopment()) {
                 builder.Services.AddHostedService<DbInitializeService>();
-            } else {
-                DbInitializeService.IsInitialized = true;
             }
             builder.Services.AddHostedService<DownloadManagerService>();
             builder.Services.AddSingleton<IEventBus<DownloadEventArgs>, DownloadEventBus>();
@@ -69,7 +67,6 @@ namespace Hitorus.Api {
             // app.UseSession();
             // app.UseResponseCompression(
 
-            app.MapHub<DbStatusHub>("api/db-status-hub");
             app.MapHub<DownloadHub>("api/download-hub");
             app.MapControllers();
 

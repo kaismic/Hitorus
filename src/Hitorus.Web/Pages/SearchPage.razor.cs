@@ -24,7 +24,6 @@ namespace Hitorus.Web.Pages {
         [Inject] ISnackbar Snackbar { get; set; } = default!;
         [Inject] IDialogService DialogService { get; set; } = default!;
         [Inject] IJSRuntime JS { get; set; } = default!;
-        [Inject] IConfiguration HostConfiguration { get; set; } = default!;
         [Inject] IStringLocalizer<SearchPage> Localizer { get; set; } = default!;
         [Inject] IStringLocalizer<SharedResource> SharedLocalizer { get; set; } = default!;
 
@@ -124,24 +123,8 @@ namespace Hitorus.Web.Pages {
             await AppConfigurationService.Load();
             TagFilters = [.. SearchConfigurationService.Config.TagFilters];
             SearchFilters = [.. SearchConfigurationService.Config.SearchFilters];
-            if (AppConfigurationService.Config.IsFirstLaunch) {
+            if (AppConfigurationService.Config.ShowSearchPageWalkthrough) {
                 _showWalkthrough = true;
-            } else if (AppConfigurationService.Config.LastUpdateCheckTime.AddDays(HostConfiguration.GetValue<int>("UpdateCheckInterval")) < DateTimeOffset.UtcNow) {
-                Version? recentVersion = await AppConfigurationService.GetRecentVersion();
-                if (recentVersion != null && recentVersion > AppConfigurationService.CURRENT_APP_VERSION) {
-                    Snackbar.Add(
-                        $"A new app version is available: {recentVersion.Major}.{recentVersion.Minor}.{recentVersion.Build}",
-                        Severity.Success,
-                        options => {
-                            options.ShowCloseIcon = true;
-                            options.CloseAfterNavigation = false;
-                            options.ShowTransitionDuration = 0;
-                            options.HideTransitionDuration = 500;
-                            options.VisibleStateDuration = 10000;
-                        }
-                    );
-                }
-                await AppConfigurationService.UpdateAutoUpdateCheckTime(DateTimeOffset.UtcNow);
             }
             _isInitialized = true;
             OnInitRenderComplete();
@@ -419,9 +402,7 @@ namespace Hitorus.Web.Pages {
             _walkthroughStep++;
             if (_walkthroughStep >= WALKTHROUGH_STEPS) {
                 _showWalkthrough = false;
-                AppConfigurationService.Config.IsFirstLaunch = false;
-                await AppConfigurationService.UpdateIsFirstLaunch(false);
-                await AppConfigurationService.UpdateAutoUpdateCheckTime(DateTimeOffset.UtcNow);
+                await AppConfigurationService.UpdateShowSearchPageWalkthrough(false);
             }
         }
 

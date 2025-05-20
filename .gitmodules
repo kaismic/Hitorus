@@ -1,3 +1,6 @@
 [submodule "MudBlazor"]
 	path = src/MudBlazor
 	url = https://github.com/kaismic/MudBlazor.git
+[submodule "Hitorus-Localization"]
+	path = Hitorus-Localization
+	url = https://github.com/kaismic/Hitorus-Localization.git

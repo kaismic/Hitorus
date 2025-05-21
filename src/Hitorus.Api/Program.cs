@@ -37,9 +37,6 @@ namespace Hitorus.Api {
 
             builder.Services.AddHttpClient();
             builder.Services.AddScoped<TagUtilityService>();
-            if (builder.Environment.IsDevelopment()) {
-                builder.Services.AddHostedService<DbInitializeService>();
-            }
             builder.Services.AddHostedService<DownloadManagerService>();
             builder.Services.AddSingleton<IEventBus<DownloadEventArgs>, DownloadEventBus>();
 

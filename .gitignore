@@ -3,17 +3,12 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+src/DbInitializer/Resources/**/*.txt
+!src/DbInitializer/Resources/types.txt
 src/Hitorus.Api/Galleries
 **/Localization
-
-# Database initialize flag
-db-init.*
-
-# ignore downloaded tag text files (which are in the subfolders)
-**/DatabaseResources/*/
-
-# ignore Credentials.resw
 Credentials.resw
+Hitorus-releases
 
 *.Designer.cs
 *.db

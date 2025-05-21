@@ -24,7 +24,7 @@ namespace Hitorus.Api {
             string webAppUrl = builder.Configuration["WebAppUrl"]!;
             builder.Services.AddCors(options => {
                 options.AddPolicy("AllowLocalhostOrigins", builder =>
-                    builder.WithOrigins(webAppUrl)
+                    builder.AllowAnyOrigin()
                         .SetIsOriginAllowed(host => true)
                         .AllowAnyHeader()
                         .AllowAnyMethod()

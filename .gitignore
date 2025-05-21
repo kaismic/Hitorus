@@ -8,7 +8,7 @@ src/DbInitializer/Resources/**/*.txt
 src/Hitorus.Api/Galleries
 **/Localization
 Credentials.resw
-Hitorus-releases
+publish-config.json
 
 *.Designer.cs
 *.db

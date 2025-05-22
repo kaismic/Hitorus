@@ -9,6 +9,7 @@ src/Hitorus.Api/Galleries
 **/Localization
 Credentials.resw
 publish-config.json
+test.ps1
 
 *.Designer.cs
 *.db

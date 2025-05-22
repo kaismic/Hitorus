@@ -7,26 +7,21 @@ $srcPaths = $projectNames | ForEach-Object { [IO.Path]::Combine('src', $_) }
 $outputPaths = $projectNames | ForEach-Object { [IO.Path]::Combine($configJson.ReleasePath, $version, $_) }
 
 $ErrorActionPreference = 'Stop'
-Write-Host 'Choose the project to build and publish'
-Write-Host "$($projectNames[0]) - 1, $($projectNames[1]) - 2, Both - 3"
-[int]$arg = Read-Host
+Write-Host 'Enter a option/options from the following (separated by space):'
+Write-Host '"web", "api", "scripts"'
+$userInput = Read-Host
+$options = $userInput.Split(' ')
 
-if ($arg -lt 1 -or $arg -gt 3) {
-    throw "Invalid input. Enter a value between 1 - 3"
-}
-
-$options = @()
-if ($arg -band 1) {
+if ($options.Contains('api')) {
+    dotnet publish $srcPaths[0] --output $outputPaths[0]
     $options += 0
 }
-if ($arg -band 2) {
-    $options += 1
-    Set-Location $outputPaths[1]
-    # TODO try installing dotnet-serve locally in the web app release folder
+if ($options.Contains('web')) {
+    dotnet publish $srcPaths[1] --output $outputPaths[1]
+    $options += 0
 }
-
-Set-Location $PSScriptRoot
-foreach ($o in $options) {
-    dotnet publish $srcPaths[$o] --output $outputPaths[$o]
-    dotnet tool install --local dotnet-serve --version 1.10.175 --create-manifest-if-needed
+if ($options.Contains('scripts')) {
+    $scriptSrcPath = [IO.Path]::Combine('run-scripts', '*')
+    $scriptOutputPath = [IO.Path]::Combine($configJson.ReleasePath, $version)
+    Copy-item -Force $scriptSrcPath -Destination $scriptOutputPath
 }

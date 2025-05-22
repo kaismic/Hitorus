@@ -19,60 +19,32 @@ namespace Hitorus.Api {
                     }
                 );
             });
-            //builder.Services.AddDbContext<ApplicationDbContext>();
             builder.Services.AddSignalR();
-            string webAppUrl = builder.Configuration["WebAppUrl"]!;
             builder.Services.AddCors(options => {
-                options.AddPolicy("AllowLocalhostOrigins", builder =>
+                options.AddPolicy("AllowAnyOrigin", builder =>
                     builder.AllowAnyOrigin()
                         .SetIsOriginAllowed(host => true)
                         .AllowAnyHeader()
                         .AllowAnyMethod()
-                        //.AllowCredentials()
                         );
             });
-            //builder.Services.AddAuthorization();
-            //builder.Services.AddIdentityApiEndpoints<IdentityUser>()
-            //    .AddEntityFrameworkStores<ApplicationDbContext>();
-
             builder.Services.AddHttpClient();
             builder.Services.AddScoped<TagUtilityService>();
             builder.Services.AddHostedService<DownloadManagerService>();
             builder.Services.AddSingleton<IEventBus<DownloadEventArgs>, DownloadEventBus>();
 
             var app = builder.Build();
-
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment()) {
-                app.MapOpenApi();
-            } else {
+            if (app.Environment.IsProduction()) {
                 app.UseExceptionHandler("/Error");
                 app.UseHsts();
             }
-
             app.UseHttpsRedirection();
-            //app.UseStaticFiles();
-            // app.UseCookiePolicy();
-
             app.UseRouting();
-            // app.UseRateLimiter();
-            // app.UseRequestLocalization();
-            app.UseCors("AllowLocalhostOrigins");
-
-            //app.UseAuthentication();
-            //app.UseAuthorization();
-            // app.UseSession();
-            // app.UseResponseCompression(
+            app.UseCors("AllowAnyOrigin");
 
             app.MapHub<DownloadHub>("api/download-hub");
             app.MapControllers();
 
-            //app.MapIdentityApi<IdentityUser>();
-
-            //if (app.Environment.IsDevelopment()) {
-            //    app.MapGet("/debug/routes", (IEnumerable<EndpointDataSource> endpointSources) =>
-            //        string.Join("\n", endpointSources.SelectMany(source => source.Endpoints)));
-            //}
             app.Run();
         }
     }

@@ -4,3 +4,6 @@
 [submodule "Hitorus-Localization"]
 	path = Hitorus-Localization
 	url = https://github.com/kaismic/Hitorus-Localization.git
+[submodule "dotnet-serve"]
+	path = dotnet-serve
+	url = https://github.com/natemcmaster/dotnet-serve

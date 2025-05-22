@@ -56,7 +56,8 @@ namespace Hitorus.Web.Layout {
 
         private async Task OnInitRenderComplete() {
             if (_isInitialized && _hasRendered) {
-                _isDarkMode = await _mudThemeProvider.GetSystemPreference();
+                _isDarkMode = await _mudThemeProvider.GetSystemDarkModeAsync();
+                await _mudThemeProvider.WatchSystemDarkModeAsync(OnSystemDarkModeChanged);
                 if (AppConfigService.Config.LastUpdateCheckTime.AddDays(HostConfiguration.GetValue<int>("UpdateCheckInterval")) < DateTimeOffset.UtcNow) {
                     Version? recentVersion = await AppConfigService.GetRecentVersion();
                     if (recentVersion != null && recentVersion > AppConfigurationService.CURRENT_APP_VERSION) {
@@ -88,6 +89,12 @@ namespace Hitorus.Web.Layout {
                     }
                 }
             }
+        }
+
+        private Task OnSystemDarkModeChanged(bool isDarkMode) {
+            _isDarkMode = isDarkMode;
+            StateHasChanged();
+            return Task.CompletedTask;
         }
     }
 }

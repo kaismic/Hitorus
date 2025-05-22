@@ -56,7 +56,8 @@ namespace Hitorus.Web.Pages {
 
         protected override async Task OnAfterRenderAsync(bool firstRender) {
             if (firstRender) {
-                _isDarkMode = await _mudThemeProvider.GetSystemPreference();
+                _isDarkMode = await _mudThemeProvider.GetSystemDarkModeAsync();
+                await _mudThemeProvider.WatchSystemDarkModeAsync(OnSystemDarkModeChanged);
                 if (!ViewConfigurationService.IsLoaded) {
                     await ViewConfigurationService.Load();
                 }
@@ -69,6 +70,12 @@ namespace Hitorus.Web.Pages {
                 CaculateImageIndexGroups();
                 ResizeListener.OnResized += OnResize;
             }
+        }
+
+        private Task OnSystemDarkModeChanged(bool isDarkMode) {
+            _isDarkMode = isDarkMode;
+            StateHasChanged();
+            return Task.CompletedTask;
         }
 
         private bool _pageNumberChangedByJs = false;

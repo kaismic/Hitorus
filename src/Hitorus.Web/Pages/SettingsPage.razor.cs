@@ -31,7 +31,7 @@ namespace Hitorus.Web.Pages {
             // the new language's satellite assembly must not have been loaded
             value = value.Length == 0 ? AppConfigurationService.DefaultBrowserLanguage : value;
             if (value != AppConfigurationService.InitialAppLanguage && !value.Contains("en")) {
-                NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
+                NavigationManager.NavigateTo(NavigationManager.BaseUri, forceLoad: true);
             }
             LayoutStateHasChanged();
         }

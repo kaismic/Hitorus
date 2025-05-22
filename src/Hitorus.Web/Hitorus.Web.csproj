@@ -7,7 +7,7 @@
 	<NoWarn>$(NoWarn);IDE0079</NoWarn>
 	<GenerateSatelliteAssembliesForCore>true</GenerateSatelliteAssembliesForCore>
 	<BlazorWebAssemblyLoadAllGlobalizationData>true</BlazorWebAssemblyLoadAllGlobalizationData>
-	<Version>1.0.0.0</Version>
+	<Version>1.0.0</Version>
   </PropertyGroup>
   <ItemGroup>
 	<ProjectReference Include="..\Hitorus.Data\Hitorus.Data.csproj" />

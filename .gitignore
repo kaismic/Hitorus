@@ -7,7 +7,6 @@ src/DbInitializer/Resources/**/*.txt
 !src/DbInitializer/Resources/types.txt
 src/Hitorus.Api/Galleries
 **/Localization
-Credentials.resw
 publish-config.json
 test.ps1
 

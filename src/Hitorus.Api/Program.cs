@@ -38,7 +38,6 @@ namespace Hitorus.Api {
                 app.UseExceptionHandler("/Error");
                 app.UseHsts();
             }
-            app.UseHttpsRedirection();
             app.UseRouting();
             app.UseCors("AllowAnyOrigin");
 

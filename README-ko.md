@@ -30,7 +30,7 @@ Hitorus는 hitomi.la 웹사이트를 더 사용하기 편하게 만들어주는 
 2. Powershell을 관리자 권한으로 실행 후 다음 명령어를 실행하세요:
 
         Set-ExecutionPolicy -ExecutionPolicy RemoteSigned
-3. [최신 버전](https://github.com/kaismic/Hitorus/releases/latest)을 다운로드 한 후 압축 해제 하세요.
+3. [최신 버전](https://github.com/kaismic/Hitorus/releases/latest)을 다운로드 한 후 압축해제 하세요.
 
 ### macOS/리눅스
 1. 설치 관리자를 통해서 [ASP.NET Core Runtime 그리고 .NET Runtime](https://dotnet.microsoft.com/download/dotnet/9.0)을 (9.0.5 이상) **둘 다** 설치하세요. [공식 설치 스크립트](https://learn.microsoft.com/en-us/dotnet/core/install/linux-scripted-manual#scripted-install)를 이용해서 설치하는 것이 권장됩니다. 설치 스크립트를 다운로드 하고 사용하려면, 다음 명령어를 실행하세요:
@@ -44,7 +44,7 @@ Hitorus는 hitomi.la 웹사이트를 더 사용하기 편하게 만들어주는 
         export PATH=$PATH:/home/{YOUR_USERNAME}/.dotnet
     여기서 `{YOUR_USERNAME}`은 사용자 이름입니다.
 
-3. [최신 버전](https://github.com/kaismic/Hitorus/releases/latest)을 다운로드 한 후 압축 해제 하세요.
+3. [최신 버전](https://github.com/kaismic/Hitorus/releases/latest)을 다운로드 한 후 압축해제 하세요.
 
 
 ## 사용법

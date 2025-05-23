@@ -13,16 +13,24 @@ $userInput = Read-Host
 $options = $userInput.Split(' ')
 
 if ($options.Contains('0') -or $options.Contains('1')) {
-    dotnet publish $srcPaths[0] --output $outputPaths[0]
+    $srcPath = $srcPaths[0]
+    $outputPath = $outputPaths[0]
+    Remove-Item -Path $outputPath -Recurse -Force
+    dotnet publish $srcPath --output $outputPath
+    # TODO change .csproj <Version> attribute
 }
 if ($options.Contains('0') -or $options.Contains('2')) {
-    dotnet publish $srcPaths[1] --output $outputPaths[1]
-    $wwwroot = [IO.Path]::Combine($outputPaths[1], 'wwwroot')
+    $srcPath = $srcPaths[1]
+    $outputPath = $outputPaths[1]
+    Remove-Item -Path $outputPath -Recurse -Force
+    dotnet publish $srcPath --output $outputPath
+    $wwwroot = [IO.Path]::Combine($outputPath, 'wwwroot')
     # remove the compressed .br .gz files because they cannot be modified
     # and browser will use them instead of the actual appsettings.json file
     # when updating api url
     Remove-Item -Path ([IO.Path]::Combine($wwwroot, 'appsettings.json.br'))
     Remove-Item -Path ([IO.Path]::Combine($wwwroot, 'appsettings.json.gz'))
+    # TODO change .csproj <Version> attribute
 }
 if ($options.Contains('0') -or $options.Contains('3')) {
     $scriptSrcPath = [IO.Path]::Combine('run-scripts', '*')
@@ -32,5 +40,6 @@ if ($options.Contains('0') -or $options.Contains('3')) {
 if ($options.Contains('0') -or $options.Contains('4')) {
     $srcPath = [IO.Path]::Combine('dotnet-serve', 'src', 'dotnet-serve')
     $outputPath = [IO.Path]::Combine($configJson.ReleasePath, $version, 'dotnet-serve')
+    Remove-Item -Path $outputPath -Recurse -Force
     dotnet publish $srcPath --output $outputPath
 }

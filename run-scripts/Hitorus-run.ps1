@@ -50,8 +50,7 @@ if ($webApiUri.Port -ne $API_PORT) {
 $webApiUri = $null
 
 # Run API
-Set-Location ([IO.Path]::Combine($PSScriptRoot, 'Hitorus.Api'))
-Start-Process powershell {dotnet 'Hitorus.Api.dll'}
+Start-Process powershell { Set-Location ([IO.Path]::Combine($PSScriptRoot, 'Hitorus.Api')); dotnet 'Hitorus.Api.dll' }
 # Run Web App
 $serveDll = [IO.Path]::Combine($PSScriptRoot, 'dotnet-serve', 'dotnet-serve.dll')
 $wwwroot = [IO.Path]::Combine($PSScriptRoot, 'Hitorus.Web', 'wwwroot')

@@ -2,7 +2,7 @@
 
 <h1 align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="content/banner-dark.png">
+    <source media="(prefers-color-scheme: dark)" srcset="content/banner-dark.jpeg">
     <source media="(prefers-color-scheme: light)" srcset="content/banner-light.png">
     <img alt="Hitorus" src="content/banner-light.png">
   </picture>
@@ -20,7 +20,9 @@ Hitorus is a local desktop web browser-based application designed to enhance you
 ... and many more!
 
 ## Preview
-(TODO show preview images)
+<div align="center">
+  <img src="./content/preview-1.jpeg" width="50%">
+</div>
 
 ## Prerequisites
 Install [ASP.NET Core Runtime](https://dotnet.microsoft.com/download/dotnet/9.0) (9.0.5 or higher) which matches  your OS and architecture.

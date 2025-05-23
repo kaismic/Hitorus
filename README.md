@@ -39,6 +39,7 @@ Hitorus is a local desktop web application designed to enhance the experience of
 To download and use the installation script, run the following commands:
 
           wget https://dot.net/v1/dotnet-install.sh -O dotnet-install.sh
+          chmod +x ./dotnet-install.sh
           ./dotnet-install.sh --channel 9.0 --runtime aspnetcore
           ./dotnet-install.sh --channel 9.0 --runtime dotnet
 

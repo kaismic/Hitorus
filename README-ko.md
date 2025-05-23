@@ -38,6 +38,7 @@ Hitorus는 hitomi.la 웹사이트를 더 사용하기 편하게 만들어주는 
 1. 설치 관리자를 통해서 [ASP.NET Core Runtime 그리고 .NET Runtime](https://dotnet.microsoft.com/download/dotnet/9.0)을 (9.0.5 이상) **둘 다** 설치하세요. [공식 설치 스크립트](https://learn.microsoft.com/en-us/dotnet/core/install/linux-scripted-manual#scripted-install)를 이용해서 설치하는 것이 권장됩니다. 설치 스크립트를 다운로드 하고 사용하려면, 다음 명령어를 실행하세요:
 
           wget https://dot.net/v1/dotnet-install.sh -O dotnet-install.sh
+          chmod +x ./dotnet-install.sh
           ./dotnet-install.sh --channel 9.0 --runtime aspnetcore
           ./dotnet-install.sh --channel 9.0 --runtime dotnet
 

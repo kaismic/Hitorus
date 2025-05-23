@@ -11,6 +11,8 @@
 [![GitHub latest release](https://img.shields.io/github/release/kaismic/Hitorus.svg?logo=github)](https://github.com/kaismic/Hitorus/releases/latest)
 [![GitHub downloads count total](https://img.shields.io/github/downloads/kaismic/Hitorus/total.svg?logo=github)](https://github.com/kaismic/Hitorus/releases)
 
+**다른 언어로 읽기:** [English](README.md), [한국어](README-ko.md)
+
 Hitorus는 hitomi.la 웹사이트를 더 사용하기 편하게 만들어주는 웹 브라우저 로컬 데스크탑 앱입니다. 이 앱은 다음과 같은 기능들이 있어요:
 
 - 커스터마이징 가능한 태그 필터로 검색 링크를 생성

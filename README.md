@@ -11,6 +11,8 @@
 [![GitHub latest release](https://img.shields.io/github/release/kaismic/Hitorus.svg?logo=github)](https://github.com/kaismic/Hitorus/releases/latest)
 [![GitHub downloads count total](https://img.shields.io/github/downloads/kaismic/Hitorus/total.svg?logo=github)](https://github.com/kaismic/Hitorus/releases)
 
+**Read in other languages:** [English](README.md), [한국어](README-ko.md)
+
 Hitorus is a local desktop web application designed to enhance the experience of using website hitomi.la. It offers the following features:
 
 - Create search links with customizable tag filters

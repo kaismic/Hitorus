@@ -20,27 +20,21 @@ Hitorus is a local desktop web browser-based application designed to enhance you
 ... and many more!
 
 ## Preview
-
 (TODO show preview images)
 
-## Installation
-- [Windows](TODO Windows .zip file url)
-- [MacOS](TODO MacOS .zip file url)
-- [Linux](TODO Linux .tar file url)
+## Prerequisites
+Install [ASP.NET Core Runtime](https://dotnet.microsoft.com/download/dotnet/9.0) (9.0.5 or higher) which matches  your OS and architecture.
 
 ## Usage
-**Note:** The application requires its API server to be running concurrently. The following scripts will automatically start both for you.
-
 ### Windows
-Run (TODO powershell script name)
+Run `Hitorus-run.ps1`
 
-### MacOS
-Run (TODO MacOS script name)
+### MacOS/Linux
+Run `Hitorus-run.sh`
 
-### Linux
-Run (TODO bash script name)
+## How to resolve possible issues
+
 
 ## Notes
-Downloaded gallery images are stored in the `Galleries` folder.
-
-To import or export your application data and settings, simply copy the `main.db` file and paste it into (TODO db path name).
+- Downloaded gallery images are stored in the `Galleries` folder.
+- You can import/export tag filters in the search page by using the provided buttons. However, to import/export the entire application data and settings, save the `main.db` file (located under `Hitorus.Api`) and paste it into the same directory later.

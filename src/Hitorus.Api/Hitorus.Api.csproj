@@ -33,6 +33,6 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(Configuration)' == 'Release'">
-    <None Update="main.db" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="main.db" CopyToOutputDirectory="Always" />
   </ItemGroup>
 </Project>

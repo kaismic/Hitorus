@@ -29,33 +29,30 @@ function Format-Json(
     }) -Join "`n"
 }
 
-$webAppSettingsPath = [IO.Path]::Combine('Hitorus.Web', 'wwwroot', 'appsettings.json')
-$webAppSettingsJson = Get-Content $webAppSettingsPath -Raw | ConvertFrom-Json
-$webApiUri = New-Object System.Uri($webAppSettingsJson.ApiUrl)
-if ($webApiUri.Port -ne $API_PORT) {
-    $webAppSettingsJson.ApiUrl = "https://localhost:$($API_PORT)/api/"
-    $webAppSettingsJson | ConvertTo-Json -Depth 2 | Format-Json | Out-File $webAppSettingsPath
-}
-$webApiUri = $null
-
 $apiAppSettingsPath = [IO.Path]::Combine('Hitorus.Api', 'appsettings.json')
 $apiAppSettingsJson = Get-Content $apiAppSettingsPath -Raw | ConvertFrom-Json
-$apiHostUri = New-Object System.Uri($apiAppSettingsJson.Kestrel.Endpoints.Https.Url)
+$apiHostUri = New-Object System.Uri($apiAppSettingsJson.Kestrel.Endpoints.Http.Url)
 if ($apiHostUri.Port -ne $API_PORT) {
-    $apiAppSettingsJson.Kestrel.Endpoints.Https.Url = "https://localhost:$($API_PORT)/"
+    $newUrl = $apiAppSettingsJson.Kestrel.Endpoints.Http.Url -replace ':\d+', ":$API_PORT"
+    $apiAppSettingsJson.Kestrel.Endpoints.Http.Url = $newUrl
     $apiAppSettingsJson | ConvertTo-Json -Depth 4 | Format-Json | Out-File $apiAppSettingsPath
 }
 $apiHostUri = $null
 
-# Install dotnet-serve if not exists
-$json = dotnet tool list -g dotnet-serve --format json | ConvertFrom-Json
-if ($json.data.Count -eq 0) {
-    dotnet tool install -g dotnet-serve --version 1.10.175
+$webAppSettingsPath = [IO.Path]::Combine('Hitorus.Web', 'wwwroot', 'appsettings.json')
+$webAppSettingsJson = Get-Content $webAppSettingsPath -Raw | ConvertFrom-Json
+$webApiUri = New-Object System.Uri($webAppSettingsJson.ApiUrl)
+if ($webApiUri.Port -ne $API_PORT) {
+    $newUrl = $webAppSettingsJson.ApiUrl -replace ':\d+', ":$API_PORT"
+    $webAppSettingsJson.ApiUrl = $newUrl
+    $webAppSettingsJson | ConvertTo-Json -Depth 2 | Format-Json | Out-File $webAppSettingsPath
 }
+$webApiUri = $null
 
 # Run API
 Set-Location ([IO.Path]::Combine($PSScriptRoot, 'Hitorus.Api'))
 Start-Process powershell {dotnet 'Hitorus.Api.dll'}
 # Run Web App
-Set-Location ([IO.Path]::Combine($PSScriptRoot, 'Hitorus.Web'))
-dotnet serve -d 'wwwroot' -o -p $WEB_PORT -q
+$serveDll = [IO.Path]::Combine($PSScriptRoot, 'dotnet-serve', 'dotnet-serve.dll')
+$wwwroot = [IO.Path]::Combine($PSScriptRoot, 'Hitorus.Web', 'wwwroot')
+dotnet $serveDll -d $wwwroot -p $WEB_PORT -o -q

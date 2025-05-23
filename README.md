@@ -52,12 +52,21 @@ To download and use the installation script, run the following commands:
 ### Windows
 - Run `Hitorus-run.ps1`
 
-### MacOS/Linux
+### macOS/Linux
 - Run `Hitorus-run.sh`
 
-## Known issues/How to resolve
+## How to resolve issues
+- In a rare case, an error might occur when other applications are using the default port numbers in the script. In this case, manually change the port numbers in the script to other numbers (1024 - 65535) and run them again.
 
+  `Hitorus-run.ps1`
 
-## Other Information
+      $WEB_PORT=5214
+      $API_PORT=7076
+  `Hitorus-run.sh`
+
+      WEB_PORT=5214
+      API_PORT=7076
+
+## Notes
 - Downloaded gallery images are stored in the `Galleries` folder.
 - The entire application data is stored in the `main.db` file (located under `Hitorus.Api`). To export or backup your data, copy, store it somewhere else and later paste it into the same location.

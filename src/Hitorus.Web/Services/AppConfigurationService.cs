@@ -1,30 +1,28 @@
-﻿using Hitorus.Data.DTOs;
+﻿using Blazored.LocalStorage;
+using Hitorus.Data.DTOs;
 using MaterialColorUtilities.Palettes;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using MudBlazor.Utilities;
 using Octokit;
 using System.Net.Http.Json;
-using System.Reflection;
 using System.Text.RegularExpressions;
 
 namespace Hitorus.Web.Services {
-    public partial class AppConfigurationService(HttpClient httpClient, IConfiguration hostConfiguration) {
-        public static readonly Version CURRENT_APP_VERSION = Assembly.GetExecutingAssembly()!.GetName().Version!;
+    public partial class AppConfigurationService {
         [GeneratedRegex("""v?(\d)+\.(\d)+\.(\d)+""")]
         private static partial Regex AppVersionRegex();
 
+        private readonly HttpClient _httpClient;
+        private readonly IConfiguration _hostConfiguration;
+        public AppConfigurationService(HttpClient httpClient, IConfiguration hostConfiguration, ISyncLocalStorageService localStorageService) {
+            _httpClient = httpClient;
+            _httpClient.BaseAddress = Utilities.GetServiceBaseUri(hostConfiguration, localStorageService, "AppConfigServicePath");
+            _hostConfiguration = hostConfiguration;
+        }
+
         public AppConfigurationDTO Config { get; private set; } = new();
         private bool _isLoaded = false;
-        /// <summary>
-        /// This value is used to store initial browser language obtained from CultureInfo.CurrentCulture so that
-        /// when user switches back to automatic language in the SettingsPage, we use this value to set CurrentCulture
-        /// </summary>
-        public string DefaultBrowserLanguage { get; set; } = "";
-        /// <summary>
-        /// This value is used to store initial app language from the API.
-        /// </summary>
-        public string InitialAppLanguage { get; set; } = "";
 
         public MudTheme AppTheme { get; } = new();
 
@@ -32,22 +30,14 @@ namespace Hitorus.Web.Services {
             if (_isLoaded) {
                 return;
             }
-            Config = (await httpClient.GetFromJsonAsync<AppConfigurationDTO>(""))!;
+            Config = (await _httpClient.GetFromJsonAsync<AppConfigurationDTO>(""))!;
             SetAppThemeColors();
             _isLoaded = true;
         }
 
-        public void ChangeAppLanguage(string value) {
-            if (string.IsNullOrEmpty(value)) {
-                Utilities.SetAppLanguage(DefaultBrowserLanguage);
-            } else {
-                Utilities.SetAppLanguage(value);
-            }
-        }
-
-        public async Task<Version?> GetRecentVersion() {
-            string repoName = hostConfiguration["RepositoryName"]!;
-            string owner = hostConfiguration["Developer"]!;
+        public async Task<Version?> GetLatestApiVersion() {
+            string repoName = _hostConfiguration["RepositoryName"]!;
+            string owner = _hostConfiguration["Developer"]!;
             GitHubClient client = new(new ProductHeaderValue(repoName));
             try {
                 IReadOnlyList<Release> releases = await client.Repository.Release.GetAll(owner, repoName, new() { PageSize = 1, PageCount = 1 });
@@ -105,39 +95,37 @@ namespace Hitorus.Web.Services {
             };
         }
 
-        public async Task<bool> UpdateAppLanguage(string value) {
-            Config.AppLanguage = value;
-            var response = await httpClient.PatchAsync($"app-language?configId={Config.Id}", JsonContent.Create(value));
-            return response.IsSuccessStatusCode;
+        public async Task<Version> GetCurrentApiVersion() {
+            return (await _httpClient.GetFromJsonAsync<Version>("version"))!;
         }
 
         public async Task<bool> UpdateAppThemeColor(string color) {
             Config.AppThemeColor = color;
-            var response = await httpClient.PatchAsync($"app-theme-color?configId={Config.Id}", JsonContent.Create(color));
+            var response = await _httpClient.PatchAsync($"app-theme-color?configId={Config.Id}", JsonContent.Create(color));
             return response.IsSuccessStatusCode;
         }
 
         public async Task<bool> IncrementAppLaunchCount() {
             Config.AppLaunchCount++;
-            var response = await httpClient.PatchAsync($"app-launch-count?configId={Config.Id}", JsonContent.Create(Config.AppLaunchCount));
+            var response = await _httpClient.PatchAsync($"app-launch-count?configId={Config.Id}", JsonContent.Create(Config.AppLaunchCount));
             return response.IsSuccessStatusCode;
         }
 
         public async Task<bool> UpdateShowSurveyPrompt(bool value) {
             Config.ShowSurveyPrompt = value;
-            var response = await httpClient.PatchAsync($"show-survey-prompt?configId={Config.Id}", JsonContent.Create(value));
+            var response = await _httpClient.PatchAsync($"show-survey-prompt?configId={Config.Id}", JsonContent.Create(value));
             return response.IsSuccessStatusCode;
         }
 
         public async Task<bool> UpdateLastUpdateCheckTime(DateTimeOffset value) {
             Config.LastUpdateCheckTime = value;
-            var response = await httpClient.PatchAsync($"last-update-check-time?configId={Config.Id}", JsonContent.Create(value));
+            var response = await _httpClient.PatchAsync($"last-update-check-time?configId={Config.Id}", JsonContent.Create(value));
             return response.IsSuccessStatusCode;
         }
         
         public async Task<bool> UpdateShowSearchPageWalkthrough(bool value) {
             Config.ShowSearchPageWalkthrough = value;
-            var response = await httpClient.PatchAsync($"show-search-page-walkthrough?configId={Config.Id}", JsonContent.Create(value));
+            var response = await _httpClient.PatchAsync($"show-search-page-walkthrough?configId={Config.Id}", JsonContent.Create(value));
             return response.IsSuccessStatusCode;
         }
     }

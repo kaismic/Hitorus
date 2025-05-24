@@ -125,7 +125,6 @@ namespace DbInitializer {
             });
 
             dbContext.AppConfigurations.Add(new() {
-                AppLanguage = "",
                 AppThemeColor = "00ffcc",
                 AppLaunchCount = 0,
                 LastUpdateCheckTime = DateTimeOffset.UtcNow,

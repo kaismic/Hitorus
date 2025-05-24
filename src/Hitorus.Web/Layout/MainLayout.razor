@@ -38,7 +38,18 @@
                         justify-content: center; gap: 2dvh;">
                 @if (_connectionError) {
                     <MudIcon Icon="@Icons.Material.Filled.Error" Size="Size.Large" Color="Color.Primary" Style="font-size: 4rem" />
-                    <span>@Localizer["ConnectionError"]</span>
+                    <MudText Typo="Typo.h6">@Localizer["ConnectionError"]</MudText>
+                    <MudText Typo="Typo.subtitle1">@Localizer["EnsureApiRunning"]</MudText>
+                    <MudText Typo="Typo.subtitle1">@(string.Format(Localizer["CheckPortNumber"], _apiPort))</MudText>
+                    <div class="d-flex gap-2 align-center">
+                        <MudText>@Localizer["EnterApiPortNumber"]</MudText>
+                        <MudNumericField T="int" @bind-Value="_apiPort" Min="1" Max="65535" />
+                        <MudButton Variant="Variant.Filled"
+                                   Color="Color.Primary"
+                                   OnClick="@OnApiPortChangeRequested">
+                            @SharedLocalizer["Confirm"]
+                        </MudButton>
+                    </div>
                 } else {
                     <MudProgressCircular Indeterminate="true" Size="Size.Large" Color="Color.Primary" Style="font-size: 4rem" />
                     <span>@Localizer["Starting"]</span>

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Hitorus.Api.Controllers {
     [ApiController]
-    [Route("api/download-service")]
+    [Route("api/download")]
     public class DownloadServiceController(IEventBus<DownloadEventArgs> eventBus) : ControllerBase {
         [HttpPost("create")]
         [ProducesResponseType(StatusCodes.Status200OK)]

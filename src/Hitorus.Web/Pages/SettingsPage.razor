@@ -3,19 +3,6 @@
 
 <div class="d-flex flex-column gap-4 pa-8">
     <MudText Typo="Typo.h4">@Localizer["GlobalSettings"]</MudText>
-    <SettingsCard Icon="@Icons.Material.Filled.Language"
-                  Header=@SharedLocalizer["Language"]>
-        <MudSelect T="string"
-                   Value="AppConfigurationService.Config.AppLanguage"
-                   ValueChanged=@OnAppLanguageChanged
-                   Variant="Variant.Outlined"
-                   Style="max-width: 200px;">
-            <MudSelectItem T="string" Value=@("")>@SharedLocalizer["Automatic"]</MudSelectItem>
-            @foreach (string lang in SUPPORTED_LANGUAGES) {
-                <MudSelectItem T="string" Value=@lang>@CultureInfo.GetCultureInfo(lang).NativeName</MudSelectItem>
-            }
-        </MudSelect>
-    </SettingsCard>
     <SettingsCard Icon="@Icons.Material.Filled.Palette"
                   Header=@Localizer["AppThemeColor"]>
         <MudColorPicker @bind-Value=@_appThemeColor ShowAlpha="false" ShowColorField="false" ShowInputs="false" ShowPreview="false">

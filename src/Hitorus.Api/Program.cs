@@ -30,7 +30,15 @@ namespace Hitorus.Api {
                             );
                 });
             } else {
-                // TODO: Configure CORS policy for production environment
+                builder.Services.AddCors(options => {
+                    options.AddPolicy("HitorusCorsPolicy", builder =>
+                        builder.SetIsOriginAllowedToAllowWildcardSubdomains()
+                            .WithOrigins("https://*.hitorus.pages.dev/")
+                            .SetIsOriginAllowed(origin => true)
+                            .AllowAnyHeader()
+                            .AllowAnyMethod()
+                            );
+                });
             }
             builder.Services.AddHttpClient();
             builder.Services.AddScoped<TagUtilityService>();

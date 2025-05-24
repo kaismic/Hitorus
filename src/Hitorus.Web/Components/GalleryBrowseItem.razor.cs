@@ -12,10 +12,10 @@ namespace Hitorus.Web.Components {
     public partial class GalleryBrowseItem : ComponentBase, IDisposable {
         [Inject] private IJSRuntime JSRuntime { get; set; } = default!;
         [Inject] private IResizeListener ResizeListener { get; set; } = default!;
-        [Inject] private IConfiguration HostConfiguration { get; set; } = default!;
         [Inject] private IStringLocalizer<SharedResource> SharedLocalizer { get; set; } = default!;
         [Inject] private IStringLocalizer<GalleryBrowseItem> Localizer { get; set; } = default!;
         [Inject] private LanguageTypeService LanguageTypeService { get; set; } = default!;
+        [Inject] ImageFileService ImageFileService { get; set; } = default!;
         [Parameter, EditorRequired] public BrowseGalleryDTO Gallery { get; set; } = default!;
         [Parameter, EditorRequired] public bool IsEditing { get; set; }
         [Parameter, EditorRequired] public bool IsSelected { get; set; }
@@ -31,7 +31,10 @@ namespace Hitorus.Web.Components {
 
         protected override void OnInitialized() {
             _imageContainerId = "thumbnail-image-container-" + Gallery.Id;
-            _baseImageUrl = HostConfiguration["ApiUrl"] + HostConfiguration["ImageFilePath"] + "?galleryId=" + Gallery.Id;
+            UriBuilder builder = new(ImageFileService.BASE_IMAGE_URI) {
+                Query = "?galleryId=" + Gallery.Id
+            };
+            _baseImageUrl = builder.ToString();
             List<GalleryImageDTO> images = [.. Gallery.Images];
             _cumulativeImageAspectRatios = new double[images.Count];
             _cumulativeImageAspectRatios[0] = (double)images[0].Width / images[0].Height;

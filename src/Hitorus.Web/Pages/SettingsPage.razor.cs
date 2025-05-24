@@ -9,11 +9,8 @@ namespace Hitorus.Web.Pages {
         [CascadingParameter] private Action LayoutStateHasChanged { get; set; } = default!;
         [Inject] private AppConfigurationService AppConfigurationService { get; set; } = default!;
         [Inject] private ViewConfigurationService ViewConfigurationService { get; set; } = default!;
-        [Inject] NavigationManager NavigationManager { get; set; } = default!;
         [Inject] IStringLocalizer<SettingsPage> Localizer { get; set; } = default!;
         [Inject] IStringLocalizer<SharedResource> SharedLocalizer { get; set; } = default!;
-
-        private static readonly string[] SUPPORTED_LANGUAGES = ["en", "ko"];
 
         private MudColor _appThemeColor = default!;
 
@@ -21,19 +18,6 @@ namespace Hitorus.Web.Pages {
             await AppConfigurationService.Load();
             await ViewConfigurationService.Load();
             _appThemeColor = new('#' + AppConfigurationService.Config.AppThemeColor);
-        }
-
-        private async Task OnAppLanguageChanged(string value) {
-            await AppConfigurationService.UpdateAppLanguage(value);
-            AppConfigurationService.ChangeAppLanguage(value);
-            // Refresh the page if the new value does not match the initial app language or
-            // is not english (default) since blazor uses satellite assembly and
-            // the new language's satellite assembly must not have been loaded
-            value = value.Length == 0 ? AppConfigurationService.DefaultBrowserLanguage : value;
-            if (value != AppConfigurationService.InitialAppLanguage && !value.Contains("en")) {
-                NavigationManager.NavigateTo(NavigationManager.BaseUri, forceLoad: true);
-            }
-            LayoutStateHasChanged();
         }
 
         private async Task OnViewModeChanged(ViewMode value) {

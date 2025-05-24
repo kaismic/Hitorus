@@ -1,24 +1,32 @@
-﻿using System.Globalization;
+﻿using Blazored.LocalStorage;
+using System.Globalization;
 
 namespace Hitorus.Web {
     public class Utilities {
-        /// <summary>
-        /// somehow you gotta set both CurrentCulture and CurrentUICulture to make localization work
-        /// </summary>
-        /// <param name="value"></param>
-        public static void SetAppLanguage(string value) {
-            try {
-                CultureInfo.DefaultThreadCurrentCulture = CultureInfo.GetCultureInfo(value);
-                CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.GetCultureInfo(value);
-            } catch (CultureNotFoundException) { }
-        }
-
         public static uint ArgbToRgba(uint value) {
             return (value - 0xFF000000) * 0x100 + 0xFF;
         }
 
         public static uint RgbToArgb(string value) {
             return 0xFF000000 + uint.Parse(value, NumberStyles.HexNumber);
+        }
+
+        public static int GetApiPort(IConfiguration hostConfiguration, ISyncLocalStorageService localStorageService) {
+            return localStorageService.GetItem<int?>(LocalStorageKeys.API_PORT) ?? hostConfiguration.GetValue<int>("DefaultApiPort");
+        }
+
+        public static Uri GetServiceBaseUri(
+            IConfiguration hostConfiguration,
+            ISyncLocalStorageService localStorageService,
+            string pathKey
+        ) {
+            UriBuilder builder = new() {
+                Scheme = "http",
+                Host = hostConfiguration["BaseApiHost"],
+                Port = GetApiPort(hostConfiguration, localStorageService),
+                Path = hostConfiguration[pathKey]
+            };
+            return builder.Uri;
         }
     }
 }

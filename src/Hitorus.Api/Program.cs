@@ -20,14 +20,18 @@ namespace Hitorus.Api {
                 );
             });
             builder.Services.AddSignalR();
-            builder.Services.AddCors(options => {
-                options.AddPolicy("AllowAnyOrigin", builder =>
-                    builder.AllowAnyOrigin()
-                        .SetIsOriginAllowed(host => true)
-                        .AllowAnyHeader()
-                        .AllowAnyMethod()
-                        );
-            });
+            if (builder.Environment.IsDevelopment()) {
+                builder.Services.AddCors(options => {
+                    options.AddPolicy("HitorusCorsPolicy", builder =>
+                        builder.WithOrigins("https://localhost")
+                            .SetIsOriginAllowed(host => true)
+                            .AllowAnyHeader()
+                            .AllowAnyMethod()
+                            );
+                });
+            } else {
+                // TODO: Configure CORS policy for production environment
+            }
             builder.Services.AddHttpClient();
             builder.Services.AddScoped<TagUtilityService>();
             builder.Services.AddHostedService<DownloadManagerService>();
@@ -39,7 +43,7 @@ namespace Hitorus.Api {
                 app.UseHsts();
             }
             app.UseRouting();
-            app.UseCors("AllowAnyOrigin");
+            app.UseCors("HitorusCorsPolicy");
 
             app.MapHub<DownloadHub>("api/download-hub");
             app.MapControllers();

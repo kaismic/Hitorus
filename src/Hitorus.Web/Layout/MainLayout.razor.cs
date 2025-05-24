@@ -1,18 +1,22 @@
-﻿using Hitorus.Data.DTOs;
+﻿using Blazored.LocalStorage;
+using Hitorus.Data.DTOs;
 using Hitorus.Web.Components.Dialogs;
 using Hitorus.Web.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Localization;
 using MudBlazor;
+using System.Globalization;
 
 namespace Hitorus.Web.Layout {
     public partial class MainLayout : LayoutComponentBase {
         [Inject] LanguageTypeService LTService { get; set; } = default!;
         [Inject] AppConfigurationService AppConfigService { get; set; } = default!;
         [Inject] SearchConfigurationService SearchConfigurationService { get; set; } = default!;
+        [Inject] NavigationManager NavigationManager { get; set; } = default!;
         [Inject] IDialogService DialogService { get; set; } = default!;
         [Inject] ISnackbar Snackbar { get; set; } = default!;
         [Inject] IConfiguration HostConfiguration { get; set; } = default!;
+        [Inject] ISyncLocalStorageService LocalStorageService { get; set; } = default!;
         [Inject] IStringLocalizer<MainLayout> Localizer { get; set; } = default!;
         [Inject] IStringLocalizer<SharedResource> SharedLocalizer { get; set; } = default!;
 
@@ -23,16 +27,18 @@ namespace Hitorus.Web.Layout {
         private bool _isInitialized = false;
         private bool _hasRendered = false;
         private bool _connectionError = false;
+        private int _apiPort;
 
         private void DrawerToggle() => _drawerOpen = !_drawerOpen;
 
         protected override async Task OnInitializedAsync() {
+            _apiPort = Utilities.GetApiPort(HostConfiguration, LocalStorageService);
             try {
                 await LTService.Load();
                 await AppConfigService.Load();
                 await SearchConfigurationService.Load();
                 if (AppConfigService.Config.AppLaunchCount == 0) {
-                    IEnumerable<TagFilterDTO> examples = await SearchConfigurationService.CreateExampleTagFilters(AppConfigService.DefaultBrowserLanguage);
+                    IEnumerable<TagFilterDTO> examples = await SearchConfigurationService.CreateExampleTagFilters(CultureInfo.CurrentCulture.Name);
                     foreach (TagFilterDTO dto in examples) {
                         SearchConfigurationService.Config.TagFilters.Add(dto);
                     }
@@ -59,10 +65,11 @@ namespace Hitorus.Web.Layout {
                 _isDarkMode = await _mudThemeProvider.GetSystemDarkModeAsync();
                 await _mudThemeProvider.WatchSystemDarkModeAsync(OnSystemDarkModeChanged);
                 if (AppConfigService.Config.LastUpdateCheckTime.AddDays(HostConfiguration.GetValue<int>("UpdateCheckInterval")) < DateTimeOffset.UtcNow) {
-                    Version? recentVersion = await AppConfigService.GetRecentVersion();
-                    if (recentVersion != null && recentVersion > AppConfigurationService.CURRENT_APP_VERSION) {
+                    Version? latestApiVersion = await AppConfigService.GetLatestApiVersion();
+                    Version currentApiVersion = await AppConfigService.GetCurrentApiVersion();
+                    if (latestApiVersion != null && latestApiVersion > currentApiVersion) {
                         Snackbar.Add(
-                            string.Format(Localizer["NewVersionAvailable"], $"{recentVersion.Major}.{recentVersion.Minor}.{recentVersion.Build}"),
+                            string.Format(Localizer["NewApiVersionAvailable"], $"{latestApiVersion.Major}.{latestApiVersion.Minor}.{latestApiVersion.Build}"),
                             Severity.Success,
                             options => {
                                 options.ShowCloseIcon = true;
@@ -95,6 +102,11 @@ namespace Hitorus.Web.Layout {
             _isDarkMode = isDarkMode;
             StateHasChanged();
             return Task.CompletedTask;
+        }
+
+        private void OnApiPortChangeRequested() {
+            LocalStorageService.SetItem(LocalStorageKeys.API_PORT, _apiPort);
+            NavigationManager.NavigateTo(NavigationManager.BaseUri, true);
         }
     }
 }

@@ -1,9 +1,9 @@
+using Blazored.LocalStorage;
 using BlazorPro.BlazorSize;
 using Hitorus.Web.Services;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor.Services;
-using System.Globalization;
 
 namespace Hitorus.Web;
 
@@ -17,97 +17,21 @@ public class Program
 
         builder.Services.AddMudServices();
         builder.Services.AddLocalization(options => options.ResourcesPath = "Localization");
-        
-        string apiUrl = builder.Configuration["ApiUrl"]!;
         builder.Services.AddHttpClient();
-        builder.Services.AddSingleton(sp =>
-            {
-                HttpClient httpClient = sp.GetRequiredService<HttpClient>();
-                httpClient.BaseAddress = new Uri(apiUrl + builder.Configuration["SearchConfigPath"]);
-                return new SearchConfigurationService(httpClient);
-            }
-        );
-        builder.Services.AddSingleton(sp =>
-            {
-                HttpClient httpClient = sp.GetRequiredService<HttpClient>();
-                httpClient.BaseAddress = new Uri(apiUrl + builder.Configuration["BrowseConfigPath"]);
-                return new BrowseConfigurationService(httpClient);
-            }
-        );
-        builder.Services.AddSingleton(sp =>
-            {
-                HttpClient httpClient = sp.GetRequiredService<HttpClient>();
-                httpClient.BaseAddress = new Uri(apiUrl + builder.Configuration["DownloadConfigPath"]);
-                return new DownloadConfigurationService(httpClient);
-            }
-        );
-        builder.Services.AddSingleton(sp =>
-            {
-                HttpClient httpClient = sp.GetRequiredService<HttpClient>();
-                httpClient.BaseAddress = new Uri(apiUrl + builder.Configuration["ViewConfigPath"]);
-                return new ViewConfigurationService(httpClient);
-            }
-        );
-        builder.Services.AddSingleton(sp =>
-            {
-                HttpClient httpClient = sp.GetRequiredService<HttpClient>();
-                httpClient.BaseAddress = new Uri(apiUrl + builder.Configuration["AppConfigPath"]);
-                AppConfigurationService service = new(httpClient, builder.Configuration) {
-                    DefaultBrowserLanguage = CultureInfo.CurrentCulture.Name
-                };
-                return service;
-            }
-        );
-        builder.Services.AddSingleton(sp =>
-            {
-                HttpClient httpClient = sp.GetRequiredService<HttpClient>();
-                httpClient.BaseAddress = new Uri(apiUrl + builder.Configuration["LanguageTypePath"]);
-                return new LanguageTypeService(httpClient);
-            }
-        );
-        builder.Services.AddSingleton(sp =>
-            {
-                HttpClient httpClient = sp.GetRequiredService<HttpClient>();
-                httpClient.BaseAddress = new Uri(apiUrl + builder.Configuration["TagFilterPath"]);
-                return new TagFilterService(httpClient, sp.GetRequiredService<SearchConfigurationService>());
-            }
-        );
-        builder.Services.AddSingleton(sp =>
-            {
-                HttpClient httpClient = sp.GetRequiredService<HttpClient>();
-                httpClient.BaseAddress = new Uri(apiUrl + builder.Configuration["SearchFilterPath"]);
-                return new SearchFilterService(httpClient, sp.GetRequiredService<SearchConfigurationService>());
-            }
-        );
-        builder.Services.AddSingleton(sp =>
-            {
-                HttpClient httpClient = sp.GetRequiredService<HttpClient>();
-                httpClient.BaseAddress = new Uri(apiUrl + builder.Configuration["TagPath"]);
-                return new TagService(httpClient);
-            }
-        );
-        builder.Services.AddSingleton(sp =>
-            {
-                HttpClient httpClient = sp.GetRequiredService<HttpClient>();
-                httpClient.BaseAddress = new Uri(apiUrl + builder.Configuration["GalleryPath"]);
-                return new GalleryService(httpClient);
-            }
-        );
-        builder.Services.AddSingleton(sp =>
-            {
-                HttpClient httpClient = sp.GetRequiredService<HttpClient>();
-                httpClient.BaseAddress = new Uri(apiUrl + builder.Configuration["DownloadServicePath"]);
-                return new DownloadService(httpClient);
-            }
-        );
-        builder.Services.AddSingleton<DownloadClientManagerService>();
+        builder.Services.AddBlazoredLocalStorageAsSingleton();
         builder.Services.AddResizeListener(options => options.ReportRate = 500);
-        var app = builder.Build();
-        // attempt fetching language information from API and set CultureInfo.CurrentCulture
-        AppConfigurationService acs = app.Services.GetRequiredService<AppConfigurationService>();
-        await acs.Load();
-        acs.InitialAppLanguage = acs.Config.AppLanguage;
-        acs.ChangeAppLanguage(acs.Config.AppLanguage);
-        await app.RunAsync();
+        builder.Services.AddSingleton<SearchConfigurationService>();
+        builder.Services.AddSingleton<BrowseConfigurationService>();
+        builder.Services.AddSingleton<DownloadConfigurationService>();
+        builder.Services.AddSingleton<ViewConfigurationService>();
+        builder.Services.AddSingleton<AppConfigurationService>();
+        builder.Services.AddSingleton<LanguageTypeService>();
+        builder.Services.AddSingleton<TagFilterService>();
+        builder.Services.AddSingleton<SearchFilterService>();
+        builder.Services.AddSingleton<TagService>();
+        builder.Services.AddSingleton<GalleryService>();
+        builder.Services.AddSingleton<DownloadService>();
+        builder.Services.AddSingleton<DownloadClientManagerService>();
+        await builder.Build().RunAsync();
     }
 }

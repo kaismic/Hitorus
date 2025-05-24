@@ -13,12 +13,12 @@ namespace Hitorus.Web.Pages {
     public partial class GalleryViewPage : IDisposable {
         [Inject] IJSRuntime JSRuntime { get; set; } = default!;
         [Inject] IResizeListener ResizeListener { get; set; } = default!;
-        [Inject] IConfiguration HostConfiguration { get; set; } = default!;
         [Inject] IStringLocalizer<GalleryViewPage> Localizer { get; set; } = default!;
         [Inject] IStringLocalizer<SharedResource> SharedLocalizer { get; set; } = default!;
         [Inject] GalleryService GalleryService { get; set; } = default!;
         [Inject] AppConfigurationService AppConfigurationService { get; set; } = default!;
         [Inject] ViewConfigurationService ViewConfigurationService { get; set; } = default!;
+        [Inject] ImageFileService ImageFileService { get; set; } = default!;
         [Parameter] public int GalleryId { get; set; }
 
         private const string DEFAULT_TOOLBAR_HEIGHT = "60px";
@@ -51,7 +51,10 @@ namespace Hitorus.Web.Pages {
         private bool _toolbarOpen = false;
 
         protected override void OnInitialized() {
-            _baseImageUrl = HostConfiguration["ApiUrl"] + HostConfiguration["ImageFilePath"] + "?galleryId=" + GalleryId;
+            UriBuilder builder = new(ImageFileService.BASE_IMAGE_URI) {
+                Query = "?galleryId=" + GalleryId
+            };
+            _baseImageUrl = builder.ToString();
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender) {

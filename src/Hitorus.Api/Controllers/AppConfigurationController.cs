@@ -2,30 +2,24 @@
 using Hitorus.Data.DTOs;
 using Hitorus.Data.Entities;
 using Microsoft.AspNetCore.Mvc;
+using System.Reflection;
 
 namespace Hitorus.Api.Controllers {
     [ApiController]
     [Route("api/app-config")]
     public class AppConfigurationController(HitomiContext context) : ControllerBase {
+        public static readonly Version CURRENT_API_VERSION = Assembly.GetExecutingAssembly()!.GetName().Version!;
+
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public ActionResult<AppConfigurationDTO> GetConfiguration() {
             AppConfiguration config = context.AppConfigurations.First();
             return Ok(config.ToDTO());
         }
-        
-        [HttpPatch("app-language")]
+
+        [HttpGet("version")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult UpdateAppLanguage(int configId, [FromBody] string value) {
-            AppConfiguration? config = context.AppConfigurations.Find(configId);
-            if (config == null) {
-                return NotFound();
-            }
-            config.AppLanguage = value;
-            context.SaveChanges();
-            return Ok();
-        }
+        public ActionResult<Version> GetApiVersion() => Ok(CURRENT_API_VERSION);
 
         [HttpPatch("app-theme-color")]
         [ProducesResponseType(StatusCodes.Status200OK)]

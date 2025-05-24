@@ -43,7 +43,9 @@
                     <MudText Typo="Typo.subtitle1">@(string.Format(Localizer["CheckPortNumber"], _apiPort))</MudText>
                     <div class="d-flex gap-2 align-center">
                         <MudText>@Localizer["EnterApiPortNumber"]</MudText>
-                        <MudNumericField T="int" @bind-Value="_apiPort" Min="1" Max="65535" />
+                        <MudNumericField T="int" HideSpinButtons
+                                         Min="1" Max="65535"
+                                         @bind-Value="_apiPort" />
                         <MudButton Variant="Variant.Filled"
                                    Color="Color.Primary"
                                    OnClick="@OnApiPortChangeRequested">

@@ -1,4 +1,5 @@
-﻿using Hitorus.Data;
+﻿using Blazored.LocalStorage;
+using Hitorus.Data;
 using Hitorus.Web.Models;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Localization;
@@ -8,6 +9,7 @@ namespace Hitorus.Web.Services {
     public class DownloadClientManagerService : IAsyncDisposable {
         private readonly GalleryService _galleryService;
         private readonly IConfiguration _hostConfiguration;
+        private readonly ISyncLocalStorageService _localStorageService;
         private readonly DownloadConfigurationService _downloadConfigurationService;
         private readonly DownloadService _downloadService;
         private readonly IJSRuntime _jsRuntime;
@@ -23,6 +25,7 @@ namespace Hitorus.Web.Services {
         public DownloadClientManagerService(
             GalleryService galleryService,
             IConfiguration hostConfiguration,
+            ISyncLocalStorageService localStorageService,
             DownloadConfigurationService downloadConfigurationService,
             DownloadService downloadService,
             IJSRuntime jsRuntime,
@@ -30,6 +33,7 @@ namespace Hitorus.Web.Services {
         ) {
             _galleryService = galleryService;
             _hostConfiguration = hostConfiguration;
+            _localStorageService = localStorageService;
             _downloadConfigurationService = downloadConfigurationService;
             _downloadService = downloadService;
             _jsRuntime = jsRuntime;
@@ -39,7 +43,7 @@ namespace Hitorus.Web.Services {
 
         public void OpenHubConnection() {
             _hubConnection = new HubConnectionBuilder()
-                .WithUrl(_hostConfiguration["ApiUrl"] + _hostConfiguration["DownloadHubPath"])
+                .WithUrl(Utilities.GetServiceBaseUri(_hostConfiguration, _localStorageService, "DownloadHubPath"))
                 .Build();
             _hubConnection.On<IEnumerable<int>>("ReceiveSavedDownloads", OnReceiveSavedDownloads);
             _hubConnection.On<int>("ReceiveGalleryAvailable", OnReceiveGalleryAvailable);

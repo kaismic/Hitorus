@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Generate localization resource files
-python Hitorus-Localization/generate-resx.py
+python generate-resx.py
 # Build Hiotrus.Web
 curl -sSL https://dot.net/v1/dotnet-install.sh > dotnet-install.sh
 chmod +x dotnet-install.sh

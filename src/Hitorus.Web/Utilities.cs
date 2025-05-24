@@ -21,7 +21,7 @@ namespace Hitorus.Web {
             string pathKey
         ) {
             UriBuilder builder = new() {
-                Scheme = "http",
+                Scheme = "https",
                 Host = hostConfiguration["BaseApiHost"],
                 Port = GetApiPort(hostConfiguration, localStorageService),
                 Path = hostConfiguration[pathKey]

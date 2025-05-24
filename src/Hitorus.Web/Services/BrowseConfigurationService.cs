@@ -22,7 +22,7 @@ namespace Hitorus.Web.Services {
         private readonly HttpClient _httpClient;
         public BrowseConfigurationService(HttpClient httpClient, IConfiguration hostConfiguration, ISyncLocalStorageService localStorageService) {
             _httpClient = httpClient;
-            _httpClient.BaseAddress = Utilities.GetServiceBaseUri(hostConfiguration, localStorageService, "BrowseServicePath");
+            _httpClient.BaseAddress = Utilities.GetServiceBaseUri(hostConfiguration, localStorageService, "BrowseConfigServicePath");
         }
 
         public async Task Load() {

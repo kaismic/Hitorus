@@ -27,12 +27,14 @@ namespace Hitorus.Web.Layout {
         private bool _isInitialized = false;
         private bool _hasRendered = false;
         private bool _connectionError = false;
+        private int _initialApiPort;
         private int _apiPort;
 
         private void DrawerToggle() => _drawerOpen = !_drawerOpen;
 
         protected override async Task OnInitializedAsync() {
-            _apiPort = Utilities.GetApiPort(HostConfiguration, LocalStorageService);
+            _initialApiPort = Utilities.GetApiPort(HostConfiguration, LocalStorageService);
+            _apiPort = _initialApiPort;
             try {
                 await LTService.Load();
                 await AppConfigService.Load();

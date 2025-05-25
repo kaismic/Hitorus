@@ -14,18 +14,33 @@ jobs:
           ref: main
 
       - name: Get changed files
-        id: changed_files
+        id: changed-files
         uses: tj-actions/changed-files@v46
-        # with:
-        #   files: src/Hitorus.Api/Hitorus.Api.csproj
+        with:
+          files: src/Hitorus.Api/Hitorus.Api.csproj
 
-      - name: List all changed files
-        env:
-          ALL_CHANGED_FILES: ${{ steps.changed_files.outputs.all_changed_files }}
+      - name: Set CURRENT_VERSION env value
         run: |
-          for file in ${ALL_CHANGED_FILES}; do
-            echo "$file was changed"
-          done
+          currentVersion=$(cat 'src/Hitorus.Api/Hitorus.Api.csproj' | grep -oP '(?<=<Version>)[0-9.]+(?=</Version>)')
+          echo "CURRENT_VERSION=$currentVersion" >> $GITHUB_ENV
 
-      - name: Print current API version
-        run: cat "src/Hitorus.Api/Hitorus.Api.csproj" | grep -oP '(?<=<Version>)[0-9.]+(?=</Version>)'
+      - name: Get latest release tag
+        id: latest-release-tag
+        uses: pozetroninc/github-action-get-latest-release@v0.8.0
+        with:
+          repository: ${{ github.repository }}
+
+      - name: Set LATEST_RELEASE_TAG env value
+        run: |
+          echo "LATEST_RELEASE_TAG=${steps.latest-release-tag.outputs.release}" >> $GITHUB_ENV
+
+      - name: Test if steps.changed-files.outputs.any_changed condition run
+        if: steps.changed-files.outputs.any_changed
+        run: echo "steps.changed-files.outputs.any_changed is true!!!"
+
+      - name: Print everything
+        run: |
+          echo "CURRENT_VERSION = $CURRENT_VERSION"
+          echo "LATEST_RELEASE_TAG = $LATEST_RELEASE_TAG"
+          echo "steps.changed-files.outputs.any_changed = ${steps.changed-files.outputs.any_changed}"
+        

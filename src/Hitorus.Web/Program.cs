@@ -20,18 +20,19 @@ public class Program
         builder.Services.AddHttpClient();
         builder.Services.AddBlazoredLocalStorageAsSingleton();
         builder.Services.AddResizeListener(options => options.ReportRate = 500);
-        builder.Services.AddSingleton<SearchConfigurationService>();
-        builder.Services.AddSingleton<BrowseConfigurationService>();
-        builder.Services.AddSingleton<DownloadConfigurationService>();
-        builder.Services.AddSingleton<ViewConfigurationService>();
         builder.Services.AddSingleton<AppConfigurationService>();
-        builder.Services.AddSingleton<LanguageTypeService>();
-        builder.Services.AddSingleton<TagFilterService>();
-        builder.Services.AddSingleton<SearchFilterService>();
-        builder.Services.AddSingleton<TagService>();
-        builder.Services.AddSingleton<GalleryService>();
-        builder.Services.AddSingleton<DownloadService>();
+        builder.Services.AddSingleton<BrowseConfigurationService>();
         builder.Services.AddSingleton<DownloadClientManagerService>();
+        builder.Services.AddSingleton<DownloadConfigurationService>();
+        builder.Services.AddSingleton<DownloadService>();
+        builder.Services.AddSingleton<GalleryService>();
+        builder.Services.AddSingleton<ImageFileService>();
+        builder.Services.AddSingleton<LanguageTypeService>();
+        builder.Services.AddSingleton<SearchConfigurationService>();
+        builder.Services.AddSingleton<SearchFilterService>();
+        builder.Services.AddSingleton<TagFilterService>();
+        builder.Services.AddSingleton<TagService>();
+        builder.Services.AddSingleton<ViewConfigurationService>();
         await builder.Build().RunAsync();
     }
 }

@@ -8,44 +8,44 @@ using Microsoft.EntityFrameworkCore;
 namespace Hitorus.Api {
     public class Program {
         public static void Main(string[] args) {
-            var builder = WebApplication.CreateBuilder(args);
+            var appBuilder = WebApplication.CreateBuilder(args);
 
-            builder.Services.AddControllers();
-            builder.Services.AddDbContextFactory<HitomiContext>(options => {
+            appBuilder.Services.AddControllers();
+            appBuilder.Services.AddDbContextFactory<HitomiContext>(options => {
                 options.UseSqlite(
-                    builder.Configuration.GetConnectionString("DefaultConnection"),
+                    appBuilder.Configuration.GetConnectionString("DefaultConnection"),
                     optionsBuilder => {
                         optionsBuilder.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
                     }
                 );
             });
-            builder.Services.AddSignalR();
-            if (builder.Environment.IsDevelopment()) {
-                builder.Services.AddCors(options => {
-                    options.AddPolicy("HitorusCorsPolicy", builder =>
-                        builder.WithOrigins("https://localhost")
+            appBuilder.Services.AddSignalR();
+            if (appBuilder.Environment.IsDevelopment()) {
+                appBuilder.Services.AddCors(options => {
+                    options.AddPolicy("HitorusCorsPolicy", corsPolicyBuilder =>
+                        corsPolicyBuilder.WithOrigins("https://localhost")
                             .SetIsOriginAllowed(host => true)
                             .AllowAnyHeader()
                             .AllowAnyMethod()
                             );
                 });
             } else {
-                builder.Services.AddCors(options => {
-                    options.AddPolicy("HitorusCorsPolicy", builder =>
-                        builder.SetIsOriginAllowedToAllowWildcardSubdomains()
-                            .WithOrigins("https://*.hitorus.pages.dev/")
+                appBuilder.Services.AddCors(options => {
+                    options.AddPolicy("HitorusCorsPolicy", corsPolicyBuilder =>
+                        corsPolicyBuilder.SetIsOriginAllowedToAllowWildcardSubdomains()
+                            .WithOrigins(appBuilder.Configuration["AllowedOrigins"]!.Split(';'))
                             .SetIsOriginAllowed(origin => true)
                             .AllowAnyHeader()
                             .AllowAnyMethod()
                             );
                 });
             }
-            builder.Services.AddHttpClient();
-            builder.Services.AddScoped<TagUtilityService>();
-            builder.Services.AddHostedService<DownloadManagerService>();
-            builder.Services.AddSingleton<IEventBus<DownloadEventArgs>, DownloadEventBus>();
+            appBuilder.Services.AddHttpClient();
+            appBuilder.Services.AddScoped<TagUtilityService>();
+            appBuilder.Services.AddHostedService<DownloadManagerService>();
+            appBuilder.Services.AddSingleton<IEventBus<DownloadEventArgs>, DownloadEventBus>();
 
-            var app = builder.Build();
+            var app = appBuilder.Build();
             if (app.Environment.IsProduction()) {
                 app.UseExceptionHandler("/Error");
                 app.UseHsts();

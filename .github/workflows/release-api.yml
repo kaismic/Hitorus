@@ -25,6 +25,7 @@ jobs:
           echo "CURRENT_VERSION=$currentVersion" >> $GITHUB_ENV
 
       - run: git fetch --tags origin
+
       - name: Get previous tag
         id: previous-tag
         uses: WyriHaximus/github-action-get-previous-tag@v1.4.0
@@ -39,7 +40,11 @@ jobs:
 
       - name: Test if steps.changed-files.outputs.any_changed condition run
         if: ${{ steps.changed-files.outputs.any_changed == true }}
-        run: echo "steps.changed-files.outputs.any_changed is true and this step was run!!!"
+        run: |
+          echo "steps.changed-files.outputs.any_changed is true and this step was run!!!"
+          echo "CURRENT_VERSION = $CURRENT_VERSION"
+          echo "LATEST_RELEASE_VERSION = $LATEST_RELEASE_VERSION"
+          [ "$CURRENT_VERSION" == "$LATEST_RELEASE_VERSION" ] && echo "version equal" || echo "version not equal"
 
       - name: Print everything
         run: |

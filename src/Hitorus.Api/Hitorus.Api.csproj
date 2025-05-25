@@ -6,7 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <PublishSingleFile>true</PublishSingleFile>
     <PublishReadyToRun>true</PublishReadyToRun>
-    <Version>0.7.0</Version>
+    <Version>0.3.0</Version>
   </PropertyGroup>
 
   <ItemGroup>

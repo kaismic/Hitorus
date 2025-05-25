@@ -35,12 +35,13 @@ jobs:
           echo "LATEST_RELEASE_TAG=${steps.latest-release-tag.outputs.release}" >> $GITHUB_ENV
 
       - name: Test if steps.changed-files.outputs.any_changed condition run
-        if: steps.changed-files.outputs.any_changed
+        if: ${{ !cancelled() && steps.changed-files.outputs.any_changed }}
         run: echo "steps.changed-files.outputs.any_changed is true!!!"
 
       - name: Print everything
+        if: ${{ !cancelled() }}
         run: |
           echo "CURRENT_VERSION = $CURRENT_VERSION"
           echo "LATEST_RELEASE_TAG = $LATEST_RELEASE_TAG"
-          echo "steps.changed-files.outputs.any_changed = ${steps.changed-files.outputs.any_changed}"
-        
+          [ "$CURRENT_VERSION" == "$LATEST_RELEASE_TAG" ] && echo "version equal" || echo "version not equal"
+          echo "any_changed = ${steps.changed-files.outputs.any_changed}"

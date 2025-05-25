@@ -24,24 +24,23 @@ jobs:
           currentVersion=$(cat 'src/Hitorus.Api/Hitorus.Api.csproj' | grep -oP '(?<=<Version>)[0-9.]+(?=</Version>)')
           echo "CURRENT_VERSION=$currentVersion" >> $GITHUB_ENV
 
-      - name: Get latest release tag
-        id: latest-release-tag
-        uses: pozetroninc/github-action-get-latest-release@v0.8.0
+      - name: Get previous tag
+        id: previous-tag
+        uses: WyriHaximus/github-action-get-previous-tag@v1.4.0
         with:
-          repository: ${{ github.repository }}
+          fallback: v0.0.0
 
-      - name: Set LATEST_RELEASE_TAG env value
+      - name: Set LATEST_TAG env value
         run: |
-          echo "LATEST_RELEASE_TAG=${{steps.latest-release-tag.outputs.release}}" >> $GITHUB_ENV
+          echo "LATEST_TAG=${{steps.previous-tag.outputs.tag}}" >> $GITHUB_ENV
 
       - name: Test if steps.changed-files.outputs.any_changed condition run
-        if: ${{ !cancelled() && steps.changed-files.outputs.any_changed }}
-        run: echo "steps.changed-files.outputs.any_changed is true!!!"
+        if: ${{ steps.changed-files.outputs.any_changed == true }}
+        run: echo "steps.changed-files.outputs.any_changed is true and this step was run!!!"
 
       - name: Print everything
-        if: ${{ !cancelled() }}
         run: |
           echo "CURRENT_VERSION = $CURRENT_VERSION"
-          echo "LATEST_RELEASE_TAG = $LATEST_RELEASE_TAG"
-          [ "$CURRENT_VERSION" == "$LATEST_RELEASE_TAG" ] && echo "version equal" || echo "version not equal"
+          echo "LATEST_TAG = $LATEST_TAG"
+          [ "$CURRENT_VERSION" == "$LATEST_TAG" ] && echo "version equal" || echo "version not equal"
           echo "any_changed = ${{steps.changed-files.outputs.any_changed}}"

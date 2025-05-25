@@ -21,13 +21,14 @@ jobs:
 
       - name: Set CURRENT_VERSION env value
         run: |
-          currentVersion=$(cat 'src/Hitorus.Api/Hitorus.Api.csproj' | grep -oP '(?<=<Version>)[0-9.]+(?=</Version>)')
+          currentVersion=$(cat 'src/Hitorus.Api/Hitorus.Api.csproj' | grep -oP '(?<=<Version>)v[0-9.]+(?=</Version>)')
           echo "CURRENT_VERSION=$currentVersion" >> $GITHUB_ENV
 
       - name: Get previous tag
         id: previous-tag
         uses: WyriHaximus/github-action-get-previous-tag@v1.4.0
         with:
+          prefix: v
           fallback: v0.0.0
 
       - name: Set LATEST_TAG env value

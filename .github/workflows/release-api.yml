@@ -1,0 +1,31 @@
+name: Release API
+
+on:
+  workflow_dispatch:
+  # push:
+  #   branches: [ "main" ]
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Get changed files
+        id: changed_files
+        uses: tj-actions/changed-files@v46
+        # with:
+        #   files: src/Hitorus.Api/Hitorus.Api.csproj
+
+      - name: List all changed files
+        env:
+          ALL_CHANGED_FILES: ${{ steps.changed_files.outputs.all_changed_files }}
+        run: |
+          for file in ${ALL_CHANGED_FILES}; do
+            echo "$file was changed"
+          done
+
+      - name: Print current API version
+        run: cat "src/Hitorus.Api/Hitorus.Api.csproj" | grep -oP '(?<=<Version>)[0-9.]+(?=</Version>)'

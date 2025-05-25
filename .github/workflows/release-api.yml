@@ -6,49 +6,61 @@ on:
   #   branches: [ "main" ]
 
 jobs:
-  release:
+  target-file-changed:
     runs-on: ubuntu-latest
+    outputs:
+      value: ${{ fromJson(steps.changed-files.outputs.any_changed) }}
     steps:
       - uses: actions/checkout@v4
         with:
           ref: main
-
-      - name: Get changed files
-        id: changed-files
+      - id: changed-files
         uses: tj-actions/changed-files@v46
         with:
           files: src/Hitorus.Api/Hitorus.Api.csproj
 
-      - name: Set CURRENT_VERSION env value
+  current-version:
+    runs-on: ubuntu-latest
+    needs: target-file-changed
+    outputs:
+      version: ${{ steps.get-current-version.outputs.value }}
+    steps:
+      - id: get-current-version
         run: |
           currentVersion=$(cat 'src/Hitorus.Api/Hitorus.Api.csproj' | sed -n 's/.*<Version>\(.*\)<\/Version>.*/\1/p')
-          echo "CURRENT_VERSION=$currentVersion" >> $GITHUB_ENV
+          echo "value=$currentVersion" >> $GITHUB_OUTPUT
 
+  latest-release-version:
+    runs-on: ubuntu-latest
+    needs: current-version
+    outputs:
+      version: ${{ steps.trim-prefix.outputs.value }}
+    steps:
       - run: git fetch --tags origin
-
-      - name: Get previous tag
-        id: previous-tag
+      - id: get-prev-tag
         uses: WyriHaximus/github-action-get-previous-tag@v1.4.0
         with:
           prefix: v
           fallback: v0.0.0
-
-      - name: Set LATEST_RELEASE_VERSION env value
+      - id: trim-prefix
         env:
-          TAG_WITH_V: ${{steps.previous-tag.outputs.tag}}
-        run: echo "LATEST_RELEASE_VERSION=${TAG_WITH_V:1}" >> $GITHUB_ENV
+          TAG_WITH_V: ${{steps.get-prev-tag.outputs.tag}}
+        run: echo "value=${TAG_WITH_V:1}" >> $GITHUB_OUTPUT
 
-      - name: Test if steps.changed-files.outputs.any_changed condition run
-        if: ${{ fromJson(steps.changed-files.outputs.any_changed) == true }}
+  compare-versions:
+    runs-on: ubuntu-latest
+    needs: [current-version, latest-release-version]
+    outputs:
+      description: returns true if versions are equal, otherwise false
+      value: ${{ fromJson(steps.compare.outputs.value) }}
+    steps:
+      - id: compare
         run: |
-          echo "steps.changed-files.outputs.any_changed is true and this step was run!!!"
-          echo "CURRENT_VERSION = $CURRENT_VERSION"
-          echo "LATEST_RELEASE_VERSION = $LATEST_RELEASE_VERSION"
-          [ "$CURRENT_VERSION" == "$LATEST_RELEASE_VERSION" ] && echo "version equal" || echo "version not equal"
+          echo "value=${{ needs.current-version.outputs.version == needs.latest-release-version.outputs.version }}" >> $GITHUB_OUTPUT
 
-      - name: Print everything
-        run: |
-          echo "CURRENT_VERSION = $CURRENT_VERSION"
-          echo "LATEST_RELEASE_VERSION = $LATEST_RELEASE_VERSION"
-          [ "$CURRENT_VERSION" == "$LATEST_RELEASE_VERSION" ] && echo "version equal" || echo "version not equal"
-          echo "any_changed = ${{steps.changed-files.outputs.any_changed}}"
+  release:
+    runs-on: ubuntu-latest
+    needs: [current-version, compare-versions]
+    if: !needs.compare-versions.outputs.value
+    steps:
+      - run: echo "Releasing version ${{ needs.current-version.outputs.version }}!!!"

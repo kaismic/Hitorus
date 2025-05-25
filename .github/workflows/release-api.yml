@@ -6,7 +6,7 @@ on:
   #   branches: [ "main" ]
 
 jobs:
-  target-file-changed:
+  check-target-file-changed:
     runs-on: ubuntu-latest
     outputs:
       value: ${{ fromJson(steps.changed-files.outputs.any_changed) }}
@@ -19,23 +19,26 @@ jobs:
         with:
           files: src/Hitorus.Api/Hitorus.Api.csproj
 
-  current-version:
+  get-current-version:
     runs-on: ubuntu-latest
-    needs: target-file-changed
+    needs: check-target-file-changed
     outputs:
-      version: ${{ steps.get-current-version.outputs.value }}
+      version: ${{ steps.parse-file.outputs.value }}
     steps:
-      - id: get-current-version
+      - id: parse-file
         run: |
           currentVersion=$(cat 'src/Hitorus.Api/Hitorus.Api.csproj' | sed -n 's/.*<Version>\(.*\)<\/Version>.*/\1/p')
           echo "value=$currentVersion" >> $GITHUB_OUTPUT
 
-  latest-release-version:
+  get-latest-release-version:
     runs-on: ubuntu-latest
-    needs: current-version
+    needs: get-current-version
     outputs:
       version: ${{ steps.trim-prefix.outputs.value }}
     steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
       - run: git fetch --tags origin
       - id: get-prev-tag
         uses: WyriHaximus/github-action-get-previous-tag@v1.4.0
@@ -49,18 +52,18 @@ jobs:
 
   compare-versions:
     runs-on: ubuntu-latest
-    needs: [current-version, latest-release-version]
+    needs: [get-current-version, get-latest-release-version]
     outputs:
       description: returns true if versions are equal, otherwise false
       value: ${{ fromJson(steps.compare.outputs.value) }}
     steps:
       - id: compare
         run: |
-          echo "value=${{ needs.current-version.outputs.version == needs.latest-release-version.outputs.version }}" >> $GITHUB_OUTPUT
+          echo "value=${{ needs.get-current-version.outputs.version == needs.get-latest-release-version.outputs.version }}" >> $GITHUB_OUTPUT
 
   release:
     runs-on: ubuntu-latest
-    needs: [current-version, compare-versions]
+    needs: [get-current-version, compare-versions]
     if: ${{ !(needs.compare-versions.outputs.value) }}
     steps:
-      - run: echo "Releasing version ${{ needs.current-version.outputs.version }}!!!"
+      - run: echo "Releasing version ${{ needs.get-current-version.outputs.version }}!!!"

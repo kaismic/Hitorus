@@ -39,7 +39,7 @@ jobs:
         run: echo "LATEST_RELEASE_VERSION=${TAG_WITH_V:1}" >> $GITHUB_ENV
 
       - name: Test if steps.changed-files.outputs.any_changed condition run
-        if: ${{ steps.changed-files.outputs.any_changed == true }}
+        if: ${{ fromJson(steps.changed-files.outputs.any_changed) == true }}
         run: |
           echo "steps.changed-files.outputs.any_changed is true and this step was run!!!"
           echo "CURRENT_VERSION = $CURRENT_VERSION"

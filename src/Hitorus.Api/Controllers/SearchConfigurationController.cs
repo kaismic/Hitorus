@@ -1,15 +1,14 @@
-﻿using Hitorus.Api.Localization;
-using Hitorus.Data.DbContexts;
+﻿using Hitorus.Data.DbContexts;
 using Hitorus.Data.DTOs;
 using Hitorus.Data.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Globalization;
+using Microsoft.Extensions.Localization;
 
 namespace Hitorus.Api.Controllers {
     [ApiController]
     [Route("api/search-config")]
-    public class SearchConfigurationController(HitomiContext context) : ControllerBase {
+    public class SearchConfigurationController(HitomiContext context, IStringLocalizer<ExampleTagFilterNames> localizer) : ControllerBase {
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public ActionResult<SearchConfigurationDTO> GetConfiguration() {
@@ -132,31 +131,30 @@ namespace Hitorus.Api.Controllers {
             if (searchConfig.ExampleTagFiltersCreated) {
                 return NoContent();
             }
-            ExampleTagFilterNames.Culture = CultureInfo.GetCultureInfo(language);
             IEnumerable<TagFilter> examples = [
                 new() {
-                    Name = ExampleTagFilterNames.Name1,
+                    Name = localizer["Name1"],
                     Tags = [
                         GetTag(context.Tags.AsNoTracking(), "full color", TagCategory.Tag),
                         GetTag(context.Tags.AsNoTracking(), "very long hair", TagCategory.Female),
                     ]
                 },
                 new() {
-                    Name = ExampleTagFilterNames.Name2,
+                    Name = localizer["Name2"],
                     Tags = [
                         GetTag(context.Tags.AsNoTracking(), "glasses", TagCategory.Female),
                         GetTag(context.Tags.AsNoTracking(), "sole male", TagCategory.Male),
                     ]
                 },
                 new() {
-                    Name = ExampleTagFilterNames.Name3,
+                    Name = localizer["Name3"],
                     Tags = [
                         GetTag(context.Tags.AsNoTracking(), "naruto", TagCategory.Series),
                         GetTag(context.Tags.AsNoTracking(), "big breasts", TagCategory.Female),
                     ]
                 },
                 new() {
-                    Name = ExampleTagFilterNames.Name4,
+                    Name = localizer["Name4"],
                     Tags = [
                         GetTag(context.Tags.AsNoTracking(), "non-h imageset", TagCategory.Tag)
                     ]

@@ -44,6 +44,9 @@ namespace Hitorus.Api {
             appBuilder.Services.AddScoped<TagUtilityService>();
             appBuilder.Services.AddHostedService<DownloadManagerService>();
             appBuilder.Services.AddSingleton<IEventBus<DownloadEventArgs>, DownloadEventBus>();
+            appBuilder.Services.AddLocalization(options => options.ResourcesPath = "Localization");
+
+            string[] supportedCultures = appBuilder.Configuration.GetSection("SupportedCultures").Get<string[]>()!;
 
             var app = appBuilder.Build();
             if (app.Environment.IsProduction()) {
@@ -52,6 +55,7 @@ namespace Hitorus.Api {
             }
             app.UseRouting();
             app.UseCors("HitorusCorsPolicy");
+            app.UseRequestLocalization(supportedCultures);
 
             app.MapHub<DownloadHub>("api/download-hub");
             app.MapControllers();

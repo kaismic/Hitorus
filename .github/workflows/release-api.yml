@@ -1,21 +1,22 @@
 name: Release API
 
 on:
-  workflow_dispatch:
-  # push:
-  #   branches: [ "main" ]
+  push:
+    branches: [ "main" ]
 
 jobs:
   release:
+    env:
+      OUTPUT_DIR: "output"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.2.2
+        uses: actions/checkout@v4
         with:
           ref: main
       - name: Changed Files
         id: changed-files
-        uses: tj-actions/changed-files@v46.0.5
+        uses: tj-actions/changed-files@v46
         with:
           files: src/Hitorus.Api/Hitorus.Api.csproj
       - name: Set env FILE_CHANGED
@@ -30,7 +31,7 @@ jobs:
         run: git fetch --tags origin
       - id: get-prev-tag
         if: ${{ fromJson(env.FILE_CHANGED) }}
-        uses: WyriHaximus/github-action-get-previous-tag@v1.4.0
+        uses: WyriHaximus/github-action-get-previous-tag@v1
         with:
           prefix: v
           fallback: v0.0.0
@@ -39,7 +40,32 @@ jobs:
         run: |
           tagWithV=${{steps.get-prev-tag.outputs.tag}}
           echo "LATEST_RELEASE_VERSION=${tagWithV:1}" >> $GITHUB_ENV
-      - name: Compare versions and release API
-        if: ${{ fromJson(env.FILE_CHANGED) && env.CURRENT_VERSION != env.LATEST_RELEASE_VERSION }}
+      - name: Set env CREATE_RELEASE
         run: |
-          echo "Releasing version $CURRENT_VERSION!!!"
+          if [ "$FILE_CHANGED" == "true" ] && [ "$CURRENT_VERSION" != "$LATEST_RELEASE_VERSION" ]; then
+              createRelease="true"
+          else
+              createRelease="false"
+          fi
+          echo "CREATE_RELEASE=$createRelease" >> $GITHUB_ENV
+      - name: Setup dotnet
+        if: ${{ fromJson(env.CREATE_RELEASE) }}
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0'
+      - name: Publish for each runtime
+        if: ${{ fromJson(env.CREATE_RELEASE) }}
+        run: |
+          declare -a runtimes=('win-x64' 'win-arm64' 'linux-x64' 'linux-arm64' 'osx-x64' 'osx-arm64')
+          for r in "${runtimes[@]}"
+          do
+            outputPath="$OUTPUT_DIR/Hitorus-v$CURRENT_VERSION-$r"
+            dotnet publish src/Hitorus.Api --output $outputPath -r "$r"
+            zip -r "$outputPath.zip" $outputPath
+          done
+      - name: Create release
+        if: ${{ fromJson(env.CREATE_RELEASE) }}
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "$OUTPUT_DIR/*.zip"
+          tag: "v$CURRENT_VERSION"

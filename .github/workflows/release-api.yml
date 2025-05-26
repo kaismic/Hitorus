@@ -21,7 +21,8 @@ jobs:
       - name: Set env FILE_CHANGED
         run:
           echo "FILE_CHANGED=${{ steps.changed-files.outputs.any_changed }}" >> $GITHUB_ENV
-      - if: ${{ fromJson(env.FILE_CHANGED) }}
+      - name: Set env CURRENT_VERSION
+        if: ${{ fromJson(env.FILE_CHANGED) }}
         run: |
           currentVersion=$(cat 'src/Hitorus.Api/Hitorus.Api.csproj' | sed -n 's/.*<Version>\(.*\)<\/Version>.*/\1/p')
           echo "CURRENT_VERSION=$currentVersion" >> $GITHUB_ENV
@@ -33,10 +34,12 @@ jobs:
         with:
           prefix: v
           fallback: v0.0.0
-      - if: ${{ fromJson(env.FILE_CHANGED) }}
+      - name: Trim out prefix "v" from latest release version and set env LATEST_RELEASE_VERSION
+        if: ${{ fromJson(env.FILE_CHANGED) }}
         run: |
           tagWithV=${{steps.get-prev-tag.outputs.tag}}
           echo "LATEST_RELEASE_VERSION=${tagWithV:1}" >> $GITHUB_ENV
-      - if: ${{ fromJson(env.FILE_CHANGED) && env.CURRENT_VERSION != env.LATEST_RELEASE_VERSION }}
+      - name: Compare versions and release API
+        if: ${{ fromJson(env.FILE_CHANGED) && env.CURRENT_VERSION != env.LATEST_RELEASE_VERSION }}
         run: |
           echo "Releasing version $CURRENT_VERSION!!!"

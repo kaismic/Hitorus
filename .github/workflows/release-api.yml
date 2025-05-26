@@ -20,7 +20,7 @@ jobs:
           files: src/Hitorus.Api/Hitorus.Api.csproj
       - name: Set env FILE_CHANGED
         run:
-          echo "FILE_CHANGED=${{ fromJson(steps.changed-files.outputs.any_changed) }}" >> $GITHUB_ENV
+          echo "FILE_CHANGED=${{ steps.changed-files.outputs.any_changed }}" >> $GITHUB_ENV
       - if: ${{ fromJson(env.FILE_CHANGED) }}
         run: |
           currentVersion=$(cat 'src/Hitorus.Api/Hitorus.Api.csproj' | sed -n 's/.*<Version>\(.*\)<\/Version>.*/\1/p')
@@ -39,4 +39,4 @@ jobs:
           echo "LATEST_RELEASE_VERSION=${tagWithV:1}" >> $GITHUB_ENV
       - if: ${{ fromJson(env.FILE_CHANGED) && env.CURRENT_VERSION != env.LATEST_RELEASE_VERSION }}
         run: |
-          echo "Releasing version ${{ fromJson(env.CURRENT_VERSION) }}!!!"
+          echo "Releasing version $CURRENT_VERSION!!!"

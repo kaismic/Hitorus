@@ -56,6 +56,7 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '9.0'
+          cache: true
       - name: Publish for each runtime
         if: ${{ fromJson(env.CREATE_RELEASE) }}
         run: |
@@ -71,5 +72,5 @@ jobs:
         if: ${{ fromJson(env.CREATE_RELEASE) }}
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "$OUTPUT_DIR/*.zip"
-          tag: "v$CURRENT_VERSION"
+          artifacts: ${{ format('{0}/*.zip', env.OUTPUT_DIR) }}
+          tag: ${{ format('v{0}', env.CURRENT_VERSION) }}

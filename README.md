@@ -23,7 +23,7 @@ Hitorus is a web application designed to enhance the experience of using website
 ## Features
 - Create search links with customizable tag filters
 - Download galleries
-- View galleries with enhanced functionalities
+- View galleries with enhanced UI and functionalities
 
 ... and many more!
 
@@ -33,6 +33,7 @@ Hitorus is a web application designed to enhance the experience of using website
 3. Go to https://hitorus.pages.dev/
 
 ## How to resolve issues
+- If the webpage does not load, try visiting the page in Incognito/Private mode.
 - In a rare case, an error might occur when other applications are using the default localhost port. In this case, manually change the Url's port number in `appsettings.json` to a random number between (1024 - 65535).
 
       "Kestrel": {

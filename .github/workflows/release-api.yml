@@ -9,7 +9,8 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
         with:
           ref: main
       - name: Changed Files
@@ -20,22 +21,22 @@ jobs:
       - name: Set env FILE_CHANGED
         run:
           echo "FILE_CHANGED=${{ fromJson(steps.changed-files.outputs.any_changed) }}" >> $GITHUB_ENV
-      - if: ${{ env.FILE_CHANGED }}
+      - if: ${{ fromJson(env.FILE_CHANGED) }}
         run: |
           currentVersion=$(cat 'src/Hitorus.Api/Hitorus.Api.csproj' | sed -n 's/.*<Version>\(.*\)<\/Version>.*/\1/p')
           echo "CURRENT_VERSION=$currentVersion" >> $GITHUB_ENV
-      - if: ${{ env.FILE_CHANGED }}
+      - if: ${{ fromJson(env.FILE_CHANGED) }}
         run: git fetch --tags origin
       - id: get-prev-tag
-        if: ${{ env.FILE_CHANGED }}
+        if: ${{ fromJson(env.FILE_CHANGED) }}
         uses: WyriHaximus/github-action-get-previous-tag@v1.4.0
         with:
           prefix: v
           fallback: v0.0.0
-      - if: ${{ env.FILE_CHANGED }}
+      - if: ${{ fromJson(env.FILE_CHANGED) }}
         run: |
           tagWithV=${{steps.get-prev-tag.outputs.tag}}
           echo "LATEST_RELEASE_VERSION=${tagWithV:1}" >> $GITHUB_ENV
-      - if: ${{ env.FILE_CHANGED && env.CURRENT_VERSION != env.LATEST_RELEASE_VERSION }}
+      - if: ${{ fromJson(env.FILE_CHANGED) && env.CURRENT_VERSION != env.LATEST_RELEASE_VERSION }}
         run: |
-          echo "Releasing version ${{ env.CURRENT_VERSION }}!!!"
+          echo "Releasing version ${{ fromJson(env.CURRENT_VERSION) }}!!!"

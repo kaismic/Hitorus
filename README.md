@@ -13,62 +13,36 @@
 
 **Read in other languages:** [English](README.md), [한국어](README-ko.md)
 
-Hitorus is a local desktop web application designed to enhance the experience of using website hitomi.la. It offers the following features:
-
-- Create search links with customizable tag filters
-- Download galleries
-- View galleries with enhanced functionalities
-
-... and many more!
+Hitorus is a web application designed to enhance the experience of using website hitomi.la.
 
 ## Preview
 <div align="center">
   <img src="./content/preview-1.jpeg" width="50%">
 </div>
 
-## Installation
-### Windows
-1. Install **both** [ASP.NET Core Runtime and .NET Runtime](https://dotnet.microsoft.com/download/dotnet/9.0) (9.0.5 or higher) using the installers.
-2. Run Powershell as administrator and run the following command: 
+## Features
+- Create search links with customizable tag filters
+- Download galleries
+- View galleries with enhanced functionalities
 
-        Set-ExecutionPolicy -ExecutionPolicy RemoteSigned
-3. Download the [latest release](https://github.com/kaismic/Hitorus/releases/latest) and extract it.
-
-### macOS/Linux
-1. Install **both** [ASP.NET Core Runtime and .NET Runtime](https://dotnet.microsoft.com/download/dotnet/9.0) (9.0.5 or higher). It is recommended to use the [offical installation script](https://learn.microsoft.com/en-us/dotnet/core/install/linux-scripted-manual#scripted-install) to install.
-To download and use the installation script, run the following commands:
-
-          wget https://dot.net/v1/dotnet-install.sh -O dotnet-install.sh
-          chmod +x ./dotnet-install.sh
-          ./dotnet-install.sh --channel 9.0 --runtime aspnetcore
-          ./dotnet-install.sh --channel 9.0 --runtime dotnet
-
-2. Add the installation location to `$PATH`. If you have used the installation script, you can do this by appending the following line to the end of `~/.bashrc` file:
-
-        export PATH=$PATH:/home/{YOUR_USERNAME}/.dotnet
-    where `{YOUR_USERNAME}` is your username.
-
-3. Download the [latest release](https://github.com/kaismic/Hitorus/releases/latest) and extract it.
-
+... and many more!
 
 ## Usage
-### Windows
-- Run `Hitorus-run.ps1`
-
-### macOS/Linux
-- Run `Hitorus-run.sh`
+1. Download the [latest release](https://github.com/kaismic/Hitorus/releases/latest) and extract it.
+2. Run `Hitorus.Api.exe` (Windows) or `Hitorus.Api` (macOS/Linux)
+3. Go to https://hitorus.pages.dev/
 
 ## How to resolve issues
-- In a rare case, an error might occur when other applications are using the default port numbers in the script. In this case, manually change the port numbers in the script to other numbers (1024 - 65535) and run them again.
+- In a rare case, an error might occur when other applications are using the default localhost port. In this case, manually change the Url's port number in `appsettings.json` to a random number between (1024 - 65535).
 
-  `Hitorus-run.ps1`
-
-      $WEB_PORT=5214
-      $API_PORT=7076
-  `Hitorus-run.sh`
-
-      WEB_PORT=5214
-      API_PORT=7076
+      "Kestrel": {
+        "Endpoints": {
+          "Http": {
+            "Url": "http://localhost:7076" <-- change this number
+          }
+        }
+      },
+      ...
 
 ## Notes
 - Downloaded gallery images are stored in the `Galleries` folder.

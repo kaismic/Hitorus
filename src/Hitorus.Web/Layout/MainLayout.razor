@@ -39,12 +39,17 @@
                 @if (_connectionError) {
                     <MudIcon Icon="@Icons.Material.Filled.Error" Size="Size.Large" Color="Color.Primary" Style="font-size: 4rem" />
                     <MudText Typo="Typo.h6">@Localizer["ConnectionError"]</MudText>
-                    <MudText Typo="Typo.subtitle1">@Localizer["EnsureApiRunning"]</MudText>
-                    <MudText Typo="Typo.subtitle1">@(string.Format(Localizer["CheckPortNumber"], _apiPort))</MudText>
+                    <div class="d-flex gap-2 align-center">
+                        <MudText Typo="Typo.subtitle1">@Localizer["EnsureApiRunning"]</MudText>
+                        <MudLink Href="https://github.com/kaismic/Hitorus/releases/latest" Target="_blank">@Localizer["DownloadLink"]</MudLink>
+                    </div>
+                    <MudText Typo="Typo.subtitle1">@Localizer["CheckPortNumber"]</MudText>
+                    <MudText Typo="Typo.subtitle1" Style="font-weight:700">@(string.Format(Localizer["CurrentPortNumber"], _initialApiPort))</MudText>
                     <div class="d-flex gap-2 align-center">
                         <MudText>@Localizer["EnterApiPortNumber"]</MudText>
                         <MudNumericField T="int" HideSpinButtons
-                                         Min="1" Max="65535"
+                                         Min="1024" Max="65535"
+                                         Pattern="[0-9]"
                                          @bind-Value="_apiPort" />
                         <MudButton Variant="Variant.Filled"
                                    Color="Color.Primary"

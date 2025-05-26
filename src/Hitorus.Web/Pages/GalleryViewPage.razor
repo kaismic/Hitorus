@@ -132,6 +132,7 @@
                                  ValueChanged="@OnPageOffsetChanged"
                                  Label=@Localizer["PageOffset"]
                                  Min="0" Max="@(_imagesPerPage - 1)"
+                                 Pattern="[0-9]"
                                  Variant="Variant.Outlined"
                                  Style="max-width: 120px" />
                 <MudNumericField T="int"
@@ -140,6 +141,7 @@
                                  Disabled="@_isAutoScrolling"
                                  Label=@(_viewConfiguration.ImageLayoutMode == ImageLayoutMode.Automatic ? Localizer["MaxImagesPerPage"] : Localizer["ImagesPerPage"])
                                  Min="1" Max=@Math.Min(4, _gallery.Images.Count)
+                                 Pattern="[0-9]"
                                  Variant="Variant.Outlined" />
                 <MudSelect T="ImageLayoutMode" FitContent
                            Margin="Margin.Dense"

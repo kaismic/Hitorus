@@ -36,6 +36,7 @@
                                  Label=@Localizer["ItemsPerPage"]
                                  Variant="Variant.Outlined"
                                  Min="1" Max="24"
+                                 Pattern="[0-9]"
                                  Style="max-width: 160px"
                                  Value="@BrowseConfigurationService.Config.ItemsPerPage"
                                  ValueChanged="@OnItemsPerPageChanged" />

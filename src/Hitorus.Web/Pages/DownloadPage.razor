@@ -34,6 +34,7 @@
                              Label=@Localizer["ThreadsPerDownload"]
                              Variant="Variant.Outlined"
                              Min="1" Max="16"
+                             Pattern="[0-9]"
                              Value="@DownloadConfigurationService.Config.ThreadNum"
                              ValueChanged="@OnThreadNumChanged" />
             <MudSpacer/>

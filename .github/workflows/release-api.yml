@@ -56,7 +56,6 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '9.0'
-          cache: true
       - name: Publish for each runtime
         if: ${{ fromJson(env.CREATE_RELEASE) }}
         run: |

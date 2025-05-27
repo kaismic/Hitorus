@@ -13,7 +13,7 @@
 
 **다른 언어로 읽기:** [English](README.md), [한국어](README-ko.md)
 
-Hitorus는 hitomi.la의 사용 경험을 더 향상시켜주는 데스크톱 웹 앱입니다.
+Hitorus는 hitomi.la를 사용하기 더 편하게 만들어주는 데스크톱 웹 앱입니다.
 
 ## 미리보기
 <div align="center">

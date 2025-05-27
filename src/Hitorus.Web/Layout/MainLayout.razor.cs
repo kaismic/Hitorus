@@ -39,16 +39,20 @@ namespace Hitorus.Web.Layout {
             _apiPort = _initialApiPort;
             try {
                 await AppConfigService.Load();
-                _currentApiVersion = await AppConfigService.GetCurrentApiVersion();
+                // need to drop the revision part of the version to compare with the minimum compatible version
+                Version temp = await AppConfigService.GetCurrentApiVersion();
+                _currentApiVersion = new(temp.Major, temp.Minor, temp.Build);
                 Version minCompatibleVersion = new(HostConfiguration["MinCompatibleApiVersion"]!);
                 if (_currentApiVersion < minCompatibleVersion) {
                     _incompatibleVersion = true;
-                } else if (AppConfigService.Config.AppLaunchCount == 0) {
-                    await LTService.Load();
-                    await SearchConfigurationService.Load();
-                    IEnumerable<TagFilterDTO> examples = await SearchConfigurationService.CreateExampleTagFilters(CultureInfo.CurrentCulture.Name);
-                    foreach (TagFilterDTO dto in examples) {
-                        SearchConfigurationService.Config.TagFilters.Add(dto);
+                } else {
+                    if (AppConfigService.Config.AppLaunchCount == 0) {
+                        await LTService.Load();
+                        await SearchConfigurationService.Load();
+                        IEnumerable<TagFilterDTO> examples = await SearchConfigurationService.CreateExampleTagFilters(CultureInfo.CurrentCulture.Name);
+                        foreach (TagFilterDTO dto in examples) {
+                            SearchConfigurationService.Config.TagFilters.Add(dto);
+                        }
                     }
                     await AppConfigService.UpdateLastUpdateCheckTime(DateTimeOffset.UtcNow);
                     await AppConfigService.IncrementAppLaunchCount();
@@ -58,7 +62,9 @@ namespace Hitorus.Web.Layout {
                 _connectionError = true;
             }
             StateHasChanged();
-            _ = OnInitRenderComplete();
+            if (!_incompatibleVersion && !_connectionError) {
+                _ = OnInitRenderComplete();
+            }
         }
 
         protected override void OnAfterRender(bool firstRender) {

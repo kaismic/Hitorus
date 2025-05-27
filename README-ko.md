@@ -13,7 +13,7 @@
 
 **다른 언어로 읽기:** [English](README.md), [한국어](README-ko.md)
 
-Hitorus는 hitomi.la 웹사이트를 더 사용하기 편하게 만들어주는 웹 앱입니다.
+Hitorus는 hitomi.la의 사용 경험을 더 향상시켜주는 데스크톱 웹 앱입니다.
 
 ## 미리보기
 <div align="center">
@@ -39,7 +39,7 @@ Hitorus는 hitomi.la 웹사이트를 더 사용하기 편하게 만들어주는 
       "Kestrel": {
         "Endpoints": {
           "Http": {
-            "Url": "http://localhost:7076" <-- change this number
+            "Url": "http://localhost:7076" <-- 여기
           }
         }
       },
@@ -47,4 +47,4 @@ Hitorus는 hitomi.la 웹사이트를 더 사용하기 편하게 만들어주는 
 
 ## 참고
 - 다운로드 된 갤러리 이미지들은 `Galleries` 폴더에 저장됩니다.
-- 앱의 모든 데이터는 `main.db` 파일에 저장되어있습니다 (`Hitorus.Api`에 위치). 데이터를 내보내거나 백업하려면, 이 파일을 복사 후 나중에 똑같은 위치에 붙여넣으면 됩니다.
+- 앱의 모든 데이터는 `main.db` 파일에 저장됩니다. 데이터를 내보내거나 백업하려면, 이 파일을 복사 후 나중에 똑같은 위치에 붙여넣으면 됩니다.

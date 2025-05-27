@@ -13,7 +13,7 @@
 
 **Read in other languages:** [English](README.md), [한국어](README-ko.md)
 
-Hitorus is a web application designed to enhance the experience of using website hitomi.la.
+Hitorus is a desktop web application designed to enhance the experience of using hitomi.la.
 
 ## Preview
 <div align="center">
@@ -39,7 +39,7 @@ Hitorus is a web application designed to enhance the experience of using website
       "Kestrel": {
         "Endpoints": {
           "Http": {
-            "Url": "http://localhost:7076" <-- change this number
+            "Url": "http://localhost:7076" <-- here
           }
         }
       },
@@ -47,4 +47,4 @@ Hitorus is a web application designed to enhance the experience of using website
 
 ## Notes
 - Downloaded gallery images are stored in the `Galleries` folder.
-- The entire application data is stored in the `main.db` file (located under `Hitorus.Api`). To export or backup your data, copy, store it somewhere else and later paste it into the same location.
+- The entire application data is stored in the `main.db` file. To export or backup your data, copy, store it somewhere else and later paste it into the same location.

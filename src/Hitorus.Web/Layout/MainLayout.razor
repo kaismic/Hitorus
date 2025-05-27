@@ -36,17 +36,19 @@
         <div style="min-height: 100dvh; display: flex; justify-content: center; align-items: center;">
             <div style="display: flex; flex-direction: column; align-items: center;
                         justify-content: center; gap: 2dvh;">
-                @if (_connectionError) {
+                @if (_connectionError || _incompatibleVersion) {
                     <MudIcon Icon="@Icons.Material.Filled.Error" Size="Size.Large" Color="Color.Primary" Style="font-size: 4rem" />
+                }
+                @if (_connectionError) {
                     <MudText Typo="Typo.h6">@Localizer["ConnectionError"]</MudText>
                     <div class="d-flex gap-2 align-center">
-                        <MudText Typo="Typo.subtitle1">@Localizer["EnsureApiRunning"]</MudText>
+                        <MudText Typo="Typo.subtitle1">@Localizer["EnsureServerRunning"]</MudText>
                         <MudLink Href="https://github.com/kaismic/Hitorus/releases/latest" Target="_blank">@Localizer["DownloadLink"]</MudLink>
                     </div>
                     <MudText Typo="Typo.subtitle1">@Localizer["CheckPortNumber"]</MudText>
                     <MudText Typo="Typo.subtitle1" Style="font-weight:700">@(string.Format(Localizer["CurrentPortNumber"], _initialApiPort))</MudText>
                     <div class="d-flex gap-2 align-center">
-                        <MudText>@Localizer["EnterApiPortNumber"]</MudText>
+                        <MudText>@Localizer["EnterPortNumber"]</MudText>
                         <MudNumericField T="int" HideSpinButtons
                                          Min="1024" Max="65535"
                                          Pattern="[0-9]"
@@ -56,6 +58,12 @@
                                    OnClick="@OnApiPortChangeRequested">
                             @SharedLocalizer["Confirm"]
                         </MudButton>
+                    </div>
+                } else if (_incompatibleVersion) {
+                    <MudText Typo="Typo.h6">@(string.Format(Localizer["IncompatibleVersion"], _currentApiVersion))</MudText>
+                    <div class="d-flex gap-2 align-center">
+                        <MudText Typo="Typo.subtitle1">@Localizer["IncompatibleDesc"]</MudText>
+                        <MudLink Href="https://github.com/kaismic/Hitorus/releases/latest" Target="_blank">@Localizer["DownloadLink"]</MudLink>
                     </div>
                 } else {
                     <MudProgressCircular Indeterminate="true" Size="Size.Large" Color="Color.Primary" Style="font-size: 4rem" />

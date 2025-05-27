@@ -13,7 +13,7 @@ namespace Hitorus.Web.Services {
             SearchConfigurationService searchConfigService
         ) {
             _httpClient = httpClient;
-            _httpClient.BaseAddress = Utilities.GetServiceBaseUri(hostConfiguration, localStorageService, "SearchConfigServicePath");
+            _httpClient.BaseAddress = Utilities.GetServiceBaseUri(hostConfiguration, localStorageService, "SearchFilterServicePath");
             _searchConfigService = searchConfigService;
         }
 

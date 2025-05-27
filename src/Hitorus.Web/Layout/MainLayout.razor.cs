@@ -27,6 +27,8 @@ namespace Hitorus.Web.Layout {
         private bool _isInitialized = false;
         private bool _hasRendered = false;
         private bool _connectionError = false;
+        private bool _incompatibleVersion = false;
+        private Version _currentApiVersion = new();
         private int _initialApiPort;
         private int _apiPort;
 
@@ -36,18 +38,22 @@ namespace Hitorus.Web.Layout {
             _initialApiPort = Utilities.GetApiPort(HostConfiguration, LocalStorageService);
             _apiPort = _initialApiPort;
             try {
-                await LTService.Load();
                 await AppConfigService.Load();
-                await SearchConfigurationService.Load();
-                if (AppConfigService.Config.AppLaunchCount == 0) {
+                _currentApiVersion = await AppConfigService.GetCurrentApiVersion();
+                Version minCompatibleVersion = new(HostConfiguration["MinCompatibleApiVersion"]!);
+                if (_currentApiVersion < minCompatibleVersion) {
+                    _incompatibleVersion = true;
+                } else if (AppConfigService.Config.AppLaunchCount == 0) {
+                    await LTService.Load();
+                    await SearchConfigurationService.Load();
                     IEnumerable<TagFilterDTO> examples = await SearchConfigurationService.CreateExampleTagFilters(CultureInfo.CurrentCulture.Name);
                     foreach (TagFilterDTO dto in examples) {
                         SearchConfigurationService.Config.TagFilters.Add(dto);
                     }
                     await AppConfigService.UpdateLastUpdateCheckTime(DateTimeOffset.UtcNow);
+                    await AppConfigService.IncrementAppLaunchCount();
+                    _isInitialized = true;
                 }
-                await AppConfigService.IncrementAppLaunchCount();
-                _isInitialized = true;
             } catch (HttpRequestException) {
                 _connectionError = true;
             }

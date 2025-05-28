@@ -66,7 +66,7 @@ jobs:
             releaseName="Hitorus-v$CURRENT_VERSION-$r"
             outputPath="$OUTPUT_DIR/$releaseName"
             dotnet publish src/Hitorus.Api --output $outputPath -r "$r"
-            zip -r "$releaseName.zip" "$outputPath"
+            zip -r "$OUTPUT_DIR/$releaseName.zip" "$outputPath"
           done
       - name: Create release
         if: ${{ fromJson(env.CREATE_RELEASE) }}

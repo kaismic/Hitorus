@@ -46,9 +46,9 @@ namespace Hitorus.Web.Layout {
                 if (_currentApiVersion < minCompatibleVersion) {
                     _incompatibleVersion = true;
                 } else {
+                    await LTService.Load();
+                    await SearchConfigurationService.Load();
                     if (AppConfigService.Config.AppLaunchCount == 0) {
-                        await LTService.Load();
-                        await SearchConfigurationService.Load();
                         IEnumerable<TagFilterDTO> examples = await SearchConfigurationService.CreateExampleTagFilters(CultureInfo.CurrentCulture.Name);
                         foreach (TagFilterDTO dto in examples) {
                             SearchConfigurationService.Config.TagFilters.Add(dto);

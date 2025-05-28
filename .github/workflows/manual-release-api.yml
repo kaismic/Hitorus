@@ -1,0 +1,44 @@
+name: Release API
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Release version (with prefix v)
+        required: true
+        type: string
+
+jobs:
+  release:
+    permissions:
+      contents: write
+    env:
+      OUTPUT_DIR: "output"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          submodules: true
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0'
+      - name: Publish for each runtime
+        run: |
+          echo "Releasing version ${{ inputs.version }}"
+          python generate-resx.py 1
+          declare -a runtimes=('win-x64' 'win-arm64' 'linux-x64' 'linux-arm64' 'osx-x64' 'osx-arm64')
+          for r in "${runtimes[@]}"
+          do
+            releaseName="Hitorus-v${{ inputs.version }}-$r"
+            outputPath="$OUTPUT_DIR/$releaseName"
+            dotnet publish src/Hitorus.Api --output $outputPath -r "$r"
+            zip -r "$OUTPUT_DIR/$releaseName.zip" "$outputPath"
+          done
+      - name: Create release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: ${{ format('{0}/*.zip', env.OUTPUT_DIR) }}
+          tag: ${{ format('v{0}', inputs.version ) }}

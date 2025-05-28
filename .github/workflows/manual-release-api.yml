@@ -1,4 +1,4 @@
-name: Manual Release API
+name: Manually Release API
 
 on:
   workflow_dispatch:
@@ -31,11 +31,11 @@ jobs:
           python generate-resx.py 1
           declare -a runtimes=('win-x64' 'win-arm64' 'linux-x64' 'linux-arm64' 'osx-x64' 'osx-arm64')
           for r in "${runtimes[@]}"
+          cd "$OUTPUT_DIR"
           do
             releaseName="Hitorus-v${{ inputs.version }}-$r"
-            outputPath="$OUTPUT_DIR/$releaseName"
-            dotnet publish src/Hitorus.Api --output $outputPath -r "$r"
-            zip -r "$OUTPUT_DIR/$releaseName.zip" "$outputPath"
+            dotnet publish ../src/Hitorus.Api --output "$releaseName" -r "$r"
+            zip -r "$releaseName.zip" "$releaseName"
           done
       - name: Create release
         uses: ncipollo/release-action@v1

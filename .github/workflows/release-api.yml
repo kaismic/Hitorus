@@ -63,7 +63,7 @@ jobs:
           declare -a runtimes=('win-x64' 'win-arm64' 'linux-x64' 'linux-arm64' 'osx-x64' 'osx-arm64')
           for r in "${runtimes[@]}"
           do
-            $releaseName="Hitorus-v$CURRENT_VERSION-$r"
+            releaseName="Hitorus-v$CURRENT_VERSION-$r"
             outputPath="$OUTPUT_DIR/$releaseName"
             dotnet publish src/Hitorus.Api --output $outputPath -r "$r"
             zip -r "$releaseName.zip" "$outputPath"

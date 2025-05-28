@@ -1,4 +1,4 @@
-name: Release API
+name: Automatic Release API
 
 on:
   push:

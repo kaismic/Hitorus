@@ -1,4 +1,4 @@
-name: Release API
+name: Manual Release API
 
 on:
   workflow_dispatch:

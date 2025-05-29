@@ -10,9 +10,9 @@ using Microsoft.JSInterop;
 using MudBlazor;
 
 namespace Hitorus.Web.Pages {
-    public partial class BrowsePage : ComponentBase {
+    public partial class BrowsePage : ComponentBase, IDisposable {
         [Inject] BrowseConfigurationService BrowseConfigurationService { get; set; } = default!;
-        [Inject] GalleryService GalleryService {get;set;} = default!;
+        [Inject] GalleryService GalleryService { get; set; } = default!;
         [Inject] IJSRuntime JsRuntime {get;set;} = default!;
         [Inject] ISnackbar Snackbar { get; set; } = default!;
         [Inject] IStringLocalizer<BrowsePage> Localizer { get; set; } = default!;
@@ -96,6 +96,8 @@ namespace Hitorus.Web.Pages {
 
         private async Task OnInitRenderComplete() {
             if (_isInitialized && _isRendered) {
+                BrowseConfigurationService.LoadGalleries = () => _ = LoadGalleries();
+                BrowseConfigurationService.BrowsePageLoaded = true;
                 for (int i = 0; i < Tag.TAG_CATEGORIES.Length; i++) {
                     TagCategory category = Tag.TAG_CATEGORIES[i];
                     IEnumerable<TagDTO> tags = BrowseConfigurationService.Config.Tags.Where(t => t.Category == category);
@@ -103,7 +105,9 @@ namespace Hitorus.Web.Pages {
                         _tagSearchPanelChipModels[i].Add(new ChipModel<TagDTO> { Value = tag });
                     }
                 }
-                if (BrowseConfigurationService.Galleries.Count == 0) {
+                if (BrowseConfigurationService.BrowsePageFirstLoad || BrowseConfigurationService.BrowsePageRefreshQueued) {
+                    BrowseConfigurationService.BrowsePageRefreshQueued = false;
+                    BrowseConfigurationService.BrowsePageFirstLoad = false;
                     await LoadGalleries();
                 }
                 StateHasChanged();
@@ -144,7 +148,7 @@ namespace Hitorus.Web.Pages {
             await LoadGalleries();
         }
 
-        private async Task LoadGalleries() {
+        public async Task LoadGalleries() {
             _isLoading = true;
             StateHasChanged();
             BrowseQueryResult result = await GalleryService.GetBrowseQueryResult(BrowseConfigurationService.PageNum - 1, BrowseConfigurationService.Config.Id);
@@ -201,6 +205,11 @@ namespace Hitorus.Web.Pages {
             for (int i = 0; i < BrowseConfigurationService.Selections.Length; i++) {
                 BrowseConfigurationService.Selections[i] = false;
             }
+        }
+
+        public void Dispose() {
+            GC.SuppressFinalize(this);
+            BrowseConfigurationService.BrowsePageLoaded = false;
         }
     }
 }

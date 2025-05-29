@@ -18,6 +18,10 @@ namespace Hitorus.Web.Services {
         public int TotalPages { get; set; } = 1;
         public List<BrowseGalleryDTO> Galleries { get; set; } = [];
         public bool[] Selections { get; set; } = [];
+        public bool BrowsePageFirstLoad { get; set; } = true;
+        public bool BrowsePageLoaded { get; set; } = false;
+        public bool BrowsePageRefreshQueued { get; set; } = false;
+        public Action LoadGalleries { get; set; } = () => { };
 
         private readonly HttpClient _httpClient;
         public BrowseConfigurationService(HttpClient httpClient, IConfiguration hostConfiguration, ISyncLocalStorageService localStorageService) {

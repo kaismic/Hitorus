@@ -1,10 +1,20 @@
 ﻿<MudPopover Class="@Class" Open=@Open AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" >
-    <div class="d-flex flex-column pa-4">
+    <div class="d-flex flex-column pa-4 gap-4 align-end">
         <MudText>@ContentText</MudText>
-        <MudButton OnClick="@OnButtonClick"
-                   Color="Color.Primary"
-                   Class="align-self-end">
-            @ButtonText
-        </MudButton>
+        <div class="d-flex">
+            @if (ShowSkipButton)
+            {
+                <MudButton OnClick="@OnSkipButtonClick"
+                           Color="Color.Default"
+                           Class="align-self-end">
+                    @SkipButtonText
+                </MudButton>                
+            }
+            <MudButton OnClick="@OnNextButtonClick"
+                       Color="Color.Primary"
+                       Class="align-self-end">
+                @NextButtonText
+            </MudButton>
+        </div>
     </div>
 </MudPopover>

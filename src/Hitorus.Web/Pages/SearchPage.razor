@@ -52,9 +52,11 @@
             </MudPaper>
             @if (_showWalkthrough) {
                 <GuidePopover ContentText=@Localizer["Walkthrough1"]
-                              ButtonText=@Localizer["Next"]
+                              NextButtonText=@Localizer["Next"]
+                              SkipButtonText=@SharedLocalizer["Skip"]
                               Open=@(_walkthroughStep == 0)
                               OnClose="@ShowNextGuide"
+                              OnSkip="@EndWalkthrough" ShowSkipButton
                               AnchorOrigin="Origin.BottomRight"
                               TransformOrigin="Origin.TopRight"
                               Class="mt-4" />
@@ -78,7 +80,7 @@
                                      Style="flex: 1;" />
             @if (_showWalkthrough) {
                 <GuidePopover ContentText=@Localizer["Walkthrough2"]
-                              ButtonText=@Localizer["Next"]
+                              NextButtonText=@Localizer["Next"]
                               Open=@(_walkthroughStep == 1)
                               OnClose="@ShowNextGuide"
                               AnchorOrigin="Origin.TopRight"
@@ -97,7 +99,7 @@
                            TitleSearchKeywordChanged=@OnTitleSearchKeywordChanged />
             @if (_showWalkthrough) {
                 <GuidePopover ContentText=@Localizer["Walkthrough3"]
-                              ButtonText=@Localizer["Next"]
+                              NextButtonText=@Localizer["Next"]
                               Open=@(_walkthroughStep == 2)
                               OnClose="@ShowNextGuide"
                               AnchorOrigin="Origin.TopLeft"
@@ -135,7 +137,7 @@
             </MudStack>
             @if (_showWalkthrough) {
                 <GuidePopover ContentText=@Localizer["Walkthrough4"]
-                              ButtonText=@Localizer["Finish"]
+                              NextButtonText=@Localizer["Finish"]
                               Open=@(_walkthroughStep == 3)
                               OnClose="@ShowNextGuide"
                               AnchorOrigin="Origin.TopLeft"

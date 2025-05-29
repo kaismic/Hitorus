@@ -8,12 +8,20 @@ namespace Hitorus.Web.Components {
         [Parameter] public Origin TransformOrigin { get; set; }
         [Parameter, EditorRequired] public bool Open { get; set; }
         [Parameter, EditorRequired] public string ContentText { get; set; } = "";
-        [Parameter, EditorRequired] public string ButtonText { get; set; } = "";
+        [Parameter, EditorRequired] public string NextButtonText { get; set; } = "";
+        [Parameter] public string SkipButtonText { get; set; } = "";
+        [Parameter] public bool ShowSkipButton { get; set; } = false;
         [Parameter, EditorRequired] public EventCallback OnClose { get; set; }
+        [Parameter] public EventCallback OnSkip { get; set; }
 
-        private void OnButtonClick() {
+        private void OnNextButtonClick() {
             Open = false;
             OnClose.InvokeAsync();
+        }
+
+        private void OnSkipButtonClick() {
+            Open = false;
+            OnSkip.InvokeAsync();
         }
     }
 }

@@ -8,6 +8,7 @@ namespace Hitorus.Web.Pages {
     public partial class DownloadPage {
         [Inject] ISnackbar Snackbar { get; set; } = default!;
         [Inject] DownloadConfigurationService DownloadConfigurationService { get; set; } = default!;
+        [Inject] BrowseConfigurationService BrowseConfigurationService { get; set; } = default!;
         [Inject] DownloadClientManagerService DownloadManager { get; set; } = default!;
         [Inject] DownloadService DownloadService { get; set; } = default!;
         [Inject] IStringLocalizer<DownloadPage> Localizer { get; set; } = default!;
@@ -48,7 +49,7 @@ namespace Hitorus.Web.Pages {
                 UiConstants.DEFAULT_SNACKBAR_OPTIONS
             );
             _isImporting = false;
-
+            BrowseConfigurationService.BrowsePageRefreshQueued = true;
         }
 
         [GeneratedRegex(@"\d{6,7}")] private static partial Regex IdPatternRegex();

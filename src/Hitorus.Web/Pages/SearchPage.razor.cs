@@ -401,9 +401,13 @@ namespace Hitorus.Web.Pages {
         private async Task ShowNextGuide() {
             _walkthroughStep++;
             if (_walkthroughStep >= WALKTHROUGH_STEPS) {
-                _showWalkthrough = false;
-                await AppConfigurationService.UpdateShowSearchPageWalkthrough(false);
+                await EndWalkthrough();
             }
+        }
+
+        private async Task EndWalkthrough() {
+            _showWalkthrough = false;
+            await AppConfigurationService.UpdateShowSearchPageWalkthrough(false);
         }
 
         private string GetWalkthroughHighlightStyle(int step) {

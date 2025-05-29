@@ -90,7 +90,7 @@ namespace Hitorus.Api.Download {
                     if (ogi.Id != GalleryId) {
                         await _hubContext.Clients.All.ReceiveIdChange(GalleryId, ogi.Id);
                         DownloadManagerService.OnDownloaderIdChange(GalleryId, ogi.Id);
-                        GalleryFileUtility.RenameDirectory(GalleryId, ogi.Id);
+                        GalleryIOUtility.RenameDirectory(GalleryId, ogi.Id);
                         GalleryId = ogi.Id;
                         using HitomiContext dbContext = _dbContextFactory.CreateDbContext();
                         _gallery = dbContext.Galleries.Find(GalleryId);
@@ -118,7 +118,7 @@ namespace Hitorus.Api.Download {
             }
             await _hubContext.Clients.All.ReceiveGalleryAvailable(GalleryId);
 
-            GalleryImage[] missingGalleryImages = [.. GalleryFileUtility.GetMissingImages(GalleryId, _gallery.Images)];
+            GalleryImage[] missingGalleryImages = [.. GalleryIOUtility.GetMissingImages(GalleryId, _gallery.Images)];
             _logger.LogInformation("{GalleryId}: Found {ImageCount} missing images", GalleryId, missingGalleryImages.Length);
             _progress = _gallery.Images.Count - missingGalleryImages.Length;
             await _hubContext.Clients.All.ReceiveProgress(GalleryId, _progress);
@@ -135,7 +135,7 @@ namespace Hitorus.Api.Download {
                 ChangeStatus(DownloadStatus.Failed, "Download failed due to an unknown error.");
                 return;
             }
-            missingGalleryImages = [.. GalleryFileUtility.GetMissingImages(GalleryId, _gallery.Images)];
+            missingGalleryImages = [.. GalleryIOUtility.GetMissingImages(GalleryId, _gallery.Images)];
             if (missingGalleryImages.Length > 0) {
                 ChangeStatus(DownloadStatus.Failed, $"Failed to download {missingGalleryImages.Length} images.");
             } else {
@@ -284,6 +284,7 @@ namespace Hitorus.Api.Download {
             return gallery;
         }
 
+        private static readonly HashSet<string> IMAGE_FILE_FORMATS = ["avif", "webp"];
         /**
          * <exception cref="TaskCanceledException"></exception>
         */
@@ -301,10 +302,12 @@ namespace Hitorus.Api.Download {
             */
             using HitomiContext dbContext = _dbContextFactory.CreateDbContext();
             int threadNum = dbContext.DownloadConfigurations.AsNoTracking().First().ThreadNum;
+            string preferredFormat = dbContext.DownloadConfigurations.AsNoTracking().First().PreferredFormat;
             int quotient = galleryImages.Length / threadNum;
             int remainder = galleryImages.Length % threadNum;
             Task[] tasks = new Task[threadNum];
             int startIdx = 0;
+            string[] orderedFormats = [preferredFormat, .. IMAGE_FILE_FORMATS.Where(f => f != preferredFormat)];
             for (int i = 0; i < threadNum; i++) {
                 int localStartIdx = startIdx;
                 int localJMax = quotient + (i < remainder ? 1 : 0);
@@ -313,7 +316,7 @@ namespace Hitorus.Api.Download {
                     async () => {
                         for (int j = 0; j < localJMax; j++) {
                             int k = localStartIdx + j;
-                            await DownloadImage(galleryImages[k], ct);
+                            await DownloadImage(galleryImages[k], orderedFormats, ct);
                         }
                     },
                     ct
@@ -323,19 +326,18 @@ namespace Hitorus.Api.Download {
             return Task.WhenAll(tasks);
         }
 
-        private static readonly string[] IMAGE_FILE_EXTS = ["avif", "webp"];
-        private async Task DownloadImage(GalleryImage galleryImage, CancellationToken ct) {
+        private async Task DownloadImage(GalleryImage galleryImage, string[] orderedFormats, CancellationToken ct) {
             if (_failureCount > MAX_FAILURE_COUNT) {
                 return;
             }
             string? non404ErrorMessage = null;
             bool all404Error = true;
-            foreach (string fileExt in IMAGE_FILE_EXTS) {
+            foreach (string f in orderedFormats) {
                 try {
-                    HttpResponseMessage response = await _httpClient.GetAsync(GetImageAddress(DownloadManagerService.LiveServerInfo, galleryImage, fileExt), ct);
+                    HttpResponseMessage response = await _httpClient.GetAsync(GetImageAddress(DownloadManagerService.LiveServerInfo, galleryImage, f), ct);
                     response.EnsureSuccessStatusCode();
                     byte[] data = await response.Content.ReadAsByteArrayAsync(CancellationToken.None);
-                    await GalleryFileUtility.WriteImageAsync(_gallery!, galleryImage, data, fileExt);
+                    await GalleryIOUtility.WriteImageAsync(_gallery!, galleryImage, data, f);
                     await _hubContext.Clients.All.ReceiveProgress(GalleryId, Interlocked.Increment(ref _progress));
                     return;
                 } catch (TaskCanceledException) {
@@ -353,12 +355,12 @@ namespace Hitorus.Api.Download {
             }
             // try LSI update and try download again
             await DownloadManagerService.UpdateLiveServerInfo();
-            foreach (string fileExt in IMAGE_FILE_EXTS) {
+            foreach (string f in orderedFormats) {
                 try {
-                    HttpResponseMessage response = await _httpClient.GetAsync(GetImageAddress(DownloadManagerService.LiveServerInfo, galleryImage, fileExt), ct);
+                    HttpResponseMessage response = await _httpClient.GetAsync(GetImageAddress(DownloadManagerService.LiveServerInfo, galleryImage, f), ct);
                     response.EnsureSuccessStatusCode();
                     byte[] data = await response.Content.ReadAsByteArrayAsync(CancellationToken.None);
-                    await GalleryFileUtility.WriteImageAsync(_gallery!, galleryImage, data, fileExt);
+                    await GalleryIOUtility.WriteImageAsync(_gallery!, galleryImage, data, f);
                     await _hubContext.Clients.All.ReceiveProgress(GalleryId, Interlocked.Increment(ref _progress));
                     return;
                 } catch (TaskCanceledException) {

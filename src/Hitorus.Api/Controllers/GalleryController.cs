@@ -113,7 +113,7 @@ namespace Hitorus.Api.Controllers {
                 if (gallery != null) {
                     context.Galleries.Remove(gallery);
                 }
-                GalleryFileUtility.DeleteGalleryDirectory(id);
+                GalleryIOUtility.DeleteGalleryDirectory(id);
             }
             context.SaveChanges();
             return Ok();

@@ -38,5 +38,18 @@ namespace Hitorus.Api.Controllers {
             context.SaveChanges();
             return Ok();
         }
+
+        [HttpPatch("update-preferred-format")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult UpdatePreferredFormat(int configId, [FromBody] string value) {
+            DownloadConfiguration? config = context.DownloadConfigurations.Find(configId);
+            if (config == null) {
+                return NotFound();
+            }
+            config.PreferredFormat = value;
+            context.SaveChanges();
+            return Ok();
+        }
     }
 }

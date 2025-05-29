@@ -25,7 +25,7 @@ namespace Hitorus.Api.Controllers {
                 return NotFound($"Image information at the index {index} was not found.");
             }
             try {
-                string path = GalleryFileUtility.GetImagePath(gallery, image);
+                string path = GalleryIOUtility.GetImagePath(gallery, image);
                 FileStream stream = System.IO.File.OpenRead(path);
                 return File(stream, $"image/{path.Split('.').Last()}");
             } catch (FileNotFoundException) {

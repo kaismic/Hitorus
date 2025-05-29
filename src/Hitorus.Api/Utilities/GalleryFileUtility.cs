@@ -2,12 +2,13 @@
 using System.Text.RegularExpressions;
 
 namespace Hitorus.Api.Utilities {
-    public static partial class GalleryFileUtility {
+    public static partial class GalleryIOUtility {
         private const string ROOT_PATH = "Galleries";
-        [GeneratedRegex(@"\d+")] private static partial Regex AllDigitRegex();
+        [GeneratedRegex(@".*?(\d{6,7})")] private static partial Regex ContainsIdRegex();
 
         public static IEnumerable<GalleryImage> GetMissingImages(int galleryId, IEnumerable<GalleryImage> galleryImages) {
-            string dir = Path.Combine(ROOT_PATH, galleryId.ToString());
+            string galleryDirName = GetGalleryDirectoryName(galleryId) ?? galleryId.ToString();
+            string dir = Path.Combine(ROOT_PATH, galleryDirName);
             if (!Directory.Exists(dir)) {
                 Directory.CreateDirectory(dir);
                 return galleryImages;
@@ -17,7 +18,7 @@ namespace Hitorus.Api.Utilities {
                 .Select(Path.GetFileName)
                 .Cast<string>()
                 .Select(f => f.Split('.')[0])
-                .Where(name => AllDigitRegex().IsMatch(name))
+                .Where(name => int.TryParse(name, out _))
                 .Select(int.Parse)];
             return galleryImages.Where(gi => !existingIndexes.Contains(gi.Index));
         }
@@ -31,10 +32,12 @@ namespace Hitorus.Api.Utilities {
         /// <exception cref="FileNotFoundException"></exception>
         /// <exception cref="DirectoryNotFoundException"></exception>
         public static string GetImagePath(Gallery gallery, GalleryImage galleryImage) {
-            string[] fullFilePaths = Directory.GetFiles(Path.Combine(ROOT_PATH, gallery.Id.ToString()), "*.*");
+            string galleryDirName = GetGalleryDirectoryName(gallery.Id) ??
+                throw new DirectoryNotFoundException($"Gallery directory for ID {gallery.Id} not found.");
+            string[] fullFilePaths = Directory.GetFiles(Path.Combine(ROOT_PATH, galleryDirName), "*.*");
             foreach (string fullFilePath in fullFilePaths) {
                 string fileName = Path.GetFileName(fullFilePath);
-                Regex regex = new($@"0*{galleryImage.Index}\.(avif|webp)");
+                Regex regex = new($@"0*{galleryImage.Index}\.+");
                 if (regex.IsMatch(fileName)) {
                     return fullFilePath;
                 }
@@ -46,28 +49,53 @@ namespace Hitorus.Api.Utilities {
             string format = "D" + Math.Floor(Math.Log10(gallery.Images.Count) + 1);
             string fileName = galleryImage.Index.ToString(format);
             string fullFileName = fileName + '.' + fileExt;
-            string dir = Path.Combine(ROOT_PATH, gallery.Id.ToString());
+            string galleryDirName = GetGalleryDirectoryName(gallery.Id) ?? gallery.Id.ToString();
+            string dir = Path.Combine(ROOT_PATH, galleryDirName);
             Directory.CreateDirectory(dir);
             await File.WriteAllBytesAsync(Path.Combine(dir, fullFileName), data);
         }
 
         public static void DeleteGalleryDirectory(int id) {
-            string dir = Path.Combine(ROOT_PATH, id.ToString());
+            string galleryDirName = GetGalleryDirectoryName(id) ?? id.ToString();
+            string dir = Path.Combine(ROOT_PATH, galleryDirName);
             if (Directory.Exists(dir)) {
                 Directory.Delete(dir, true);
             }
         }
 
         public static void RenameDirectory(int oldId, int newId) {
-            string oldDir = Path.Combine(ROOT_PATH, oldId.ToString());
+            string galleryDirName = GetGalleryDirectoryName(oldId) ??
+                throw new DirectoryNotFoundException($"Gallery directory for ID {oldId} not found.");
+            string oldDir = Path.Combine(ROOT_PATH, galleryDirName);
             if (Directory.Exists(oldDir)) {
-                string newDir = Path.Combine(ROOT_PATH, newId.ToString());
+                string newDir = Path.Combine(ROOT_PATH, galleryDirName.Replace(oldId.ToString(), newId.ToString()));
                 if (Directory.Exists(newDir)) {
                     Directory.Delete(oldDir, true);
                 } else {
                     Directory.Move(oldDir, newDir);
                 }
             }
+        }
+
+        private static string? GetGalleryDirectoryName(int id) {
+            if (!Directory.Exists(ROOT_PATH)) {
+                return null;
+            }
+            return Directory.GetDirectories(ROOT_PATH)
+                .Select(dir => Path.GetFileName(dir))
+                .Where(name => name.Contains(id.ToString()))
+                .FirstOrDefault();
+        }
+
+        public static IEnumerable<int> GetExistingGalleries() {
+            if (!Directory.Exists(ROOT_PATH)) {
+                return [];
+            }
+            return Directory.GetDirectories(ROOT_PATH)
+                .Select(dir => Path.GetFileName(dir))
+                .Where(name => ContainsIdRegex().IsMatch(name))
+                .Select(name => ContainsIdRegex().Match(name).Groups[1].Value)
+                .Select(int.Parse);
         }
     }
 }

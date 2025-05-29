@@ -42,7 +42,7 @@ public class DownloadManagerService(
                         }
                         break;
                     }
-                    case DownloadAction.Start: {
+                    case DownloadAction.Start or DownloadAction.Import: {
                         if (!_lsiInitialized) {
                             logger.LogInformation("Fetching Live Server Info...");
                             try {
@@ -59,7 +59,7 @@ public class DownloadManagerService(
                             }
                         }
                         foreach (int id in args.GalleryIds) {
-                            _ = GetOrCreateDownloader(id, true).Start();
+                            _ = GetOrCreateDownloader(id, args.Action == DownloadAction.Start).Start();
                         }
                         break;
                     }

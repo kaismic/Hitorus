@@ -7,11 +7,5 @@ public class DownloadConfigurationDTO
     public bool UseParallelDownload { get; set; }
     public int ThreadNum { get; set; }
     public ICollection<int> Downloads { get; set; } = [];
-
-    public DownloadConfiguration ToEntity() => new() {
-        Id = Id,
-        UseParallelDownload = UseParallelDownload,
-        ThreadNum = ThreadNum,
-        Downloads = Downloads
-    };
+    public string PreferredFormat { get; set; } = "webp";
 }

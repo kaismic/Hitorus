@@ -8,11 +8,13 @@ public class DownloadConfiguration
     public bool UseParallelDownload { get; set; }
     public int ThreadNum { get; set; }
     public ICollection<int> Downloads { get; set; } = [];
+    public string PreferredFormat { get; set; } = "webp";
 
     public DownloadConfigurationDTO ToDTO() => new() {
         Id = Id,
         UseParallelDownload = UseParallelDownload,
         ThreadNum = ThreadNum,
-        Downloads = Downloads
+        Downloads = Downloads,
+        PreferredFormat = PreferredFormat
     };
 }

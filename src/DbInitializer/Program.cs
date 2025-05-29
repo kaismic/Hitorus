@@ -111,7 +111,11 @@ namespace DbInitializer {
                 SelectedSortDirection = SortDirection.Descending
             });
 
-            dbContext.DownloadConfigurations.Add(new() { ThreadNum = 1 });
+            dbContext.DownloadConfigurations.Add(new() {
+                ThreadNum = 1,
+                UseParallelDownload = true,
+                PreferredFormat = "webp"
+            });
             dbContext.ViewConfigurations.Add(new() {
                 ViewMode = ViewMode.Default,
                 Loop = true,

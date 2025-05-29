@@ -6,13 +6,15 @@ using System.Text.RegularExpressions;
 
 namespace Hitorus.Web.Pages {
     public partial class DownloadPage {
-        [Inject] private ISnackbar Snackbar { get; set; } = default!;
-        [Inject] private DownloadConfigurationService DownloadConfigurationService { get; set; } = default!;
-        [Inject] private DownloadClientManagerService DownloadManager { get; set; } = default!;
+        [Inject] ISnackbar Snackbar { get; set; } = default!;
+        [Inject] DownloadConfigurationService DownloadConfigurationService { get; set; } = default!;
+        [Inject] DownloadClientManagerService DownloadManager { get; set; } = default!;
+        [Inject] DownloadService DownloadService { get; set; } = default!;
         [Inject] IStringLocalizer<DownloadPage> Localizer { get; set; } = default!;
         [Inject] IStringLocalizer<SharedResource> SharedLocalizer { get; set; } = default!;
 
         private string _inputText = "";
+        private bool _isImporting = false;
 
         private async Task OnParallelDownloadChanged(bool value) {
             DownloadConfigurationService.Config.UseParallelDownload = value;
@@ -23,6 +25,11 @@ namespace Hitorus.Web.Pages {
             DownloadConfigurationService.Config.ThreadNum = value;
             await DownloadConfigurationService.UpdateThreadNum(value);
         }
+        
+        private async Task OnPreferredFormatChanged(string value) {
+            DownloadConfigurationService.Config.PreferredFormat = value;
+            await DownloadConfigurationService.UpdatePreferredFormat(value);
+        }
 
         protected override async Task OnInitializedAsync() {
             await DownloadConfigurationService.Load();
@@ -30,6 +37,18 @@ namespace Hitorus.Web.Pages {
             if (!DownloadManager.IsHubConnectionOpen) {
                 DownloadManager.OpenHubConnection();
             }
+        }
+
+        private async Task OnImportButtonClick() {
+            _isImporting = true;
+            int importCount = await DownloadService.ImportGalleries();
+            Snackbar.Add(
+                string.Format(Localizer["ImportSuccess"], importCount),
+                Severity.Success,
+                UiConstants.DEFAULT_SNACKBAR_OPTIONS
+            );
+            _isImporting = false;
+
         }
 
         [GeneratedRegex(@"\d{6,7}")] private static partial Regex IdPatternRegex();

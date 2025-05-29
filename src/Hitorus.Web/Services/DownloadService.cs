@@ -28,5 +28,10 @@ namespace Hitorus.Web.Services {
             HttpResponseMessage response = await _httpClient.PostAsync($"delete", JsonContent.Create(galleryIds));
             return response.IsSuccessStatusCode;
         }
+
+        public async Task<int> ImportGalleries() {
+            HttpResponseMessage response = await _httpClient.PostAsync($"import", null);
+            return await response.Content.ReadFromJsonAsync<int>();
+        }
     }
 }

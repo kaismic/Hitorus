@@ -1,6 +1,7 @@
 ﻿using Blazored.LocalStorage;
 using DebounceThrottle;
 using Hitorus.Data;
+using Hitorus.Data.Entities;
 using Hitorus.Web.Models;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Localization;
@@ -182,6 +183,14 @@ namespace Hitorus.Web.Services {
                 }
             }
             await downloadService.DeleteDownloaders(ids);
+            _ = Task.Delay(DELETE_ANIM_DURATION).ContinueWith(_ => {
+                // this is not really necessary if the server sends the delete event correctly
+                // but it is a good fallback in case the server does not send the delete event
+                // e.g. the downloads might have beeen already deleted so the server does not send the delete event
+                foreach (int id in ids) {
+                    Downloads.Remove(id);
+                }
+            });
         }
 
         public void DeleteDownload(int galleryId) {

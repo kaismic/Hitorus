@@ -1,7 +1,7 @@
 ﻿@page "/download"
 
 <div style="height: 100%;" class="d-flex gap-8 pa-8">
-    <div Style="min-width: 360px;">
+    <div style="min-width: 360px;" class="d-flex flex-column gap-4">
         <MudTextField FullWidth AutoGrow Immediate
                       Variant="Variant.Outlined"
                       T="string"
@@ -15,14 +15,24 @@
                        Color="@Color.Primary"
                        EndIcon="@Icons.Material.Filled.Download"
                        Disabled="@(_inputText.Length == 0 || !DownloadManager.IsHubConnectionOpen)"
-                       OnClick="@OnDownloadButtonClick"
-                       Class="mt-4">
+                       OnClick="@OnDownloadButtonClick">
                 @(DownloadManager.IsHubConnectionOpen ? SharedLocalizer["Download"] : Localizer["ServerUnavilable"])
             </MudButton>
         </MudTooltip>
     </div>
     <MudDivider Vertical />
     <div style="flex: 1;" class="d-flex flex-column gap-4">
+        <MudButton Color="Color.Secondary" 
+                   Variant="Variant.Outlined"
+                   OnClick="@OnImportButtonClick"
+                   Disabled="@_isImporting"
+                   Class="align-self-start">
+            @if (_isImporting)
+            {
+                <MudProgressCircular Indeterminate Size="Size.Small" Color="Color.Primary" Class="mr-2" />
+            }
+            @Localizer["ImportGalleries"]
+        </MudButton>
         <div class="d-flex gap-4 align-center">
             <MudSwitch T="bool"
                        Label=@Localizer["ConcurrentDownload"]
@@ -37,6 +47,14 @@
                              Pattern="[0-9]"
                              Value="@DownloadConfigurationService.Config.ThreadNum"
                              ValueChanged="@OnThreadNumChanged" />
+            <MudSelect T="string" FitContent
+                       Label=@Localizer["PreferredFormat"]
+                       Variant="Variant.Outlined"
+                       Value="@DownloadConfigurationService.Config.PreferredFormat"
+                       ValueChanged="@OnPreferredFormatChanged">
+                <MudSelectItem Value=@("webp")>webp</MudSelectItem>
+                <MudSelectItem Value=@("avif")>avif</MudSelectItem>
+            </MudSelect>
             <MudSpacer/>
             <MudButton Disabled="@(DownloadManager.Downloads.Count == 0)"
                        StartIcon="@Icons.Material.Filled.PlayArrow"

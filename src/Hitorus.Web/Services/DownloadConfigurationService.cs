@@ -31,5 +31,10 @@ namespace Hitorus.Web.Services {
             var response = await _httpClient.PatchAsync($"update-thread-num?configId={Config.Id}", JsonContent.Create(threadNum));
             return response.IsSuccessStatusCode;
         }
+
+        public async Task<bool> UpdatePreferredFormat(string value) {
+            var response = await _httpClient.PatchAsync($"update-preferred-format?configId={Config.Id}", JsonContent.Create(value));
+            return response.IsSuccessStatusCode;
+        }
     }
 }

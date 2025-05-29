@@ -30,6 +30,7 @@ jobs:
           echo "Releasing version ${{ inputs.version }}"
           python generate-resx.py 1
           declare -a runtimes=('win-x64' 'win-arm64' 'linux-x64' 'linux-arm64' 'osx-x64' 'osx-arm64')
+          mkdir "$OUTPUT_DIR"
           cd "$OUTPUT_DIR"
           for r in "${runtimes[@]}"
           do

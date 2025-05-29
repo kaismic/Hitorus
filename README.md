@@ -29,8 +29,19 @@ Hitorus is a desktop web application that makes using hitomi.la easier.
 
 ## Usage
 1. Download the [latest release](https://github.com/kaismic/Hitorus/releases/latest) and extract it.
-2. Run `Hitorus.Api.exe` (Windows) or `Hitorus.Api` (macOS/Linux)
-3. Go to https://hitorus.pages.dev/
+2. Run `Hitorus.Api.exe` (Windows) or `Hitorus.Api` (macOS/Linux), the webpage should open automatically. If it doesn't, open https://hitorus.pages.dev/ on the browser.
+
+## How to import existing galleries
+Put the folders containing gallery images into the `Galleries` folder. Then use the "Import existing galleries" button.
+
+For the imports to work:
+1. The folder must contain the gallery's id in its name (e.g. "some gallery name - 3817651", "185732" and "another 2811241 name" are all valid folder names.)
+2. The image files must be named in numbers starting with 1, with or without trailing 0s (e.g. "03.webp", "0001.avif" and "5.webp" are all valid image file names.)
+
+## Migration to new version
+- The entire application data is stored in the `main.db` file. To export or backup your data, copy, store it somewhere else and later paste it into the same location.
+- If you are migrating from a compatible version to the latest version, you can move both `main.db` file and `Galleries` folder.
+- If you are migrating from an incompatible version to the latest version, only move the `Galleries` folder since `main.db` won't be compatible.
 
 ## How to resolve issues
 - If the webpage does not load, try visiting the page in Incognito/Private mode.
@@ -47,4 +58,3 @@ Hitorus is a desktop web application that makes using hitomi.la easier.
 
 ## Notes
 - Downloaded gallery images are stored in the `Galleries` folder.
-- The entire application data is stored in the `main.db` file. To export or backup your data, copy, store it somewhere else and later paste it into the same location.

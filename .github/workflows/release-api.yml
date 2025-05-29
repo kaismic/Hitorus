@@ -67,6 +67,7 @@ jobs:
           do
             releaseName="Hitorus-v$CURRENT_VERSION-$r"
             dotnet publish ../src/Hitorus.Api --output "$releaseName" -r "$r"
+            mkdir "$releaseName/Galleries"
             zip -r "$releaseName.zip" "$releaseName"
           done
       - name: Create release

@@ -77,6 +77,11 @@ namespace Hitorus.Web.Services {
                         model.WaitingResponse = false;
                         break;
                     case DownloadStatus.Completed:
+                        if (browseConfigurationService.BrowsePageLoaded) {
+                            _loadGalleriesDebDispatcher.Debounce(browseConfigurationService.LoadGalleries);
+                        } else {
+                            browseConfigurationService.BrowsePageRefreshQueued = true;
+                        }
                         model.StatusMessage = localizer["DownloadStatus_Completed"];
                         await jsRuntime.InvokeVoidAsync("startDeleteAnimation", model.ElementId, galleryId, DELETE_ANIM_DURATION);
                         _ = Task.Delay(DELETE_ANIM_DURATION).ContinueWith(_ => DeleteDownload(galleryId));

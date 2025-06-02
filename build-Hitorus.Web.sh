@@ -8,5 +8,5 @@ chmod +x dotnet-install.sh
 ./dotnet-install.sh -c 9.0 -InstallDir ./dotnet
 ./dotnet/dotnet workload install wasm-tools
 ./dotnet/dotnet publish src/Hitorus.Web -c Release -o output
-rm **/*.br
-rm **/*.gz
+find . -name "*.br" -type f -delete
+find . -name "*.gz" -type f -delete

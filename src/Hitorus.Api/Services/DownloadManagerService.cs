@@ -15,7 +15,7 @@ public class DownloadManagerService(
         IConfiguration appConfiguration,
         IDbContextFactory<HitomiContext> dbContextFactory,
         IHttpClientFactory httpClientFactory
-    ) : BackgroundService {
+    ) : BackgroundService, IDownloadManagerService {
     private const int SERVER_TIME_EXCLUDE_LENGTH = 16; // length of the string "0123456789/'\r\n};"
     private readonly string _hitomiGgjsAddress = $"https://ltn.{appConfiguration["HitomiServerDomain"]}/gg.js";
     private bool _lsiInitialized = false;
@@ -87,7 +87,7 @@ public class DownloadManagerService(
         }
     }
 
-    private Downloader GetOrCreateDownloader(int galleryId, bool addToDb) =>
+    public Downloader GetOrCreateDownloader(int galleryId, bool addToDb) =>
         _liveDownloaders.GetOrAdd(
             galleryId,
             (galleryId) => {

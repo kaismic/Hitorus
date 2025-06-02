@@ -14,7 +14,7 @@ namespace Hitorus.Api.Download {
     public class Downloader : IDisposable {
         private const int GALLERY_JS_EXCLUDE_LENGTH = 18; // length of the string "var galleryinfo = "
         public required int GalleryId { get; set; }
-        public required DownloadManagerService DownloadManagerService { get; init; }
+        public required IDownloadManagerService DownloadManagerService { get; init; }
         public DownloadStatus Status { get; private set; } = DownloadStatus.Paused;
 
         private readonly IServiceScope _serviceScope;

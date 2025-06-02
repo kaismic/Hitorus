@@ -35,7 +35,8 @@ namespace Hitorus.Api {
             });
             appBuilder.Services.AddHttpClient();
             appBuilder.Services.AddScoped<TagUtilityService>();
-            appBuilder.Services.AddHostedService<DownloadManagerService>();
+            appBuilder.Services.AddSingleton<IDownloadManagerService, DownloadManagerService>();
+            appBuilder.Services.AddHostedService(provider => (DownloadManagerService)provider.GetRequiredService<IDownloadManagerService>());
             appBuilder.Services.AddSingleton<IEventBus<DownloadEventArgs>, DownloadEventBus>();
             appBuilder.Services.AddLocalization(options => options.ResourcesPath = "Localization");
 

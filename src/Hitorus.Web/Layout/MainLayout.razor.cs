@@ -83,7 +83,7 @@ namespace Hitorus.Web.Layout {
                     Version currentApiVersion = await AppConfigService.GetCurrentApiVersion();
                     if (latestApiVersion != null && latestApiVersion > currentApiVersion) {
                         Snackbar.Add(
-                            string.Format(Localizer["NewApiVersionAvailable"], $"{latestApiVersion.Major}.{latestApiVersion.Minor}.{latestApiVersion.Build}"),
+                            string.Format(Localizer["NewApiVersionAvailable"], latestApiVersion.ToString(3)),
                             Severity.Success,
                             options => {
                                 options.ShowCloseIcon = true;

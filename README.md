@@ -13,7 +13,7 @@
 
 **Read in other languages:** [English](README.md), [한국어](README-ko.md)
 
-Hitorus is a desktop web application that makes using hitomi.la easier.
+Hitorus is a desktop web application that enhances the use of hitomi.la by extending its features and incorporating custom features unique to the app.
 
 ## Preview
 <div align="center">
@@ -27,16 +27,12 @@ Hitorus is a desktop web application that makes using hitomi.la easier.
 
 ... and many more!
 
-## Usage
+## Installation
 1. Download the [latest release](https://github.com/kaismic/Hitorus/releases/latest) and extract it.
 2. Run `Hitorus.Api.exe` (Windows) or `Hitorus.Api` (macOS/Linux), the webpage should open automatically. If it doesn't, open https://hitorus.pages.dev/ on the browser.
 
-## How to import existing galleries
-Put the folders containing gallery images into the `Galleries` folder. Then use the "Import existing galleries" button.
-
-For the imports to work:
-1. The folder must contain the gallery's id in its name (e.g. "some gallery name - 3817651", "185732" and "another 2811241 name" are all valid folder names.)
-2. The image files must be named in numbers starting with 1, with or without trailing 0s (e.g. "03.webp", "0001.avif" and "5.webp" are all valid image file names.)
+## [Usage](/wiki/usage.md)
+Refer to the [Usage](/wiki/usage.md) documentation.
 
 ## Migration to new version
 - The entire application data is stored in the `main.db` file. To export or backup your data, copy, store it somewhere else and later paste it into the same location.

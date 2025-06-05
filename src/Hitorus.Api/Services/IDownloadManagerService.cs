@@ -8,5 +8,5 @@ public interface IDownloadManagerService {
     void DeleteDownloader(int id, bool startNext);
     void OnDownloaderIdChange(int oldId, int newId);
     Task UpdateLiveServerInfo();
-    Downloader GetOrCreateDownloader(int galleryId, bool addToDb);
+    IDownloader GetOrCreateDownloader(int galleryId, bool addToDb);
 }

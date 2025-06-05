@@ -21,7 +21,7 @@ public class DownloadManagerService(
     private bool _lsiInitialized = false;
     public LiveServerInfo LiveServerInfo { get; private set; } = new();
 
-    private readonly ConcurrentDictionary<int, Downloader> _liveDownloaders = [];
+    private readonly ConcurrentDictionary<int, IDownloader> _liveDownloaders = [];
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken) {
         await Task.Run(() => {
@@ -51,8 +51,8 @@ public class DownloadManagerService(
                             } catch (HttpRequestException e) {
                                 logger.LogError(e, "Failed to fetch Live Server Info.");
                                 foreach (int id in args.GalleryIds) {
-                                    if (_liveDownloaders.TryGetValue(id, out Downloader? value)) {
-                                        value.ChangeStatus(DownloadStatus.Failed, "Failed to fetch Live Server Info.");
+                                    if (_liveDownloaders.TryGetValue(id, out IDownloader? value)) {
+                                        value.Fail("Failed to fetch Live Server Info.");
                                     }
                                 }
                                 break;
@@ -65,7 +65,7 @@ public class DownloadManagerService(
                     }
                     case DownloadAction.Pause: {
                         foreach (int id in args.GalleryIds) {
-                            if (_liveDownloaders.TryGetValue(id, out Downloader? value)) {
+                            if (_liveDownloaders.TryGetValue(id, out IDownloader? value)) {
                                 value.Pause();
                             }
                         }
@@ -73,7 +73,7 @@ public class DownloadManagerService(
                     }
                     case DownloadAction.Delete: {
                         foreach (int id in args.GalleryIds) {
-                            if (_liveDownloaders.TryGetValue(id, out Downloader? value)) {
+                            if (_liveDownloaders.TryGetValue(id, out IDownloader? value)) {
                                 value.Delete();
                             }
                         }
@@ -87,7 +87,7 @@ public class DownloadManagerService(
         }
     }
 
-    public Downloader GetOrCreateDownloader(int galleryId, bool addToDb) =>
+    public IDownloader GetOrCreateDownloader(int galleryId, bool addToDb) =>
         _liveDownloaders.GetOrAdd(
             galleryId,
             (galleryId) => {
@@ -100,7 +100,7 @@ public class DownloadManagerService(
                         dbContext.SaveChanges();
                     }
                 }
-                return new(serviceProvider.CreateScope()) {
+                return new Downloader(serviceProvider.CreateScope()) {
                     GalleryId = galleryId,
                     DownloadManagerService = this
                 };
@@ -108,7 +108,7 @@ public class DownloadManagerService(
         );
 
     public void DeleteDownloader(int id, bool startNext) {
-        if (_liveDownloaders.TryRemove(id, out Downloader? downloader)) {
+        if (_liveDownloaders.TryRemove(id, out IDownloader? downloader)) {
             downloader.Dispose();
         }
         using HitomiContext dbContext = dbContextFactory.CreateDbContext();
@@ -123,7 +123,7 @@ public class DownloadManagerService(
 
     public void OnDownloaderIdChange(int oldId, int newId) {
         logger.LogInformation("Downloader Id changed: Old = {old}, New = {new}", oldId, newId);
-        if (_liveDownloaders.TryRemove(oldId, out Downloader? downloader)) {
+        if (_liveDownloaders.TryRemove(oldId, out IDownloader? downloader)) {
             using HitomiContext dbContext = dbContextFactory.CreateDbContext();
             DownloadConfiguration config = dbContext.DownloadConfigurations.First();
             config.Downloads.Remove(oldId);
@@ -142,8 +142,8 @@ public class DownloadManagerService(
         using HitomiContext dbContext = dbContextFactory.CreateDbContext();
         DownloadConfiguration config = dbContext.DownloadConfigurations.AsNoTracking().First();
         if (!config.UseParallelDownload) {
-            Downloader? firstPaused = null;
-            foreach (Downloader d in _liveDownloaders.Values) {
+            IDownloader? firstPaused = null;
+            foreach (IDownloader d in _liveDownloaders.Values) {
                 if (d.Status == DownloadStatus.Downloading) {
                     return;
                 } else if (firstPaused == null && d.Status == DownloadStatus.Paused) {

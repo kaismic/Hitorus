@@ -11,7 +11,7 @@ using System.Net;
 using System.Text.Json;
 
 namespace Hitorus.Api.Download {
-    public class Downloader : IDisposable {
+    public class Downloader : IDownloader {
         private const int GALLERY_JS_EXCLUDE_LENGTH = 18; // length of the string "var galleryinfo = "
         public required int GalleryId { get; set; }
         public required IDownloadManagerService DownloadManagerService { get; init; }
@@ -39,7 +39,7 @@ namespace Hitorus.Api.Download {
             _httpClient.DefaultRequestHeaders.Referrer = new Uri("https://" + _appConfiguration["HitomiClientDomain"]!);
         }
 
-        public void ChangeStatus(DownloadStatus status, string? message = null) {
+        private void ChangeStatus(DownloadStatus status, string? message = null) {
             Status = status;
             if (status == DownloadStatus.Failed) {
                 _hubContext.Clients.All.ReceiveFailure(GalleryId, message ?? throw new ArgumentNullException(nameof(message)));
@@ -234,7 +234,7 @@ namespace Hitorus.Api.Download {
             return existingTags;
         }
 
-        public async Task<Gallery?> CreateGallery(OriginalGalleryInfoDTO original) {
+        private async Task<Gallery?> CreateGallery(OriginalGalleryInfoDTO original) {
             // add artist, group, character, parody (series) tags
             List<Task<IEnumerable<Tag>>> tagTasks = [];
             tagTasks.Add(GetNonMTFTags(original.Artists, TagCategory.Artist));
@@ -398,6 +398,10 @@ namespace Hitorus.Api.Download {
         public void Delete() {
             _cts?.Cancel();
             ChangeStatus(DownloadStatus.Deleted);
+        }
+
+        public void Fail(string message) {
+            ChangeStatus(DownloadStatus.Failed, message);
         }
 
         public void Dispose() {

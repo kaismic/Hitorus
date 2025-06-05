@@ -17,7 +17,8 @@
         Start,
         Pause,
         Delete,
-        Import
+        Import,
+        Complete
     }
 
     public enum ViewMode {

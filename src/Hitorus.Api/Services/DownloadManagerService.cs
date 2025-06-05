@@ -52,7 +52,7 @@ public class DownloadManagerService(
                                 logger.LogError(e, "Failed to fetch Live Server Info.");
                                 foreach (int id in args.GalleryIds) {
                                     if (_liveDownloaders.TryGetValue(id, out IDownloader? value)) {
-                                        value.Fail("Failed to fetch Live Server Info.");
+                                        value.ChangeStatus(DownloadStatus.Failed, "Failed to fetch Live Server Info.");
                                     }
                                 }
                                 break;
@@ -66,15 +66,18 @@ public class DownloadManagerService(
                     case DownloadAction.Pause: {
                         foreach (int id in args.GalleryIds) {
                             if (_liveDownloaders.TryGetValue(id, out IDownloader? value)) {
-                                value.Pause();
+                                value.ChangeStatus(DownloadStatus.Paused);
                             }
                         }
                         break;
                     }
-                    case DownloadAction.Delete: {
+                    case DownloadAction.Delete or DownloadAction.Complete: {
                         foreach (int id in args.GalleryIds) {
                             if (_liveDownloaders.TryGetValue(id, out IDownloader? value)) {
-                                value.Delete();
+                                if (args.Action == DownloadAction.Delete) {
+                                    value.ChangeStatus(DownloadStatus.Deleted);
+                                }
+                                DeleteDownloader(value, args.Action == DownloadAction.Complete);
                             }
                         }
                         break;
@@ -102,20 +105,20 @@ public class DownloadManagerService(
                 }
                 return new Downloader(serviceProvider.CreateScope()) {
                     GalleryId = galleryId,
-                    DownloadManagerService = this
+                    LiveServerInfo = LiveServerInfo,
+                    OnIdChange = OnDownloaderIdChange,
+                    UpdateLiveServerInfo = UpdateLiveServerInfo
                 };
             }
         );
 
-    public void DeleteDownloader(int id, bool startNext) {
-        if (_liveDownloaders.TryRemove(id, out IDownloader? downloader)) {
-            downloader.Dispose();
-        }
+    public void DeleteDownloader(IDownloader downloader, bool startNext) {
         using HitomiContext dbContext = dbContextFactory.CreateDbContext();
         DownloadConfiguration config = dbContext.DownloadConfigurations.First();
-        if (config.Downloads.Remove(id)) {
+        if (config.Downloads.Remove(downloader.GalleryId)) {
             dbContext.SaveChanges();
         }
+        downloader.Dispose();
         if (startNext) {
             StartNext();
         }
@@ -180,5 +183,8 @@ public class DownloadManagerService(
             SubdomainSelectionSet = subdomainSelectionSet,
             IsContains = match.Groups[1].Value == "0"
         };
+        foreach (IDownloader d in _liveDownloaders.Values) {
+            d.LiveServerInfo = LiveServerInfo;
+        }
     }
 }

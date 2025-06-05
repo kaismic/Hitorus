@@ -14,14 +14,17 @@ namespace Hitorus.Api.Download {
     public class Downloader : IDownloader {
         private const int GALLERY_JS_EXCLUDE_LENGTH = 18; // length of the string "var galleryinfo = "
         public required int GalleryId { get; set; }
-        public required IDownloadManagerService DownloadManagerService { get; init; }
         public DownloadStatus Status { get; private set; } = DownloadStatus.Paused;
+        public required LiveServerInfo LiveServerInfo { get; set; }
+        public required Action<int, int> OnIdChange { get; init; }
+        public required Func<Task> UpdateLiveServerInfo { get; init; }
 
         private readonly IServiceScope _serviceScope;
         private readonly IConfiguration _appConfiguration;
         private readonly ILogger<Downloader> _logger;
         private readonly IHubContext<DownloadHub, IDownloadClient> _hubContext;
         private readonly IDbContextFactory<HitomiContext> _dbContextFactory;
+        private readonly IEventBus<DownloadEventArgs> _eventBus;
         private readonly HttpClient _httpClient;
         private CancellationTokenSource? _cts;
         private Gallery? _gallery;
@@ -35,11 +38,12 @@ namespace Hitorus.Api.Download {
             _logger = _serviceScope.ServiceProvider.GetRequiredService<ILogger<Downloader>>();
             _hubContext = _serviceScope.ServiceProvider.GetRequiredService<IHubContext<DownloadHub, IDownloadClient>>();
             _dbContextFactory = _serviceScope.ServiceProvider.GetRequiredService<IDbContextFactory<HitomiContext>>();
+            _eventBus = _serviceScope.ServiceProvider.GetRequiredService<IEventBus<DownloadEventArgs>>();
             _httpClient = _serviceScope.ServiceProvider.GetRequiredService<IHttpClientFactory>().CreateClient();
             _httpClient.DefaultRequestHeaders.Referrer = new Uri("https://" + _appConfiguration["HitomiClientDomain"]!);
         }
 
-        private void ChangeStatus(DownloadStatus status, string? message = null) {
+        public void ChangeStatus(DownloadStatus status, string? message = null) {
             Status = status;
             if (status == DownloadStatus.Failed) {
                 _hubContext.Clients.All.ReceiveFailure(GalleryId, message ?? throw new ArgumentNullException(nameof(message)));
@@ -52,16 +56,18 @@ namespace Hitorus.Api.Download {
                     break;
                 case DownloadStatus.Completed:
                     _logger.LogInformation("{GalleryId}: Download completed.", GalleryId);
-                    DownloadManagerService.DeleteDownloader(GalleryId, true);
+                    _eventBus.Publish(new() { Action = DownloadAction.Complete, GalleryIds = [GalleryId] });
                     break;
                 case DownloadStatus.Deleted:
+                    _cts?.Cancel();
                     _logger.LogInformation("{GalleryId}: Deleted", GalleryId);
-                    DownloadManagerService.DeleteDownloader(GalleryId, false);
                     break;
                 case DownloadStatus.Paused:
+                    _cts?.Cancel();
                     _logger.LogInformation("{GalleryId}: Paused", GalleryId);
                     break;
                 case DownloadStatus.Failed:
+                    _cts?.Cancel();
                     _logger.LogInformation("{GalleryId}: Download failed: {message}.", GalleryId, message);
                     break;
             }
@@ -89,7 +95,7 @@ namespace Hitorus.Api.Download {
                     }
                     if (ogi.Id != GalleryId) {
                         await _hubContext.Clients.All.ReceiveIdChange(GalleryId, ogi.Id);
-                        DownloadManagerService.OnDownloaderIdChange(GalleryId, ogi.Id);
+                        OnIdChange(GalleryId, ogi.Id);
                         GalleryIOUtility.RenameDirectory(GalleryId, ogi.Id);
                         GalleryId = ogi.Id;
                         using HitomiContext dbContext = _dbContextFactory.CreateDbContext();
@@ -334,7 +340,7 @@ namespace Hitorus.Api.Download {
             bool all404Error = true;
             foreach (string f in orderedFormats) {
                 try {
-                    HttpResponseMessage response = await _httpClient.GetAsync(GetImageAddress(DownloadManagerService.LiveServerInfo, galleryImage, f), ct);
+                    HttpResponseMessage response = await _httpClient.GetAsync(GetImageAddress(LiveServerInfo, galleryImage, f), ct);
                     response.EnsureSuccessStatusCode();
                     byte[] data = await response.Content.ReadAsByteArrayAsync(CancellationToken.None);
                     await GalleryIOUtility.WriteImageAsync(_gallery!, galleryImage, data, f);
@@ -354,10 +360,10 @@ namespace Hitorus.Api.Download {
                 return;
             }
             // try LSI update and try download again
-            await DownloadManagerService.UpdateLiveServerInfo();
+            await UpdateLiveServerInfo();
             foreach (string f in orderedFormats) {
                 try {
-                    HttpResponseMessage response = await _httpClient.GetAsync(GetImageAddress(DownloadManagerService.LiveServerInfo, galleryImage, f), ct);
+                    HttpResponseMessage response = await _httpClient.GetAsync(GetImageAddress(LiveServerInfo, galleryImage, f), ct);
                     response.EnsureSuccessStatusCode();
                     byte[] data = await response.Content.ReadAsByteArrayAsync(CancellationToken.None);
                     await GalleryIOUtility.WriteImageAsync(_gallery!, galleryImage, data, f);
@@ -385,23 +391,6 @@ namespace Hitorus.Api.Download {
             char subdomainChar2 = liveServerInfo.IsContains ^ liveServerInfo.SubdomainSelectionSet.Contains(hashFragment) ? '1' : '2';
             string subdomain = $"{fileExt[0]}{subdomainChar2}";
             return $"https://{subdomain}.{_appConfiguration["HitomiServerDomain"]}/{liveServerInfo.ServerTime}/{hashFragment}/{galleryImage.Hash}.{fileExt}";
-        }
-
-        public void Pause() {
-            if (Status == DownloadStatus.Paused) {
-                return;
-            }
-            _cts?.Cancel();
-            ChangeStatus(DownloadStatus.Paused);
-        }
-
-        public void Delete() {
-            _cts?.Cancel();
-            ChangeStatus(DownloadStatus.Deleted);
-        }
-
-        public void Fail(string message) {
-            ChangeStatus(DownloadStatus.Failed, message);
         }
 
         public void Dispose() {

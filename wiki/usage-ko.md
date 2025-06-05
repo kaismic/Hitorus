@@ -16,7 +16,7 @@
 
     <img src="images/search-3.jpeg">
 
-4. 검색 결과에 포함/제외할 태그들을 선택하세요.
+4. 검색 결과에 포함/제외할 태그필터들을 선택하세요.
 
     <img src="images/search-4.jpeg">
 

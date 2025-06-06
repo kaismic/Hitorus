@@ -3,7 +3,7 @@
 **Read in other languages:** [English](usage.md), [한국어](usage-ko.md)
 
 ## Search
-1. Go to the search page.
+1. Go to search page.
 
     <img src="images/search-1.jpeg">
 
@@ -29,7 +29,7 @@
     <img src="images/search-6.jpeg">
 
 ## Download
-- Go to the download page.
+- Go to download page.
 
     <img src="images/download-1.jpeg">
 
@@ -49,7 +49,7 @@
 ## Browse
 You can browse and open the downloaded galleries here.
 
-- Go to the browse page
+- Go to browse page
 
     <img src="images/browse-1.jpeg">
 

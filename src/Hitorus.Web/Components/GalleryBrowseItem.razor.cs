@@ -32,7 +32,7 @@ namespace Hitorus.Web.Components {
         private readonly List<KeyValuePair<TagCategory, List<TagDTO>>> _tagCollections = [];
 
         protected override async Task OnInitializedAsync() {
-            int? thumbnailImageCount = await LocalStorageService.GetItemAsync<int?>(LocalStorageKeys.THUMBNAMIL_IMAGE_COUNT);
+            int? thumbnailImageCount = await LocalStorageService.GetItemAsync<int?>(LocalStorageKeys.THUMBNAIL_IMAGE_COUNT);
             // TODO use thumbnailImageCount to set _maxImageCount
             _imageContainerId = "thumbnail-image-container-" + Gallery.Id;
             UriBuilder builder = new(ImageFileService.BASE_IMAGE_URI) {

@@ -54,12 +54,14 @@ namespace Hitorus.Api {
             app.MapHub<DownloadHub>("api/download-hub");
             app.MapControllers();
 
-            Process.Start(
-                new ProcessStartInfo {
-                    UseShellExecute = true,
-                    FileName = appBuilder.Configuration["WebAppUrl"]
-                }
-            );
+            if (appBuilder.Environment.IsProduction()) {
+                Process.Start(
+                    new ProcessStartInfo {
+                        UseShellExecute = true,
+                        FileName = appBuilder.Configuration["WebAppUrl"]
+                    }
+                );
+            }
 
             app.Run();
         }

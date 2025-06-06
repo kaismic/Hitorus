@@ -31,30 +31,30 @@ namespace Hitorus.Web.Components {
         private string _baseImageUrl = "";
         private readonly List<KeyValuePair<TagCategory, List<TagDTO>>> _tagCollections = [];
 
-        protected override async Task OnInitializedAsync() {
-            int? thumbnailImageCount = await LocalStorageService.GetItemAsync<int?>(LocalStorageKeys.THUMBNAIL_IMAGE_COUNT);
-            // TODO use thumbnailImageCount to set _maxImageCount
+        protected override void OnInitialized() {
             _imageContainerId = "thumbnail-image-container-" + Gallery.Id;
             UriBuilder builder = new(ImageFileService.BASE_IMAGE_URI) {
                 Query = "?galleryId=" + Gallery.Id
             };
             _baseImageUrl = builder.ToString();
-            List<GalleryImageDTO> images = [.. Gallery.Images];
-            _cumulativeImageAspectRatios = new double[images.Count];
-            _cumulativeImageAspectRatios[0] = (double)images[0].Width / images[0].Height;
-            _maxRecordedAspectRatio = _cumulativeImageAspectRatios[0];
-            for (int i = 1; i < Gallery.Images.Count; i++) {
-                _cumulativeImageAspectRatios[i] = _cumulativeImageAspectRatios[i - 1] + (double)images[i].Width / images[i].Height;
-            }
         }
 
-        protected override void OnAfterRender(bool firstRender) {
+        protected override async Task OnAfterRenderAsync(bool firstRender) {
             if (firstRender) {
                 foreach (TagCategory category in Tag.TAG_CATEGORIES) {
                     List<TagDTO> collection = [.. Gallery.Tags.Where(t => t.Category == category).OrderBy(t => t.Value)];
                     if (collection.Count > 0) {
                         _tagCollections.Add(new(category, collection));
                     }
+                }
+                // TODO use thumbnailImageCount
+                int thumbnailImageCount = await LocalStorageService.GetItemAsync<int>(LocalStorageKeys.THUMBNAIL_IMAGE_COUNT);
+                List<GalleryImageDTO> images = [.. Gallery.Images];
+                _cumulativeImageAspectRatios = new double[images.Count];
+                _cumulativeImageAspectRatios[0] = (double)images[0].Width / images[0].Height;
+                _maxRecordedAspectRatio = _cumulativeImageAspectRatios[0];
+                for (int i = 1; i < Gallery.Images.Count; i++) {
+                    _cumulativeImageAspectRatios[i] = _cumulativeImageAspectRatios[i - 1] + (double)images[i].Width / images[i].Height;
                 }
                 ResizeListener.OnResized += OnResize;
                 StateHasChanged();

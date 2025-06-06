@@ -1,4 +1,5 @@
-﻿using BlazorPro.BlazorSize;
+﻿using Blazored.LocalStorage;
+using BlazorPro.BlazorSize;
 using Hitorus.Data.DTOs;
 using Hitorus.Data.Entities;
 using Hitorus.Web.Services;
@@ -10,11 +11,12 @@ using MudBlazor;
 
 namespace Hitorus.Web.Components {
     public partial class GalleryBrowseItem : ComponentBase, IDisposable {
-        [Inject] private IJSRuntime JSRuntime { get; set; } = default!;
-        [Inject] private IResizeListener ResizeListener { get; set; } = default!;
-        [Inject] private IStringLocalizer<SharedResource> SharedLocalizer { get; set; } = default!;
-        [Inject] private IStringLocalizer<GalleryBrowseItem> Localizer { get; set; } = default!;
-        [Inject] private LanguageTypeService LanguageTypeService { get; set; } = default!;
+        [Inject] IJSRuntime JSRuntime { get; set; } = default!;
+        [Inject] IResizeListener ResizeListener { get; set; } = default!;
+        [Inject] IStringLocalizer<SharedResource> SharedLocalizer { get; set; } = default!;
+        [Inject] IStringLocalizer<GalleryBrowseItem> Localizer { get; set; } = default!;
+        [Inject] ILocalStorageService LocalStorageService { get; set; } = default!;
+        [Inject] LanguageTypeService LanguageTypeService { get; set; } = default!;
         [Inject] ImageFileService ImageFileService { get; set; } = default!;
         [Parameter, EditorRequired] public BrowseGalleryDTO Gallery { get; set; } = default!;
         [Parameter, EditorRequired] public bool IsEditing { get; set; }
@@ -29,7 +31,9 @@ namespace Hitorus.Web.Components {
         private string _baseImageUrl = "";
         private readonly List<KeyValuePair<TagCategory, List<TagDTO>>> _tagCollections = [];
 
-        protected override void OnInitialized() {
+        protected override async Task OnInitializedAsync() {
+            int? thumbnailImageCount = await LocalStorageService.GetItemAsync<int?>(LocalStorageKeys.THUMBNAMIL_IMAGE_COUNT);
+            // TODO use thumbnailImageCount to set _maxImageCount
             _imageContainerId = "thumbnail-image-container-" + Gallery.Id;
             UriBuilder builder = new(ImageFileService.BASE_IMAGE_URI) {
                 Query = "?galleryId=" + Gallery.Id

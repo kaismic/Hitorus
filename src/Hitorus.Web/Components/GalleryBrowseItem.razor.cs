@@ -47,16 +47,19 @@ namespace Hitorus.Web.Components {
                         _tagCollections.Add(new(category, collection));
                     }
                 }
-                // TODO use thumbnailImageCount
                 int thumbnailImageCount = await LocalStorageService.GetItemAsync<int>(LocalStorageKeys.THUMBNAIL_IMAGE_COUNT);
-                List<GalleryImageDTO> images = [.. Gallery.Images];
-                _cumulativeImageAspectRatios = new double[images.Count];
-                _cumulativeImageAspectRatios[0] = (double)images[0].Width / images[0].Height;
-                _maxRecordedAspectRatio = _cumulativeImageAspectRatios[0];
-                for (int i = 1; i < Gallery.Images.Count; i++) {
-                    _cumulativeImageAspectRatios[i] = _cumulativeImageAspectRatios[i - 1] + (double)images[i].Width / images[i].Height;
+                if (thumbnailImageCount >= 1) {
+                    _maxImageCount = thumbnailImageCount;
+                } else {
+                    List<GalleryImageDTO> images = [.. Gallery.Images];
+                    _cumulativeImageAspectRatios = new double[images.Count];
+                    _cumulativeImageAspectRatios[0] = (double)images[0].Width / images[0].Height;
+                    _maxRecordedAspectRatio = _cumulativeImageAspectRatios[0];
+                    for (int i = 1; i < Gallery.Images.Count; i++) {
+                        _cumulativeImageAspectRatios[i] = _cumulativeImageAspectRatios[i - 1] + (double)images[i].Width / images[i].Height;
+                    }
+                    ResizeListener.OnResized += OnResize;
                 }
-                ResizeListener.OnResized += OnResize;
                 StateHasChanged();
             }
         }

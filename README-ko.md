@@ -31,8 +31,8 @@ Hitorus는 기존의 기능들을 확장시키고 앱만의 고유한 커스텀 
 1. [가장 최근 버전](https://github.com/kaismic/Hitorus/releases/latest)을 다운로드 후 압축해제 하세요.
 2. `Hitorus.Api.exe` (윈도우) 또는 `Hitorus.Api` (macOS/리눅스)을 실행하세요, 웹페이지가 자동으로 열립니다. 만약에 열리지 않으면, 브라우저에서 https://hitorus.pages.dev/ 을 여세요.
 
-## [사용법](/wiki/usage-ko.md)
-[사용법](/wiki/usage-ko.md) 문서를 참고하세요.
+## [사용법](/wiki/ko/usage.md)
+[사용법](/wiki/ko/usage.md) 문서를 참고하세요.
 
 ## 새로운 버전으로 옮길때
 - 앱의 모든 데이터는 `main.db` 파일에 저장됩니다. 데이터를 내보내거나 백업하려면, 이 파일을 복사 후 나중에 똑같은 위치에 붙여넣으면 됩니다.

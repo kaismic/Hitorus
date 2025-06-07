@@ -31,8 +31,8 @@ Hitorus is a desktop web application that enhances the use of hitomi.la by exten
 1. Download the [latest release](https://github.com/kaismic/Hitorus/releases/latest) and extract it.
 2. Run `Hitorus.Api.exe` (Windows) or `Hitorus.Api` (macOS/Linux), the webpage should open automatically. If it doesn't, open https://hitorus.pages.dev/ on the browser.
 
-## [Usage](/wiki/usage.md)
-Refer to the [Usage](/wiki/usage.md) documentation.
+## [Usage](/wiki/en/usage.md)
+Refer to the [Usage](/wiki/en/usage.md) documentation.
 
 ## Migration to new version
 - The entire application data is stored in the `main.db` file. To export or backup your data, copy, store it somewhere else and later paste it into the same location.

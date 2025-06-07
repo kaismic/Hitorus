@@ -67,8 +67,15 @@ namespace Hitorus.Web.Layout {
             }
         }
 
-        protected override void OnAfterRender(bool firstRender) {
+        protected override async Task OnAfterRenderAsync(bool firstRender) {
             if (firstRender) {
+                bool? isDarkMode = LocalStorageService.GetItem<bool?>(LocalStorageKeys.IS_DARK_MODE);
+                if (isDarkMode == null) {
+                    _isDarkMode = await _mudThemeProvider.GetSystemDarkModeAsync();
+                    await _mudThemeProvider.WatchSystemDarkModeAsync(OnSystemDarkModeChanged);
+                } else {
+                    _isDarkMode = isDarkMode.Value;
+                }
                 _hasRendered = true;
                 _ = OnInitRenderComplete();
             }
@@ -76,8 +83,6 @@ namespace Hitorus.Web.Layout {
 
         private async Task OnInitRenderComplete() {
             if (_isInitialized && _hasRendered) {
-                _isDarkMode = await _mudThemeProvider.GetSystemDarkModeAsync();
-                await _mudThemeProvider.WatchSystemDarkModeAsync(OnSystemDarkModeChanged);
                 if (AppConfigService.Config.LastUpdateCheckTime.AddDays(HostConfiguration.GetValue<int>("UpdateCheckInterval")) < DateTimeOffset.UtcNow) {
                     Version? latestApiVersion = await AppConfigService.GetLatestApiVersion();
                     Version currentApiVersion = await AppConfigService.GetCurrentApiVersion();
@@ -112,10 +117,15 @@ namespace Hitorus.Web.Layout {
             }
         }
 
-        private Task OnSystemDarkModeChanged(bool isDarkMode) {
-            _isDarkMode = isDarkMode;
+        private Task OnSystemDarkModeChanged(bool value) {
+            _isDarkMode = value;
             StateHasChanged();
             return Task.CompletedTask;
+        }
+
+        private void OnDarkModeButtonToggled(bool value) {
+            _isDarkMode = value;
+            LocalStorageService.SetItem(LocalStorageKeys.IS_DARK_MODE, value);
         }
 
         private void OnApiPortChangeRequested() {

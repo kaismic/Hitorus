@@ -2,7 +2,7 @@
 @using Microsoft.AspNetCore.SignalR.Client
 @inherits LayoutComponentBase
 
-<MudThemeProvider @ref="@_mudThemeProvider" @bind-IsDarkMode="@_isDarkMode" Theme="AppConfigService.AppTheme" />
+<MudThemeProvider @ref="@_mudThemeProvider" IsDarkMode="@_isDarkMode" Theme="AppConfigService.AppTheme" />
 <MudPopoverProvider />
 <MudSnackbarProvider />
 <MudDialogProvider MaxWidth="MaxWidth.Small" FullWidth="true" />
@@ -13,7 +13,8 @@
             <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@DrawerToggle" />
             <MudText Typo="Typo.h5" Class="ml-3">Hitorus</MudText>
             <MudSpacer />
-            <MudToggleIconButton @bind-Toggled="_isDarkMode"
+            <MudToggleIconButton Toggled="_isDarkMode"
+                ToggledChanged="@OnDarkModeButtonToggled"
             Color="Color.Inherit"
             Icon="@Icons.Material.Filled.LightMode"
             ToggledIcon="@Icons.Material.Filled.DarkMode" />

@@ -3,7 +3,7 @@
 
 <PageTitle>@((_gallery == null ? "" : _gallery.Title + " - ") + GalleryId.ToString())</PageTitle>
 
-<MudThemeProvider @ref="@_mudThemeProvider" @bind-IsDarkMode="@_isDarkMode" Theme="AppConfigurationService.AppTheme" />
+<MudThemeProvider @ref="@_mudThemeProvider" IsDarkMode="@_isDarkMode" Theme="AppConfigurationService.AppTheme" />
 <MudPopoverProvider />
 
 @if (_gallery != null) {
@@ -108,7 +108,8 @@
         }
         <MudIconButton Icon="@(_toolbarOpen ? Icons.Material.Filled.ExpandLess : Icons.Material.Filled.ExpandMore)"
                        OnClick="@(() => _toolbarOpen = !_toolbarOpen)" />
-        <MudToggleIconButton @bind-Toggled="_isDarkMode"
+        <MudToggleIconButton Toggled="_isDarkMode"
+                             ToggledChanged="@OnDarkModeButtonToggled"
                              Color="Color.Default"
                              Icon="@Icons.Material.Filled.LightMode"
                              ToggledIcon="@Icons.Material.Filled.DarkMode"

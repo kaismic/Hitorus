@@ -1,4 +1,5 @@
-﻿using BlazorPro.BlazorSize;
+﻿using Blazored.LocalStorage;
+using BlazorPro.BlazorSize;
 using Hitorus.Data;
 using Hitorus.Data.DTOs;
 using Hitorus.Web.Services;
@@ -15,6 +16,7 @@ namespace Hitorus.Web.Pages {
         [Inject] IResizeListener ResizeListener { get; set; } = default!;
         [Inject] IStringLocalizer<GalleryViewPage> Localizer { get; set; } = default!;
         [Inject] IStringLocalizer<SharedResource> SharedLocalizer { get; set; } = default!;
+        [Inject] ILocalStorageService LocalStorageService { get; set; } = default!;
         [Inject] GalleryService GalleryService { get; set; } = default!;
         [Inject] AppConfigurationService AppConfigurationService { get; set; } = default!;
         [Inject] ViewConfigurationService ViewConfigurationService { get; set; } = default!;
@@ -59,8 +61,13 @@ namespace Hitorus.Web.Pages {
 
         protected override async Task OnAfterRenderAsync(bool firstRender) {
             if (firstRender) {
-                _isDarkMode = await _mudThemeProvider.GetSystemDarkModeAsync();
-                await _mudThemeProvider.WatchSystemDarkModeAsync(OnSystemDarkModeChanged);
+                bool? isDarkMode = await LocalStorageService.GetItemAsync<bool?>(LocalStorageKeys.IS_DARK_MODE);
+                if (isDarkMode == null) {
+                    _isDarkMode = await _mudThemeProvider.GetSystemDarkModeAsync();
+                    await _mudThemeProvider.WatchSystemDarkModeAsync(OnSystemDarkModeChanged);
+                } else {
+                    _isDarkMode = isDarkMode.Value;
+                }
                 if (!ViewConfigurationService.IsLoaded) {
                     await ViewConfigurationService.Load();
                 }
@@ -75,10 +82,15 @@ namespace Hitorus.Web.Pages {
             }
         }
 
-        private Task OnSystemDarkModeChanged(bool isDarkMode) {
-            _isDarkMode = isDarkMode;
+        private Task OnSystemDarkModeChanged(bool value) {
+            _isDarkMode = value;
             StateHasChanged();
             return Task.CompletedTask;
+        }
+
+        private async Task OnDarkModeButtonToggled(bool value) {
+            _isDarkMode = value;
+            await LocalStorageService.SetItemAsync(LocalStorageKeys.IS_DARK_MODE, value);
         }
 
         private bool _pageNumberChangedByJs = false;

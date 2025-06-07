@@ -12,7 +12,7 @@ namespace Hitorus.Api.Controllers {
         public ActionResult<IEnumerable<Tag>> GetTags(TagCategory category, int count, string? start) {
             IQueryable<Tag> tags = context.Tags.AsNoTracking().Where(tag => tag.Category == category);
             if (start != null && start.Length > 0) {
-                tags = tags.Where(tag => tag.Value.StartsWith(start));
+                tags = tags.Where(tag => tag.Value.Contains(start));
             }
             return Ok(tags.OrderByDescending(tag => tag.GalleryCount).Take(count));
         }

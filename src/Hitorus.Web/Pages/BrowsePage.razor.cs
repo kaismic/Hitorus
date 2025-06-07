@@ -1,4 +1,5 @@
-﻿using Hitorus.Data;
+﻿using Blazored.LocalStorage;
+using Hitorus.Data;
 using Hitorus.Data.DTOs;
 using Hitorus.Data.Entities;
 using Hitorus.Data.Events;
@@ -17,7 +18,9 @@ namespace Hitorus.Web.Pages {
         [Inject] ISnackbar Snackbar { get; set; } = default!;
         [Inject] IStringLocalizer<BrowsePage> Localizer { get; set; } = default!;
         [Inject] IStringLocalizer<SharedResource> SharedLocalizer { get; set; } = default!;
+        [Inject] ILocalStorageService LocalStorageService { get; set; } = default!;
 
+        private int _thumbnailImageCount;
         private readonly List<ChipModel<TagDTO>>[] _tagSearchPanelChipModels = [.. Tag.TAG_CATEGORIES.Select(t => new List<ChipModel<TagDTO>>())];
 
         private bool _isLoading = false;
@@ -55,6 +58,12 @@ namespace Hitorus.Web.Pages {
             }
         }
 
+        private async Task OnThumbnailImageCountChanged(int value) {
+            _thumbnailImageCount = value;
+            await LocalStorageService.SetItemAsync(LocalStorageKeys.THUMBNAIL_IMAGE_COUNT, value);
+            await LoadGalleries();
+        }
+
         private async Task OnSelectedSortPropertyChanged(GalleryProperty value) {
             BrowseConfigurationService.Config.SelectedSortProperty = value;
             await BrowseConfigurationService.UpdateSelectedSortPropertyAsync(value);
@@ -81,6 +90,7 @@ namespace Hitorus.Web.Pages {
 
         protected override async Task OnInitializedAsync() {
             await BrowseConfigurationService.Load();
+            _thumbnailImageCount = await LocalStorageService.GetItemAsync<int>(LocalStorageKeys.THUMBNAIL_IMAGE_COUNT);
             _isInitialized = true;
             _ = OnInitRenderComplete();
         }

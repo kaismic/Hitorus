@@ -30,8 +30,8 @@
             </MudButton>
         </div>
     } else {
-        <div class="d-flex align-center">
-            <div class="d-flex align-center gap-4">
+        <div class="d-flex align-center flex-wrap mud-width-full">
+            <div class="d-flex align-center gap-x-4 flex-wrap">
                 <MudNumericField T="int" Margin="Margin.Dense"
                                  Label=@Localizer["ItemsPerPage"]
                                  Variant="Variant.Outlined"
@@ -40,6 +40,19 @@
                                  Style="max-width: 160px"
                                  Value="@BrowseConfigurationService.Config.ItemsPerPage"
                                  ValueChanged="@OnItemsPerPageChanged" />
+                <MudSelect T="int" FitContent
+                           Margin="Margin.Dense"
+                           Label=@Localizer["ThumbnailImageCount"]
+                           Variant="Variant.Outlined"
+                           ToStringFunc="@(i => i < 1 ? SharedLocalizer["Automatic"] : i.ToString())"
+                           Value="@_thumbnailImageCount"
+                           ValueChanged="@OnThumbnailImageCountChanged">
+                    <MudSelectItem Value="0" />
+                    <MudSelectItem Value="1" />
+                    <MudSelectItem Value="2" />
+                    <MudSelectItem Value="3" />
+                    <MudSelectItem Value="4" />
+                </MudSelect>
                 <div class="d-flex align-center">
                     <div id="sort-property-select">
                         <MudSelect T="GalleryProperty" FitContent
@@ -48,8 +61,7 @@
                                    Variant="Variant.Outlined"
                                    ToStringFunc="@(p => SharedLocalizer[p.ToString()])"
                                    Value="@BrowseConfigurationService.Config.SelectedSortProperty"
-                                   ValueChanged="@OnSelectedSortPropertyChanged"
-                                   Style="">
+                                   ValueChanged="@OnSelectedSortPropertyChanged">
                             <MudSelectItem Value="GalleryProperty.Id" />
                             <MudSelectItem Value="GalleryProperty.Title" />
                             <MudSelectItem Value="GalleryProperty.UploadTime" />
@@ -70,8 +82,7 @@
                     </div>
                 </div>
             </div>
-            <MudSpacer />
-            <div id="right-control-panel" class="d-flex align-center gap-4">
+            <div id="right-control-panel" class="d-flex flex-grow-1 justify-end align-center gap-4 flex-wrap">
                 <MudButton Color="Color.Default"
                            Variant="Variant.Outlined"
                            StartIcon="@Icons.Material.Filled.Edit"

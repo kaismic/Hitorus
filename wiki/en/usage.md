@@ -1,6 +1,6 @@
 # Usage
 
-**Read in other languages:** [English](usage.md), [한국어](usage-ko.md)
+**Read in other languages:** [English](/wiki/en/usage.md), [한국어](/wiki/ko/usage.md)
 
 - [Search](/wiki/en/usage.search.md)
 - [Download](/wiki/en/usage.download.md)

@@ -34,10 +34,10 @@ Hitorus is a desktop web application that enhances the use of hitomi.la by exten
 ## [Usage](/wiki/en/usage.md)
 Refer to the [Usage](/wiki/en/usage.md) documentation.
 
-## Migration to new version
-- The entire application data is stored in the `main.db` file. To export or backup your data, copy, store it somewhere else and later paste it into the same location.
-- If you are migrating from a compatible version to the latest version, you can move both `main.db` file and `Galleries` folder.
-- If you are migrating from an incompatible version to the latest version, only move the `Galleries` folder since `main.db` won't be compatible.
+## Managing application data
+- Most of the application data is stored in the `main.db` file. To export or backup your data, store this file and later paste it into the new location.
+- If you are migrating from a compatible version to the latest version, you can export both `main.db` file and `Galleries` folder.
+- If you are migrating from an incompatible version to the latest version, you can only export the `Galleries` folder since `main.db` won't be compatible.
 
 ## How to resolve issues
 - If the webpage does not load, try visiting the page in Incognito/Private mode.

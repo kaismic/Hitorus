@@ -26,17 +26,17 @@ namespace Hitorus.Web.Pages {
         private bool _isLoading = false;
         private bool _isEditing = false;
 
-        private async Task OnSelectedLanguageChanged(GalleryLanguageDTO value) {
+        private async Task OnSelectedLanguageChanged(GalleryLanguageDTO? value) {
             BrowseConfigurationService.Config.SelectedLanguage = value;
-            await BrowseConfigurationService.UpdateLanguageAsync(value.Id);
+            await BrowseConfigurationService.UpdateLanguageAsync(value == null ? 0 : value.Id);
             if (BrowseConfigurationService.Config.AutoRefresh) {
                 await LoadGalleries();
             }
         }
         
-        private async Task OnSelectedTypeChanged(GalleryTypeDTO value) {
+        private async Task OnSelectedTypeChanged(GalleryTypeDTO? value) {
             BrowseConfigurationService.Config.SelectedType = value;
-            await BrowseConfigurationService.UpdateTypeAsync(value.Id);
+            await BrowseConfigurationService.UpdateTypeAsync(value == null ? 0 : value.Id);
             if (BrowseConfigurationService.Config.AutoRefresh) {
                 await LoadGalleries();
             }
@@ -95,9 +95,8 @@ namespace Hitorus.Web.Pages {
             _ = OnInitRenderComplete();
         }
 
-        protected override async Task OnAfterRenderAsync(bool firstRender) {
+        protected override void OnAfterRender(bool firstRender) {
             if (firstRender) {
-                await JsRuntime.InvokeVoidAsync("setHeightToSourceHeight", "tag-search-panel-collection", "class", "ltk-search-view", "class");
                 _isRendered = true;
                 _ = OnInitRenderComplete();
             }
@@ -119,6 +118,7 @@ namespace Hitorus.Web.Pages {
                     BrowseConfigurationService.BrowsePageFirstLoad = false;
                     await LoadGalleries();
                 }
+                await JsRuntime.InvokeVoidAsync("setHeightToSourceHeight", "tag-search-panel-collection", "class", "ltk-search-view", "class");
                 StateHasChanged();
             }
         }

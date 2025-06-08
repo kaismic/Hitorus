@@ -1,7 +1,7 @@
 ﻿<div class="@Class" style="@Style">
     <MudPaper Class="ltk-search-view d-flex flex-column pa-4 gap-2" Outlined>
         <MudSelect Label=@SharedLocalizer["Language"]
-                   T="GalleryLanguageDTO"
+                   T="GalleryLanguageDTO?"
                    ToStringFunc="@(l => l == null ? SharedLocalizer["All"] : l.LocalName)"
                    FullWidth
                    Variant="Variant.Outlined"
@@ -13,7 +13,7 @@
             }
         </MudSelect>
         <MudSelect Label=@SharedLocalizer["Type"]
-                   T="GalleryTypeDTO"
+                   T="GalleryTypeDTO?"
                    ToStringFunc="@(t => t == null ? SharedLocalizer["All"] : SharedLocalizer[t.Value])"
                    FullWidth
                    Variant="Variant.Outlined"

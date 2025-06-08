@@ -1,7 +1,7 @@
 ﻿@page "/browse"
 
-<div class="d-flex flex-column pa-8 gap-2">
-    <div class="d-flex gap-4">
+<div class="d-flex flex-column pa-8 gap-y-2">
+    <div class="d-flex gap-x-4">
         <TagSearchPanelCollection Style="flex: 3;"
                                   TagSearchPanelChipModels="@_tagSearchPanelChipModels"
                                   ChipModelsChanged="@OnChipModelsChanged" />
@@ -14,12 +14,12 @@
                        TitleSearchKeywordChanged="@OnTitleSearchKeywordChanged" />
     </div>
     @if (_isEditing) {
-        <div class="d-flex justify-end align-center gap-4 my-4">
+        <div class="d-flex justify-end align-center gap-x-4 my-2">
             <MudButton Color="Color.Primary"
                        Variant="Variant.Text"
                        StartIcon="@Icons.Material.Filled.Cancel"
                        OnClick=@ExitEditMode>
-                @SharedLocalizer["Cancel"]
+                @Localizer["ExitEditMode"]
             </MudButton>
             <MudButton Color="Color.Error"
                        Variant="Variant.Filled"
@@ -82,14 +82,13 @@
                     </div>
                 </div>
             </div>
-            <div id="right-control-panel" class="d-flex flex-grow-1 justify-end align-center gap-4 flex-wrap">
+            <div id="right-control-panel" class="d-flex flex-grow-1 justify-end align-center gap-x-4 flex-wrap">
                 <MudButton Color="Color.Default"
                            Variant="Variant.Outlined"
                            StartIcon="@Icons.Material.Filled.Edit"
                            OnClick="@(() => _isEditing = true)">
                     @Localizer["Edit"]
                 </MudButton>
-                <MudDivider Vertical id="edit-button-next-divider"/>
                 <MudSwitch T="bool"
                            Label=@Localizer["AutoRefresh"]
                            Color="Color.Primary"
@@ -103,13 +102,13 @@
                 </MudButton>
             </div>
         </div>
-        <MudPagination ShowFirstButton ShowLastButton
-                       MiddleCount="8"
-                       Count="@BrowseConfigurationService.TotalPages"
-                       Selected="@BrowseConfigurationService.PageNum"
-                       SelectedChanged="@OnPageNumChanged"
-                       Style="margin: auto;" />
     }
+    <MudPagination ShowFirstButton ShowLastButton
+                    MiddleCount="8"
+                    Count="@BrowseConfigurationService.TotalPages"
+                    Selected="@BrowseConfigurationService.PageNum"
+                    SelectedChanged="@OnPageNumChanged"
+                    Style="margin: auto;" />
     @if (_isLoading) {
         <div class="d-flex justify-center mt-16">
             <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
@@ -118,7 +117,7 @@
         @if (BrowseConfigurationService.Galleries.Count == 0) {
             <MudText Style="margin: auto; margin-top: 160px; color: var(--mud-palette-gray-default)">@Localizer["NoGalleriesFound"]</MudText>
         } else {
-            <MudGrid Spacing="4">
+            <MudGrid Spacing="4" Class="mt-2">
                 @for (int i = 0; i < BrowseConfigurationService.Galleries.Count; i++) {
                     int localIndex = i;
                     <MudItem sm="12" md="6" lg="4" xl="3" xxl="2" Style="overflow-x: clip;">

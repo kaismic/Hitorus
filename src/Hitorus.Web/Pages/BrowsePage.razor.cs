@@ -98,7 +98,6 @@ namespace Hitorus.Web.Pages {
         protected override async Task OnAfterRenderAsync(bool firstRender) {
             if (firstRender) {
                 await JsRuntime.InvokeVoidAsync("setHeightToSourceHeight", "tag-search-panel-collection", "class", "ltk-search-view", "class");
-                await JsRuntime.InvokeVoidAsync("setHeightToSourceHeight", "edit-button-next-divider", "id", "right-control-panel", "id");
                 _isRendered = true;
                 _ = OnInitRenderComplete();
             }

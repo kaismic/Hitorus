@@ -1,7 +1,7 @@
-﻿<div class="gallery-browse-item pa-2 d-flex flex-column gap-2 rounded @(IsSelected ? "selected" : "") @(IsEditing ? "editing" : "")"
+﻿<div class="gallery-browse-item d-flex flex-column gap-2 rounded @(IsSelected ? "selected" : "") @(IsEditing ? "editing" : "")"
      style="height: 300px; overflow-y: auto; overflow-x: hidden;"
      onclick="@OnClick">
-    <MudText Typo="Typo.h6">@Gallery.Title</MudText>
+    <MudText Typo="Typo.h6" Style=@(IsEditing ? "user-select: none" : "")>@Gallery.Title</MudText>
     <a href=@($"/gallery/{Gallery.Id}") target="_blank">
         <div id="@_imageContainerId" class="d-flex relative" style="width: 100%; height: @(THUMBNAIL_IMAGE_HEIGHT)px; overflow-x: hidden;">
             @for (int i = 1; i <= _maxImageCount; i++) {

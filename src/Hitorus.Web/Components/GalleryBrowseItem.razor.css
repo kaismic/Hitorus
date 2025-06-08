@@ -1,22 +1,37 @@
 ﻿.gallery-browse-item {
     border: 1px solid var(--mud-palette-lines-default);
+    padding: 8px;
 }
 
     .gallery-browse-item:hover {
-        border: 1px solid var(--mud-palette-action-default)
+        border: 1px solid var(--mud-palette-action-default);
     }
 
 .editing:hover {
     cursor: pointer;
-    border: 1px solid var(--mud-palette-primary)
+    border: 1px solid var(--mud-palette-primary);
+    background-color: var(--mud-palette-action-default-hover);
+}
+
+span {
+    user-select: all;
+}
+
+.editing * {
+    user-select: none;
+}
+
+.editing a {
+    pointer-events: none;
 }
 
 .gallery-browse-item.selected {
-    border: 3px solid var(--mud-palette-primary)
+    border: 3px solid var(--mud-palette-primary);
+    padding: 7px;
 }
 
 a {
-    border: 3px solid rgb(0, 0, 0, 0.00)
+    border: 3px solid rgb(0, 0, 0, 0.00);
 }
     a:hover {
         border: 3px solid var(--mud-palette-primary);
@@ -49,8 +64,4 @@ td:last-child {
 .image-overlay:hover {
     opacity: 1;
     backdrop-filter: blur(2px);
-}
-
-span {
-    user-select: all;
 }

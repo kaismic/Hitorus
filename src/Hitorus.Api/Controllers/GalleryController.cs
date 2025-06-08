@@ -66,10 +66,14 @@ namespace Hitorus.Api.Controllers {
             if (config == null) {
                 return NotFound($"Browse configuration with ID {configId} not found.");
             }
-            IEnumerable<int> selectedTagIds = config.Tags.Select(t => t.Id);
+            context.Entry(config).Collection(c => c.Tags).Load();
+            context.Entry(config).Reference(c => c.SelectedLanguage).Load();
+            context.Entry(config).Reference(c => c.SelectedType).Load();
             IEnumerable<Gallery> galleries =
                 context.Galleries.AsNoTracking()
-                .Include(g => g.Tags);
+                .Include(g => g.Tags)
+                .Include(g => g.Language)
+                .Include(g => g.Type);
             if (config.SelectedLanguage != null) {
                 galleries = galleries.Where(g => g.Language.Id == config.SelectedLanguage.Id);
             }
@@ -79,6 +83,7 @@ namespace Hitorus.Api.Controllers {
             if (!string.IsNullOrEmpty(config.TitleSearchKeyword)) {
                 galleries = galleries.Where(g => g.Title.Contains(config.TitleSearchKeyword, StringComparison.InvariantCultureIgnoreCase));
             }
+            IEnumerable<int> selectedTagIds = config.Tags.Select(t => t.Id);
             foreach (int tagId in selectedTagIds) {
                 galleries = galleries.Where(g => g.Tags.Any(t => t.Id == tagId));
             }

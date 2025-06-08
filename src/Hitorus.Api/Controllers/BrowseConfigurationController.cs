@@ -61,11 +61,8 @@ namespace Hitorus.Api.Controllers {
             if (config == null) {
                 return NotFound();
             }
-            GalleryLanguage? language = context.GalleryLanguages.Find(languageId);
-            if (language == null) {
-                return NotFound();
-            }
-            config.SelectedLanguage = language;
+            context.Entry(config).Reference(c => c.SelectedLanguage).Load();
+            config.SelectedLanguage = context.GalleryLanguages.Find(languageId);
             context.SaveChanges();
             return Ok();
         }
@@ -78,11 +75,8 @@ namespace Hitorus.Api.Controllers {
             if (config == null) {
                 return NotFound();
             }
-            GalleryType? type = context.GalleryTypes.Find(typeId);
-            if (type == null) {
-                return NotFound();
-            }
-            config.SelectedType = type;
+            context.Entry(config).Reference(c => c.SelectedType).Load();
+            config.SelectedType = context.GalleryTypes.Find(typeId);
             context.SaveChanges();
             return Ok();
         }

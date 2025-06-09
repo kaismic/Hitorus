@@ -25,6 +25,7 @@ namespace Hitorus.Web.Components {
 
         private string _imageContainerId = "";
         private const int THUMBNAIL_IMAGE_HEIGHT = 120; // px
+        private const int MAX_THUMBNAIL_IMAGES_COUNT = 5;
         private double _maxRecordedAspectRatio;
         private double[] _cumulativeImageAspectRatios = [];
         private int _maxImageCount = 1;
@@ -52,10 +53,10 @@ namespace Hitorus.Web.Components {
                     _maxImageCount = thumbnailImageCount;
                 } else {
                     List<GalleryImageDTO> images = [.. Gallery.Images];
-                    _cumulativeImageAspectRatios = new double[images.Count];
+                    _cumulativeImageAspectRatios = new double[Math.Min(images.Count, MAX_THUMBNAIL_IMAGES_COUNT)];
                     _cumulativeImageAspectRatios[0] = (double)images[0].Width / images[0].Height;
                     _maxRecordedAspectRatio = _cumulativeImageAspectRatios[0];
-                    for (int i = 1; i < Gallery.Images.Count; i++) {
+                    for (int i = 1; i < _cumulativeImageAspectRatios.Length; i++) {
                         _cumulativeImageAspectRatios[i] = _cumulativeImageAspectRatios[i - 1] + (double)images[i].Width / images[i].Height;
                     }
                     ResizeListener.OnResized += OnResize;
@@ -83,7 +84,7 @@ namespace Hitorus.Web.Components {
             }
             _maxRecordedAspectRatio = aspectRatio;
             if (aspectRatio >= _cumulativeImageAspectRatios[^1]) {
-                _maxImageCount = Gallery.Images.Count;
+                _maxImageCount = _cumulativeImageAspectRatios.Length;
             } else {
                 for (int i = _maxImageCount - 1; i < _cumulativeImageAspectRatios.Length; i++) {
                     if (_cumulativeImageAspectRatios[i] > aspectRatio) {

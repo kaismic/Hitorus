@@ -25,7 +25,7 @@ namespace Hitorus.Web.Components {
 
         private string _imageContainerId = "";
         private const int THUMBNAIL_IMAGE_HEIGHT = 120; // px
-        private const int MAX_THUMBNAIL_IMAGES_COUNT = 5;
+        public const int MAX_THUMBNAIL_IMAGES_COUNT = 5;
         private double _maxRecordedAspectRatio;
         private double[] _cumulativeImageAspectRatios = [];
         private int _maxImageCount = 1;

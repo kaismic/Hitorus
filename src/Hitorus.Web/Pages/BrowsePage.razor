@@ -47,11 +47,10 @@
                            ToStringFunc="@(i => i < 1 ? SharedLocalizer["Automatic"] : i.ToString())"
                            Value="@_thumbnailImageCount"
                            ValueChanged="@OnThumbnailImageCountChanged">
-                    <MudSelectItem Value="0" />
-                    <MudSelectItem Value="1" />
-                    <MudSelectItem Value="2" />
-                    <MudSelectItem Value="3" />
-                    <MudSelectItem Value="4" />
+                    @for (int i = 0; i <= GalleryBrowseItem.MAX_THUMBNAIL_IMAGES_COUNT; i++)
+                    {
+                        <MudSelectItem Value="@i" />
+                    }
                 </MudSelect>
                 <div class="d-flex align-center">
                     <div id="sort-property-select">

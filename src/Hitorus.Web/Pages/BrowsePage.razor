@@ -61,10 +61,9 @@
                                    ToStringFunc="@(p => SharedLocalizer[p.ToString()])"
                                    Value="@BrowseConfigurationService.Config.SelectedSortProperty"
                                    ValueChanged="@OnSelectedSortPropertyChanged">
-                            <MudSelectItem Value="GalleryProperty.Id" />
-                            <MudSelectItem Value="GalleryProperty.Title" />
-                            <MudSelectItem Value="GalleryProperty.UploadTime" />
-                            <MudSelectItem Value="GalleryProperty.LastDownloadTime" />
+                            @foreach (GalleryProperty gp in Enum.GetValues(typeof(GalleryProperty))) {
+                                <MudSelectItem Value="@gp" />
+                            }
                         </MudSelect>
                     </div>
                     <div id="sort-direction-select">
@@ -75,8 +74,9 @@
                                    ToStringFunc="@(sd => Localizer[sd.ToString()])"
                                    Value="@BrowseConfigurationService.Config.SelectedSortDirection"
                                    ValueChanged="@OnSelectedSortDirectionChanged">
-                            <MudSelectItem Value="SortDirection.Ascending" />
-                            <MudSelectItem Value="SortDirection.Descending" />
+                            @foreach (SortDirection sd in Enum.GetValues(typeof(SortDirection))) {
+                                <MudSelectItem Value="@sd" />
+                            }
                         </MudSelect>
                     </div>
                 </div>

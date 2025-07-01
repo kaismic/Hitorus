@@ -7,7 +7,6 @@ namespace Hitorus.Web.Services {
         private bool _isLoaded = false;
         public DownloadConfigurationDTO Config { get; private set; } = new();
 
-
         private readonly HttpClient _httpClient;
         public DownloadConfigurationService(HttpClient httpClient, IConfiguration hostConfiguration, ISyncLocalStorageService localStorageService) {
             _httpClient = httpClient;

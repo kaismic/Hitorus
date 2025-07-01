@@ -45,7 +45,7 @@
                              Variant="Variant.Outlined"
                              Min="1" Max="16"
                              Pattern="[0-9]"
-                             Value="@DownloadConfigurationService.Config.ThreadNum"
+                             Value="@DownloadConfigurationService.Config.DownloadThreadCount"
                              ValueChanged="@OnThreadNumChanged" />
             <MudSelect T="string" FitContent
                        Label=@Localizer["PreferredFormat"]

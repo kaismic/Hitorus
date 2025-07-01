@@ -23,7 +23,7 @@ namespace Hitorus.Web.Pages {
         }
         
         private async Task OnThreadNumChanged(int value) {
-            DownloadConfigurationService.Config.ThreadNum = value;
+            DownloadConfigurationService.Config.DownloadThreadCount = value;
             await DownloadConfigurationService.UpdateThreadNum(value);
         }
         

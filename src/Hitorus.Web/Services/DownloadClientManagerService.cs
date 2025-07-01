@@ -1,7 +1,6 @@
 ﻿using Blazored.LocalStorage;
 using DebounceThrottle;
 using Hitorus.Data;
-using Hitorus.Data.Entities;
 using Hitorus.Web.Models;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Localization;
@@ -17,7 +16,7 @@ namespace Hitorus.Web.Services {
         DownloadService downloadService,
         IJSRuntime jsRuntime,
         IStringLocalizer<DownloadClientManagerService> localizer
-    ) : IAsyncDisposable {
+    ) : IAsyncDisposable, IDownloadClient {
         private HubConnection? _hubConnection;
         public Dictionary<int, DownloadModel> Downloads { get; } = [];
 
@@ -32,24 +31,29 @@ namespace Hitorus.Web.Services {
             _hubConnection = new HubConnectionBuilder()
                 .WithUrl(Utilities.GetServiceBaseUri(hostConfiguration, localStorageService, "DownloadHubPath"))
                 .Build();
-            _hubConnection.On<IEnumerable<int>>("ReceiveSavedDownloads", OnReceiveSavedDownloads);
-            _hubConnection.On<int>("ReceiveGalleryAvailable", OnReceiveGalleryAvailable);
-            _hubConnection.On<int, int>("ReceiveProgress", OnReceiveProgress);
-            _hubConnection.On<int, DownloadStatus>("ReceiveStatus", OnReceiveStatus);
-            _hubConnection.On<int, string>("ReceiveFailure", OnReceiveFailure);
-            _hubConnection.On<int, int>("ReceiveIdChange", OnReceiveIdChange);
+            _hubConnection.On<IEnumerable<int>>(nameof(ReceiveSavedDownloads), ReceiveSavedDownloads);
+            _hubConnection.On<int>(nameof(ReceiveGalleryAvailable), ReceiveGalleryAvailable);
+            _hubConnection.On<int, int>(nameof(ReceiveProgress), ReceiveProgress);
+            _hubConnection.On<int, DownloadStatus>(nameof(ReceiveStatus), ReceiveStatus);
+            _hubConnection.On<int, string>(nameof(ReceiveFailure), ReceiveFailure);
+            _hubConnection.On<int, int>(nameof(ReceiveIdChange), ReceiveIdChange);
             _hubConnection.Closed += OnClosed;
             _hubConnection.StartAsync();
         }
 
-        private void OnReceiveSavedDownloads(IEnumerable<int> galleryIds) {
+        public Task ReceiveSavedDownloads(IEnumerable<int> galleryIds) {
             foreach (int id in galleryIds) {
                 Downloads.Add(id, new() { GalleryId = id });
             }
             DownloadPageStateHasChanged();
+            return Task.CompletedTask;
         }
 
-        private async Task OnReceiveGalleryAvailable(int galleryId) {
+        public Task ReceiveCreateDownloads(IEnumerable<int> galleryIds) {
+            return Task.CompletedTask;
+        }
+
+        public async Task ReceiveGalleryAvailable(int galleryId) {
             if (Downloads.TryGetValue(galleryId, out DownloadModel? model)) {
                 model.Gallery = await galleryService.GetDownloadGalleryDTO(galleryId);
                 model.StateHasChanged();
@@ -61,14 +65,15 @@ namespace Hitorus.Web.Services {
             }
         }
 
-        private void OnReceiveProgress(int galleryId, int progress) {
+        public Task ReceiveProgress(int galleryId, int progress) {
             if (Downloads.TryGetValue(galleryId, out DownloadModel? model)) {
                 model.Progress = progress;
                 model.StateHasChanged();
             }
+            return Task.CompletedTask;
         }
 
-        private async Task OnReceiveStatus(int galleryId, DownloadStatus status) {
+        public async Task ReceiveStatus(int galleryId, DownloadStatus status) {
             if (Downloads.TryGetValue(galleryId, out DownloadModel? model)) {
                 model.Status = status;
                 switch (status) {
@@ -96,28 +101,30 @@ namespace Hitorus.Web.Services {
                         _ = Task.Delay(DELETE_ANIM_DURATION).ContinueWith(_ => DeleteDownload(galleryId));
                         break;
                     case DownloadStatus.Failed:
-                        throw new InvalidOperationException($"{DownloadStatus.Failed} must be handled by {nameof(OnReceiveFailure)}");
+                        throw new InvalidOperationException($"{DownloadStatus.Failed} must be handled by {nameof(ReceiveFailure)}");
                 }
                 model.StateHasChanged();
             }
         }
 
-        private void OnReceiveFailure(int galleryId, string message) {
+        public Task ReceiveFailure(int galleryId, string message) {
             if (Downloads.TryGetValue(galleryId, out DownloadModel? model)) {
                 model.WaitingResponse = false;
                 model.Status = DownloadStatus.Failed;
                 model.StatusMessage = message;
                 model.StateHasChanged();
             }
+            return Task.CompletedTask;
         }
 
-        private void OnReceiveIdChange(int oldId, int newId) {
+        public Task ReceiveIdChange(int oldId, int newId) {
             if (Downloads.TryGetValue(oldId, out DownloadModel? model)) {
                 Downloads.Remove(oldId);
                 Downloads.TryAdd(newId, model);
                 model.GalleryId = newId;
                 model.StateHasChanged();
             }
+            return Task.CompletedTask;
         }
 
         private async Task OnClosed(Exception? e) {

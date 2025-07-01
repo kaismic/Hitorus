@@ -1,11 +1,7 @@
 ﻿namespace Hitorus.Data {
-    public enum DbInitStatus {
-        InProgress,
-        Complete
-    }
-
     public enum DownloadStatus {
         Downloading,
+        Queued,
         Completed,
         Paused,
         Failed,
@@ -13,12 +9,11 @@
     }
 
     public enum DownloadAction {
-        Create,
+        GalleryInfoOnly,
+        Queue,
         Start,
         Pause,
-        Delete,
-        Import,
-        Complete
+        Delete
     }
 
     public enum ViewMode {
@@ -48,6 +43,10 @@
     }
 
     public enum GalleryProperty {
-        Id, Title, UploadTime, LastDownloadTime
+        Id,
+        Title,
+        UploadTime,
+        LastDownloadTime,
+        UserDefinedOrder
     }
 }

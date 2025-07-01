@@ -93,6 +93,7 @@ namespace Hitorus.Api.Controllers {
                 GalleryProperty.Title => g => g.Title,
                 GalleryProperty.UploadTime => g => g.Date,
                 GalleryProperty.LastDownloadTime => g => g.LastDownloadTime,
+                GalleryProperty.UserDefinedOrder => g => g.UserDefinedOrder,
                 _ => throw new NotImplementedException(),
             };
             galleries = config.SelectedSortDirection == SortDirection.Ascending ?

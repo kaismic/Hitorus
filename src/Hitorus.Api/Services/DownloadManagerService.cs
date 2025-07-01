@@ -18,48 +18,72 @@ public class DownloadManagerService(
     ) : BackgroundService, IDownloadManagerService {
     private const int SERVER_TIME_EXCLUDE_LENGTH = 16; // length of the string "0123456789/'\r\n};"
     private readonly string _hitomiGgjsAddress = $"https://ltn.{appConfiguration["HitomiServerDomain"]}/gg.js";
-    private bool _lsiInitialized = false;
     public LiveServerInfo LiveServerInfo { get; private set; } = new();
 
     private readonly ConcurrentDictionary<int, IDownloader> _liveDownloaders = [];
+    private readonly LinkedList<IDownloader> _downloaderQueue = [];
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken) {
+        // Restore saved downloads from the database
         await Task.Run(() => {
             using HitomiContext dbContext = dbContextFactory.CreateDbContext();
             DownloadConfiguration config = dbContext.DownloadConfigurations.AsNoTracking().First();
-            foreach (int id in config.Downloads) {
-                GetOrCreateDownloader(id, false);
+            foreach (int id in config.SavedDownloads) {
+                _liveDownloaders.TryAdd(id, CreateDownloader(id, false));
             }
         }, CancellationToken.None);
+
+        // Fetch initial Live Server Info
+        logger.LogInformation("Fetching Live Server Info...");
+        try {
+            await UpdateLiveServerInfo();
+        } catch (HttpRequestException e) {
+            logger.LogError(e, "Failed to fetch Live Server Info.");
+        }
+
         try {
             ChannelReader<DownloadEventArgs> reader = eventBus.Subscribe();
             await foreach (DownloadEventArgs args in reader.ReadAllAsync(stoppingToken)) {
                 logger.LogInformation("Download event received: Ids = [{Ids}], Action = {Action}", string.Join(", ", args.GalleryIds), args.Action);
                 switch (args.Action) {
-                    case DownloadAction.Create: {
+                    case DownloadAction.GalleryInfoOnly: {
+                        using HitomiContext dbContext = dbContextFactory.CreateDbContext();
                         foreach (int id in args.GalleryIds) {
-                            GetOrCreateDownloader(id, true);
+                            if (dbContext.Galleries.Any(g => g.Id == id) || _liveDownloaders.ContainsKey(id)) {
+                                continue;
+                            }
+                            IDownloader downloader = CreateDownloader(id, true);
+                            _liveDownloaders.TryAdd(id, downloader);
+                            _ = downloader.Start();
                         }
                         break;
                     }
-                    case DownloadAction.Start or DownloadAction.Import: {
-                        if (!_lsiInitialized) {
-                            logger.LogInformation("Fetching Live Server Info...");
-                            try {
-                                await UpdateLiveServerInfo();
-                                _lsiInitialized = true;
-                            } catch (HttpRequestException e) {
-                                logger.LogError(e, "Failed to fetch Live Server Info.");
-                                foreach (int id in args.GalleryIds) {
-                                    if (_liveDownloaders.TryGetValue(id, out IDownloader? value)) {
-                                        value.ChangeStatus(DownloadStatus.Failed, "Failed to fetch Live Server Info.");
-                                    }
-                                }
-                                break;
-                            }
-                        }
+                    case DownloadAction.Queue: {
+                        using HitomiContext dbContext = dbContextFactory.CreateDbContext();
                         foreach (int id in args.GalleryIds) {
-                            _ = GetOrCreateDownloader(id, args.Action == DownloadAction.Start).Start();
+                            if (_downloaderQueue.Any(d => d.GalleryId == id) || _liveDownloaders.ContainsKey(id)) {
+                                continue;
+                            }
+                            IDownloader downloader = CreateDownloader(id, false);
+                            _downloaderQueue.AddFirst(downloader);
+                            downloader.ChangeStatus(DownloadStatus.Queued);
+                        }
+                        break;
+                    }
+                    case DownloadAction.Start: {
+                        foreach (int id in args.GalleryIds) {
+                            if (_liveDownloaders.TryGetValue(id, out IDownloader? downloader)) {
+                                _ = downloader.Start();
+                                continue;
+                            }
+                            foreach (IDownloader d in _downloaderQueue) {
+                                if (d.GalleryId == id) {
+                                    _downloaderQueue.Remove(d);
+                                    _liveDownloaders.TryAdd(id, d);
+                                    _ = d.Start();
+                                    break;
+                                }
+                            }
                         }
                         break;
                     }
@@ -71,13 +95,11 @@ public class DownloadManagerService(
                         }
                         break;
                     }
-                    case DownloadAction.Delete or DownloadAction.Complete: {
+                    case DownloadAction.Delete: {
                         foreach (int id in args.GalleryIds) {
                             if (_liveDownloaders.TryGetValue(id, out IDownloader? value)) {
-                                if (args.Action == DownloadAction.Delete) {
-                                    value.ChangeStatus(DownloadStatus.Deleted);
-                                }
-                                DeleteDownloader(value, args.Action == DownloadAction.Complete);
+                                value.ChangeStatus(DownloadStatus.Deleted);
+                                DeleteDownloader(value, false);
                             }
                         }
                         break;
@@ -90,37 +112,37 @@ public class DownloadManagerService(
         }
     }
 
-    public IDownloader GetOrCreateDownloader(int galleryId, bool addToDb) =>
-        _liveDownloaders.GetOrAdd(
-            galleryId,
-            (galleryId) => {
-                logger.LogInformation("{GalleryId}: Creating Downloader.", galleryId);
-                if (addToDb) {
-                    using HitomiContext dbContext = dbContextFactory.CreateDbContext();
-                    ICollection<int> downloads = dbContext.DownloadConfigurations.First().Downloads;
-                    if (!downloads.Contains(galleryId)) {
-                        downloads.Add(galleryId);
-                        dbContext.SaveChanges();
-                    }
-                }
-                return new Downloader(serviceProvider.CreateScope()) {
-                    GalleryId = galleryId,
-                    LiveServerInfo = LiveServerInfo,
-                    OnIdChange = OnDownloaderIdChange,
-                    UpdateLiveServerInfo = UpdateLiveServerInfo
-                };
-            }
-        );
+    public IDownloader CreateDownloader(int galleryId, bool galleryInfoOnly) {
+        Downloader downloader = new(serviceProvider.CreateScope()) {
+            GalleryId = galleryId,
+            GalleryInfoOnly = galleryInfoOnly,
+            LiveServerInfo = LiveServerInfo,
+            OnIdChange = OnDownloaderIdChange,
+            UpdateLiveServerInfo = UpdateLiveServerInfo,
+        };
+        downloader.DownloadCompleted += OnDownloadCompleted;
+        return downloader;
+    }
 
-    public void DeleteDownloader(IDownloader downloader, bool startNext) {
+    public void DeleteDownloader(IDownloader downloader, bool completed) {
         using HitomiContext dbContext = dbContextFactory.CreateDbContext();
         DownloadConfiguration config = dbContext.DownloadConfigurations.First();
-        if (config.Downloads.Remove(downloader.GalleryId)) {
+        if (config.SavedDownloads.Remove(downloader.GalleryId)) {
             dbContext.SaveChanges();
         }
+        if (!_liveDownloaders.TryRemove(downloader.GalleryId, out _)) {
+            _downloaderQueue.Remove(downloader);
+        }
         downloader.Dispose();
-        if (startNext) {
-            StartNext();
+        if (completed) {
+            DequeueDownloaders();
+        }
+    }
+
+    private void OnDownloadCompleted(int galleryId) {
+        if (_liveDownloaders.TryGetValue(galleryId, out IDownloader? value)) {
+            value.DownloadCompleted -= OnDownloadCompleted;
+            DeleteDownloader(value, true);
         }
     }
 
@@ -129,10 +151,10 @@ public class DownloadManagerService(
         if (_liveDownloaders.TryRemove(oldId, out IDownloader? downloader)) {
             using HitomiContext dbContext = dbContextFactory.CreateDbContext();
             DownloadConfiguration config = dbContext.DownloadConfigurations.First();
-            config.Downloads.Remove(oldId);
+            config.SavedDownloads.Remove(oldId);
             if (_liveDownloaders.TryAdd(newId, downloader)) {
-                if (!config.Downloads.Contains(newId)) {
-                    config.Downloads.Add(newId);
+                if (!config.SavedDownloads.Contains(newId)) {
+                    config.SavedDownloads.Add(newId);
                 }
             } else {
                 downloader.Dispose();
@@ -141,21 +163,20 @@ public class DownloadManagerService(
         }
     }
 
-    private void StartNext() {
+    private void DequeueDownloaders() {
         using HitomiContext dbContext = dbContextFactory.CreateDbContext();
         DownloadConfiguration config = dbContext.DownloadConfigurations.AsNoTracking().First();
-        if (!config.UseParallelDownload) {
-            IDownloader? firstPaused = null;
-            foreach (IDownloader d in _liveDownloaders.Values) {
-                if (d.Status == DownloadStatus.Downloading) {
-                    return;
-                } else if (firstPaused == null && d.Status == DownloadStatus.Paused) {
-                    firstPaused = d;
-                }
+        while (_downloaderQueue.Count > 0) {
+            int activeDownloaders = _liveDownloaders.Values.Count(d => d.Status == DownloadStatus.Downloading);
+            if (activeDownloaders >= config.MaxConcurrentDownloadCount) {
+                break;
             }
-            // no currently downloading downloads so start the first paused download
-            if (firstPaused != null) {
-                _ = firstPaused.Start();
+            LinkedListNode<IDownloader>? next = _downloaderQueue.First;
+            if (next != null && !_liveDownloaders.ContainsKey(next.Value.GalleryId)) {
+                IDownloader d = next.Value;
+                _downloaderQueue.RemoveFirst();
+                _liveDownloaders.TryAdd(d.GalleryId, d);
+                _ = d.Start();
             }
         }
     }

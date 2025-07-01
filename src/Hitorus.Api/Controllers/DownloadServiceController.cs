@@ -8,41 +8,11 @@ namespace Hitorus.Api.Controllers {
     [ApiController]
     [Route("api/download-service")]
     public class DownloadServiceController(IEventBus<DownloadEventArgs> eventBus, HitomiContext dbContext) : ControllerBase {
-        [HttpPost("create")]
+        [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public ActionResult CreateDownloaders([FromBody] IEnumerable<int> galleryIds) {
+        public ActionResult HandleAction(DownloadAction action, [FromBody] IEnumerable<int> galleryIds) {
             eventBus.Publish(new() {
-                Action = DownloadAction.Create,
-                GalleryIds = galleryIds,
-            });
-            return Ok();
-        }
-
-        [HttpPost("start")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public ActionResult StartDownloaders([FromBody] IEnumerable<int> galleryIds) {
-            eventBus.Publish(new() {
-                Action = DownloadAction.Start,
-                GalleryIds = galleryIds,
-            });
-            return Ok();
-        }
-
-        [HttpPost("pause")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public ActionResult PauseDownloaders([FromBody] IEnumerable<int> galleryIds) {
-            eventBus.Publish(new() {
-                Action = DownloadAction.Pause,
-                GalleryIds = galleryIds,
-            });
-            return Ok();
-        }
-
-        [HttpPost("delete")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public ActionResult DeleteDownloaders([FromBody] IEnumerable<int> galleryIds) {
-            eventBus.Publish(new() {
-                Action = DownloadAction.Delete,
+                Action = action,
                 GalleryIds = galleryIds,
             });
             return Ok();

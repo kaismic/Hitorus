@@ -6,6 +6,9 @@ namespace Hitorus.Data.Entities {
     [Index(nameof(Title))]
     [Index(nameof(Date))]
     [Index(nameof(LastDownloadTime))]
+    [Index(nameof(LanguageId))]
+    [Index(nameof(TypeId))]
+    [Index(nameof(UserDefinedOrder))]
     public class Gallery {
         public int Id { get; set; }
         public required string Title { get; set; }
@@ -19,6 +22,7 @@ namespace Hitorus.Data.Entities {
         [Required] public required GalleryType Type { get; set; }
         public required ICollection<GalleryImage> Images { get; set; }
         public required ICollection<Tag> Tags { get; set; }
+        public required int UserDefinedOrder { get; set; }
 
         public BrowseGalleryDTO ToBrowseDTO() => new() {
             Id = Id,

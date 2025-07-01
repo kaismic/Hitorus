@@ -13,28 +13,28 @@ namespace Hitorus.Api.Controllers {
             return Ok(config.ToDTO());
         }
 
-        [HttpPatch("update-parallel-download")]
+        [HttpPatch("max-concurrent-download-count")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult UpdateParallelDownload(int configId, [FromBody] bool enable) {
+        public ActionResult UpdateMaxConcurrentDownloadCount(int configId, [FromBody] int value) {
             DownloadConfiguration? config = context.DownloadConfigurations.Find(configId);
             if (config == null) {
                 return NotFound();
             }
-            config.UseParallelDownload = enable;
+            config.MaxConcurrentDownloadCount = value;
             context.SaveChanges();
             return Ok();
         }
 
-        [HttpPatch("update-thread-num")]
+        [HttpPatch("update-download-thread-count")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult UpdateThreadNum(int configId, [FromBody] int threadNum) {
+        public ActionResult UpdateDownloadThreadCount(int configId, [FromBody] int value) {
             DownloadConfiguration? config = context.DownloadConfigurations.Find(configId);
             if (config == null) {
                 return NotFound();
             }
-            config.ThreadNum = threadNum;
+            config.DownloadThreadCount = value;
             context.SaveChanges();
             return Ok();
         }

@@ -13,18 +13,19 @@ using System.Text.Json;
 namespace Hitorus.Api.Download {
     public class Downloader : IDownloader {
         private const int GALLERY_JS_EXCLUDE_LENGTH = 18; // length of the string "var galleryinfo = "
+        public required bool GalleryInfoOnly { get; init; } = false;
         public required int GalleryId { get; set; }
         public DownloadStatus Status { get; private set; } = DownloadStatus.Paused;
         public required LiveServerInfo LiveServerInfo { get; set; }
         public required Action<int, int> OnIdChange { get; init; }
         public required Func<Task> UpdateLiveServerInfo { get; init; }
+        public event Action<int>? DownloadCompleted;
 
         private readonly IServiceScope _serviceScope;
         private readonly IConfiguration _appConfiguration;
         private readonly ILogger<Downloader> _logger;
         private readonly IHubContext<DownloadHub, IDownloadClient> _hubContext;
         private readonly IDbContextFactory<HitomiContext> _dbContextFactory;
-        private readonly IEventBus<DownloadEventArgs> _eventBus;
         private readonly HttpClient _httpClient;
         private CancellationTokenSource? _cts;
         private Gallery? _gallery;
@@ -38,7 +39,6 @@ namespace Hitorus.Api.Download {
             _logger = _serviceScope.ServiceProvider.GetRequiredService<ILogger<Downloader>>();
             _hubContext = _serviceScope.ServiceProvider.GetRequiredService<IHubContext<DownloadHub, IDownloadClient>>();
             _dbContextFactory = _serviceScope.ServiceProvider.GetRequiredService<IDbContextFactory<HitomiContext>>();
-            _eventBus = _serviceScope.ServiceProvider.GetRequiredService<IEventBus<DownloadEventArgs>>();
             _httpClient = _serviceScope.ServiceProvider.GetRequiredService<IHttpClientFactory>().CreateClient();
             _httpClient.DefaultRequestHeaders.Referrer = new Uri("https://" + _appConfiguration["HitomiClientDomain"]!);
         }
@@ -54,17 +54,20 @@ namespace Hitorus.Api.Download {
                 case DownloadStatus.Downloading:
                     _logger.LogInformation("{GalleryId}: Starting download...", GalleryId);
                     break;
+                case DownloadStatus.Queued:
+                    _logger.LogInformation("{GalleryId}: Enqueued.", GalleryId);
+                    break;
                 case DownloadStatus.Completed:
                     _logger.LogInformation("{GalleryId}: Download completed.", GalleryId);
-                    _eventBus.Publish(new() { Action = DownloadAction.Complete, GalleryIds = [GalleryId] });
+                    DownloadCompleted?.Invoke(GalleryId);
                     break;
                 case DownloadStatus.Deleted:
                     _cts?.Cancel();
-                    _logger.LogInformation("{GalleryId}: Deleted", GalleryId);
+                    _logger.LogInformation("{GalleryId}: Deleted.", GalleryId);
                     break;
                 case DownloadStatus.Paused:
                     _cts?.Cancel();
-                    _logger.LogInformation("{GalleryId}: Paused", GalleryId);
+                    _logger.LogInformation("{GalleryId}: Paused.", GalleryId);
                     break;
                 case DownloadStatus.Failed:
                     _cts?.Cancel();
@@ -123,6 +126,11 @@ namespace Hitorus.Api.Download {
                 }
             }
             await _hubContext.Clients.All.ReceiveGalleryAvailable(GalleryId);
+
+            if (GalleryInfoOnly) {
+                ChangeStatus(DownloadStatus.Completed);
+                return;
+            }
 
             GalleryImage[] missingGalleryImages = [.. GalleryIOUtility.GetMissingImages(GalleryId, _gallery.Images)];
             _logger.LogInformation("{GalleryId}: Found {ImageCount} missing images", GalleryId, missingGalleryImages.Length);
@@ -283,7 +291,8 @@ namespace Hitorus.Api.Download {
                     Haswebp = f.Haswebp,
                     Hasjxl = f.Hasjxl
                 })],
-                Tags = [.. tags]
+                Tags = [.. tags],
+                UserDefinedOrder = -1 // TODO
             };
             dbContext.Galleries.Add(gallery);
             dbContext.SaveChanges();
@@ -307,7 +316,7 @@ namespace Hitorus.Api.Download {
                  5     11
             */
             using HitomiContext dbContext = _dbContextFactory.CreateDbContext();
-            int threadNum = dbContext.DownloadConfigurations.AsNoTracking().First().ThreadNum;
+            int threadNum = dbContext.DownloadConfigurations.AsNoTracking().First().DownloadThreadCount;
             string preferredFormat = dbContext.DownloadConfigurations.AsNoTracking().First().PreferredFormat;
             int quotient = galleryImages.Length / threadNum;
             int remainder = galleryImages.Length % threadNum;

@@ -112,8 +112,8 @@ namespace DbInitializer {
             });
 
             dbContext.DownloadConfigurations.Add(new() {
-                ThreadNum = 1,
-                UseParallelDownload = true,
+                DownloadThreadCount = 1,
+                MaxConcurrentDownloadCount = 3,
                 PreferredFormat = "webp"
             });
             dbContext.ViewConfigurations.Add(new() {

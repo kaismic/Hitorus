@@ -1,11 +1,9 @@
-﻿using Hitorus.Data.Entities;
-
-namespace Hitorus.Data.DTOs;
+﻿namespace Hitorus.Data.DTOs;
 public class DownloadConfigurationDTO
 {
     public int Id { get; set; }
-    public bool UseParallelDownload { get; set; }
-    public int ThreadNum { get; set; }
-    public ICollection<int> Downloads { get; set; } = [];
+    public virtual int MaxConcurrentDownloadCount { get; set; }
+    public virtual int DownloadThreadCount { get; set; }
+    public virtual ICollection<int> SavedDownloads { get; set; } = [];
     public string PreferredFormat { get; set; } = "webp";
 }

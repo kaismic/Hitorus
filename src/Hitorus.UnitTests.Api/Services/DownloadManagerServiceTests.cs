@@ -52,7 +52,7 @@ namespace Hitorus.UnitTests.Api.Services {
             _mockHttpClientFactory.Setup(f => f.CreateClient(It.IsAny<string>())).Returns(httpClient);
 
             // Setup DbContext
-            _mockDownloadConfiguration.SetupGet(c => c.Downloads).Returns(new List<int>());
+            _mockDownloadConfiguration.SetupGet(c => c.SavedDownloads).Returns(new List<int>());
             _mockDbContext.Setup(c => c.DownloadConfigurations).Returns(CreateDbSetMock(new List<DownloadConfiguration> { _mockDownloadConfiguration.Object }).Object);
             _mockDbContextFactory.Setup(f => f.CreateDbContext()).Returns(_mockDbContext.Object);
 
@@ -101,66 +101,19 @@ namespace Hitorus.UnitTests.Api.Services {
         }
 
         [TestMethod]
-        public void GetOrCreateDownloader_ShouldReturnExistingDownloader_WhenDownloaderExists() {
-            // Arrange
-            int galleryId = 123;
-            var mockDownloader = new Mock<IDownloader>();
-            mockDownloader.SetupGet(d => d.GalleryId).Returns(galleryId);
-
-            // Use reflection to access the private _liveDownloaders field
-            var liveDownloadersField = typeof(DownloadManagerService).GetField("_liveDownloaders", BindingFlags.NonPublic | BindingFlags.Instance);
-            var liveDownloaders = (ConcurrentDictionary<int, IDownloader>)liveDownloadersField.GetValue(_downloadManagerService);
-            liveDownloaders.TryAdd(galleryId, mockDownloader.Object);
-
-            // Act
-            var result = _downloadManagerService.GetOrCreateDownloader(galleryId, false);
-
-            // Assert
-            Assert.AreEqual(mockDownloader.Object, result);
-            _mockDbContext.Verify(c => c.SaveChanges(), Times.Never);
-        }
-
-        [TestMethod]
-        public void GetOrCreateDownloader_ShouldCreateNewDownloader_WhenDownloaderDoesNotExist() {
-            // Arrange
-            int galleryId = 456;
-            var mockServiceScope = new Mock<IServiceScope>();
-            var mockServiceScopeFactory = new Mock<IServiceScopeFactory>();
-            var mockLogger = new Mock<ILogger<Downloader>>();
-            var mockHubContext = new Mock<IHubContext<DownloadHub, IDownloadClient>>();
-
-            mockServiceScope.Setup(s => s.ServiceProvider).Returns(_mockServiceProvider.Object);
-            _mockServiceProvider.Setup(p => p.GetService(typeof(IServiceScopeFactory))).Returns(mockServiceScopeFactory.Object);
-            _mockServiceProvider.Setup(p => p.GetService(typeof(IConfiguration))).Returns(_mockConfiguration.Object);
-            _mockServiceProvider.Setup(p => p.GetService(typeof(ILogger<Downloader>))).Returns(mockLogger.Object);
-            _mockServiceProvider.Setup(p => p.GetService(typeof(IHubContext<DownloadHub, IDownloadClient>))).Returns(mockHubContext.Object);
-            _mockServiceProvider.Setup(p => p.GetService(typeof(IDbContextFactory<HitomiContext>))).Returns(_mockDbContextFactory.Object);
-            _mockServiceProvider.Setup(p => p.GetService(typeof(IEventBus<DownloadEventArgs>))).Returns(_mockEventBus.Object);
-            _mockServiceProvider.Setup(p => p.GetService(typeof(IHttpClientFactory))).Returns(_mockHttpClientFactory.Object);
-            mockServiceScopeFactory.Setup(f => f.CreateScope()).Returns(mockServiceScope.Object);
-
-            // Act
-            var result = _downloadManagerService.GetOrCreateDownloader(galleryId, true);
-
-            // Assert
-            Assert.IsNotNull(result);
-            Assert.AreEqual(galleryId, result.GalleryId);
-        }
-
-        [TestMethod]
         public void DeleteDownloader_ShouldRemoveDownloaderFromDbAndDispose() {
             // Arrange
             int galleryId = 789;
             var mockDownloader = new Mock<IDownloader>();
             mockDownloader.SetupGet(d => d.GalleryId).Returns(galleryId);
 
-            _mockDownloadConfiguration.Setup(c => c.Downloads.Remove(galleryId)).Returns(true);
+            _mockDownloadConfiguration.Setup(c => c.SavedDownloads.Remove(galleryId)).Returns(true);
 
             // Act
             _downloadManagerService.DeleteDownloader(mockDownloader.Object, false);
 
             // Assert
-            _mockDownloadConfiguration.Verify(c => c.Downloads.Remove(galleryId), Times.Once);
+            _mockDownloadConfiguration.Verify(c => c.SavedDownloads.Remove(galleryId), Times.Once);
             _mockDbContext.Verify(c => c.SaveChanges(), Times.Once);
             mockDownloader.Verify(d => d.Dispose(), Times.Once);
         }

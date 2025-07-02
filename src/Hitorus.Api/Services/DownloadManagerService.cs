@@ -174,6 +174,7 @@ public class DownloadManagerService(
             LinkedListNode<IDownloader>? next = _downloaderQueue.First;
             if (next != null && !_liveDownloaders.ContainsKey(next.Value.GalleryId)) {
                 IDownloader d = next.Value;
+                d.LiveServerInfo = LiveServerInfo;
                 _downloaderQueue.RemoveFirst();
                 _liveDownloaders.TryAdd(d.GalleryId, d);
                 _ = d.Start();

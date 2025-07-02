@@ -272,6 +272,8 @@ namespace Hitorus.Api.Download {
                 ChangeStatus(DownloadStatus.Failed, $"Type {original.Type} not found");
                 return null;
             }
+
+            await using var transaction = await dbContext.Database.BeginTransactionAsync();
             Gallery gallery = new() {
                 Id = original.Id,
                 Title = original.Title,
@@ -292,10 +294,11 @@ namespace Hitorus.Api.Download {
                     Hasjxl = f.Hasjxl
                 })],
                 Tags = [.. tags],
-                UserDefinedOrder = -1 // TODO
+                UserDefinedOrder = dbContext.SequenceGenerators.First().NextValue++
             };
             dbContext.Galleries.Add(gallery);
             dbContext.SaveChanges();
+            await transaction.CommitAsync();
             return gallery;
         }
 

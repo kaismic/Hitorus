@@ -18,5 +18,6 @@ namespace Hitorus.Data.DbContexts {
         public virtual DbSet<SearchFilter> SearchFilters { get; set; }
         public virtual DbSet<LabeledTagCollection> LabeledTagCollections { get; set; }
         public virtual DbSet<AppConfiguration> AppConfigurations { get; set; }
+        public virtual DbSet<SequenceGenerator> SequenceGenerators { get; set; }
     }
 }

@@ -135,6 +135,8 @@ namespace DbInitializer {
                 ShowSearchPageWalkthrough = true
             });
 
+            dbContext.SequenceGenerators.Add(new());
+
             Console.WriteLine("  Complete");
             Console.Write("{0,-" + _totalLeftAlignment + "}", "Saving changes...");
             dbContext.SaveChanges();

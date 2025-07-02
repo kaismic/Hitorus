@@ -13,16 +13,16 @@
 	<ProjectReference Include="..\MudBlazor\src\MudBlazor\MudBlazor.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="BitFaster.Caching" Version="2.5.3" />
+    <PackageReference Include="BitFaster.Caching" Version="2.5.4" />
     <PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
     <PackageReference Include="BlazorPro.BlazorSize" Version="9.0.0" />
     <PackageReference Include="DebounceThrottle" Version="3.0.1" />
     <PackageReference Include="MaterialColorUtilities" Version="0.3.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.5" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="9.0.5" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="9.0.5" />
-    <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.5" />
-    <PackageReference Include="Microsoft.Extensions.Localization" Version="9.0.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.6" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="9.0.6" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="9.0.6" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.6" />
+    <PackageReference Include="Microsoft.Extensions.Localization" Version="9.0.6" />
     <PackageReference Include="Octokit" Version="14.0.0" />
   </ItemGroup>
   <ItemGroup>

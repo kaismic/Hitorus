@@ -9,10 +9,10 @@ namespace Hitorus.Api.Controllers {
     public class TagController(HitomiContext context) : ControllerBase {
         [HttpGet("search")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public ActionResult<IEnumerable<Tag>> GetTags(TagCategory category, int count, string? start) {
+        public ActionResult<IEnumerable<Tag>> GetTags(TagCategory category, int count, string? value) {
             IQueryable<Tag> tags = context.Tags.AsNoTracking().Where(tag => tag.Category == category);
-            if (start != null && start.Length > 0) {
-                tags = tags.Where(tag => tag.Value.Contains(start));
+            if (value != null && value.Length > 0) {
+                tags = tags.Where(tag => tag.Value.Contains(value, StringComparison.CurrentCultureIgnoreCase));
             }
             return Ok(tags.OrderByDescending(tag => tag.GalleryCount).Take(count));
         }

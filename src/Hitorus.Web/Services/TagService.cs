@@ -10,10 +10,10 @@ namespace Hitorus.Web.Services {
             _httpClient.BaseAddress = Utilities.GetServiceBaseUri(hostConfiguration, localStorageService, "TagServicePath");
         }
 
-        public async Task<IEnumerable<Tag>> GetTagsAsync(TagCategory category, int count, string? start, CancellationToken ct) {
-            string startStr = start == null || start.Length == 0 ? "" : $"&start={start}";
+        public async Task<IEnumerable<Tag>> GetTagsAsync(TagCategory category, int count, string? value, CancellationToken ct) {
+            string valueQuery = value == null || value.Length == 0 ? "" : $"&value={value}";
             try {
-                return (await _httpClient.GetFromJsonAsync<IEnumerable<Tag>>($"search?category={category}&count={count}{startStr}", ct))!;
+                return (await _httpClient.GetFromJsonAsync<IEnumerable<Tag>>($"search?category={category}&count={count}{valueQuery}", ct))!;
             } catch (TaskCanceledException) {
                 return [];
             }

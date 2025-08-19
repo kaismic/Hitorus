@@ -1,7 +1,7 @@
 ﻿namespace Hitorus.Data {
     public enum DownloadStatus {
         Downloading,
-        Queued,
+        Enqueued,
         Completed,
         Paused,
         Failed,
@@ -9,8 +9,8 @@
     }
 
     public enum DownloadAction {
-        GalleryInfoOnly,
-        Queue,
+        QuickSave,
+        Enqueue,
         Start,
         Pause,
         Delete

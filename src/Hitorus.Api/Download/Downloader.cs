@@ -13,7 +13,7 @@ using System.Text.Json;
 namespace Hitorus.Api.Download {
     public class Downloader : IDownloader {
         private const int GALLERY_JS_EXCLUDE_LENGTH = 18; // length of the string "var galleryinfo = "
-        public required bool GalleryInfoOnly { get; init; } = false;
+        public required bool QuickSave { get; init; } = false;
         public required int GalleryId { get; set; }
         public DownloadStatus Status { get; private set; } = DownloadStatus.Paused;
         public required LiveServerInfo LiveServerInfo { get; set; }
@@ -54,7 +54,7 @@ namespace Hitorus.Api.Download {
                 case DownloadStatus.Downloading:
                     _logger.LogInformation("{GalleryId}: Starting download...", GalleryId);
                     break;
-                case DownloadStatus.Queued:
+                case DownloadStatus.Enqueued:
                     _logger.LogInformation("{GalleryId}: Enqueued.", GalleryId);
                     break;
                 case DownloadStatus.Completed:
@@ -121,13 +121,15 @@ namespace Hitorus.Api.Download {
             if (_gallery.Images == null) {
                 using HitomiContext dbContext = _dbContextFactory.CreateDbContext();
                 dbContext.Entry(_gallery).Collection(g => g.Images).Load();
+                // This check is needed to silence CS8604 warning, but it should not happen in practice
                 if (_gallery.Images == null) {
-                    throw new InvalidOperationException("_gallery.GalleryImages is null after loading images");
+                    // This should not happen, but just in case
+                    throw new InvalidOperationException($"{nameof(_gallery.Images)} is null after loading images");
                 }
             }
             await _hubContext.Clients.All.ReceiveGalleryAvailable(GalleryId);
 
-            if (GalleryInfoOnly) {
+            if (QuickSave) {
                 ChangeStatus(DownloadStatus.Completed);
                 return;
             }
@@ -274,6 +276,12 @@ namespace Hitorus.Api.Download {
             }
 
             await using var transaction = await dbContext.Database.BeginTransactionAsync();
+
+            int maxOrder = await dbContext.Galleries
+                .OrderByDescending(g => g.UserDefinedOrder)
+                .Select(g => g.UserDefinedOrder)
+                .FirstOrDefaultAsync();
+
             Gallery gallery = new() {
                 Id = original.Id,
                 Title = original.Title,
@@ -294,7 +302,7 @@ namespace Hitorus.Api.Download {
                     Hasjxl = f.Hasjxl
                 })],
                 Tags = [.. tags],
-                UserDefinedOrder = dbContext.SequenceGenerators.First().NextValue++
+                UserDefinedOrder = maxOrder + 1
             };
             dbContext.Galleries.Add(gallery);
             dbContext.SaveChanges();

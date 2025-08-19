@@ -2,7 +2,7 @@
 
 namespace Hitorus.Api.Download {
     public interface IDownloader : IDisposable {
-        bool GalleryInfoOnly { get; }
+        bool QuickSave { get; }
         int GalleryId { get; }
         DownloadStatus Status { get; }
         LiveServerInfo LiveServerInfo { set; }

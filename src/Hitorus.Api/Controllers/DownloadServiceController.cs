@@ -32,7 +32,7 @@ namespace Hitorus.Api.Controllers {
                 }
             }
             eventBus.Publish(new() {
-                Action = DownloadAction.Start,
+                Action = DownloadAction.QuickSave,
                 GalleryIds = importingGalleries,
             });
             return Ok(importingGalleries.Count);

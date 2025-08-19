@@ -75,8 +75,8 @@ namespace Hitorus.Web.Services {
             if (Downloads.TryGetValue(galleryId, out DownloadModel? model)) {
                 model.Status = status;
                 switch (status) {
-                    case DownloadStatus.Queued:
-                        model.StatusMessage = localizer["DownloadStatus_Queued"];
+                    case DownloadStatus.Enqueued:
+                        model.StatusMessage = localizer["DownloadStatus_Enqueued"];
                         break;
                     case DownloadStatus.Downloading:
                         model.StatusMessage = localizer["DownloadStatus_Downloading"];
@@ -134,13 +134,6 @@ namespace Hitorus.Web.Services {
                 await _hubConnection.DisposeAsync();
                 _hubConnection = null;
             }
-        }
-
-        public async Task SendStartAllDownloads() {
-            IEnumerable<int> ids = Downloads.Values
-                .Where(d => d.Status is DownloadStatus.Paused or DownloadStatus.Failed or DownloadStatus.Queued)
-                .Select(d => d.GalleryId);
-            await downloadService.SendAction(DownloadAction.Start, ids);
         }
 
         public async Task SendPauseAllDownloads() {

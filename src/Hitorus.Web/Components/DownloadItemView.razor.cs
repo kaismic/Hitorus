@@ -15,7 +15,7 @@ namespace Hitorus.Web.Components {
         private string ControlButtonIcon => Model.Status switch {
             DownloadStatus.Downloading => Icons.Material.Filled.Pause,
             DownloadStatus.Completed => Icons.Material.Filled.Check,
-            DownloadStatus.Paused or DownloadStatus.Failed or DownloadStatus.Queued => Icons.Material.Filled.PlayArrow,
+            DownloadStatus.Paused or DownloadStatus.Failed or DownloadStatus.Enqueued => Icons.Material.Filled.PlayArrow,
             DownloadStatus.Deleted => "",
             _ => throw new NotImplementedException()
         };
@@ -30,7 +30,7 @@ namespace Hitorus.Web.Components {
                 case DownloadStatus.Downloading:
                     await DownloadService.SendAction(DownloadAction.Pause, [Model.GalleryId]);
                     break;
-                case DownloadStatus.Paused or DownloadStatus.Failed or DownloadStatus.Queued:
+                case DownloadStatus.Paused or DownloadStatus.Failed or DownloadStatus.Enqueued:
                     await DownloadService.SendAction(DownloadAction.Start, [Model.GalleryId]);
                     break;
                 case DownloadStatus.Completed or DownloadStatus.Deleted:

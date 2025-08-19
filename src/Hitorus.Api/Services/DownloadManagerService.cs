@@ -1,7 +1,9 @@
 ﻿using Hitorus.Api.Download;
+using Hitorus.Api.Hubs;
 using Hitorus.Data;
 using Hitorus.Data.DbContexts;
 using Hitorus.Data.Entities;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Concurrent;
 using System.Text.RegularExpressions;
@@ -14,7 +16,8 @@ public class DownloadManagerService(
         IEventBus<DownloadEventArgs> eventBus,
         IConfiguration appConfiguration,
         IDbContextFactory<HitomiContext> dbContextFactory,
-        IHttpClientFactory httpClientFactory
+        IHttpClientFactory httpClientFactory,
+        IHubContext<DownloadHub, IDownloadClient> hubContext
     ) : BackgroundService, IDownloadManagerService {
     private const int SERVER_TIME_EXCLUDE_LENGTH = 16; // length of the string "0123456789/'\r\n};"
     private readonly string _hitomiGgjsAddress = $"https://ltn.{appConfiguration["HitomiServerDomain"]}/gg.js";
@@ -42,12 +45,25 @@ public class DownloadManagerService(
             logger.LogError(e, "Failed to fetch Live Server Info.");
         }
 
+        /**
+         * Logic:
+         * DownloadAction.QuickSave and DownloadAction.Queue can have multiple gallery ids either by:
+         * - Using the Hitorus web app and entering one or more gallery ids in the Download Page
+         * - Using the Hitorus Add-on extension's context menu to download a single gallery
+         * 
+         * When args.Action == Start, will GalleryIds must have been triggered by the user clicking the start icon on the `DownloadItemView`.
+         * So there is no need to call ReceiveCreateDownloads with DownloadAction.Start since the user must have clicked
+         * the "Start" button from the already created `DownloadItemView` component.
+         * 
+         */
+
         try {
             ChannelReader<DownloadEventArgs> reader = eventBus.Subscribe();
             await foreach (DownloadEventArgs args in reader.ReadAllAsync(stoppingToken)) {
                 logger.LogInformation("Download event received: Ids = [{Ids}], Action = {Action}", string.Join(", ", args.GalleryIds), args.Action);
                 switch (args.Action) {
-                    case DownloadAction.GalleryInfoOnly: {
+                    case DownloadAction.QuickSave: {
+                        await hubContext.Clients.All.ReceiveCreateDownloads(args.GalleryIds);
                         using HitomiContext dbContext = dbContextFactory.CreateDbContext();
                         foreach (int id in args.GalleryIds) {
                             if (dbContext.Galleries.Any(g => g.Id == id) || _liveDownloaders.ContainsKey(id)) {
@@ -59,7 +75,8 @@ public class DownloadManagerService(
                         }
                         break;
                     }
-                    case DownloadAction.Queue: {
+                    case DownloadAction.Enqueue: {
+                        await hubContext.Clients.All.ReceiveCreateDownloads(args.GalleryIds);
                         using HitomiContext dbContext = dbContextFactory.CreateDbContext();
                         foreach (int id in args.GalleryIds) {
                             if (_downloaderQueue.Any(d => d.GalleryId == id) || _liveDownloaders.ContainsKey(id)) {
@@ -67,7 +84,7 @@ public class DownloadManagerService(
                             }
                             IDownloader downloader = CreateDownloader(id, false);
                             _downloaderQueue.AddFirst(downloader);
-                            downloader.ChangeStatus(DownloadStatus.Queued);
+                            downloader.ChangeStatus(DownloadStatus.Enqueued);
                         }
                         break;
                     }
@@ -113,10 +130,10 @@ public class DownloadManagerService(
         }
     }
 
-    public IDownloader CreateDownloader(int galleryId, bool galleryInfoOnly) {
+    public IDownloader CreateDownloader(int galleryId, bool quickSave) {
         Downloader downloader = new(serviceProvider.CreateScope()) {
             GalleryId = galleryId,
-            GalleryInfoOnly = galleryInfoOnly,
+            QuickSave = quickSave,
             LiveServerInfo = LiveServerInfo,
             OnIdChange = OnDownloaderIdChange,
             UpdateLiveServerInfo = UpdateLiveServerInfo,

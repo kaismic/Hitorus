@@ -126,6 +126,7 @@ namespace Hitorus.Web.Services {
         }
 
         private async Task OnClosed(Exception? e) {
+            DownloadPageStateHasChanged();
             if (_hubConnection != null) {
                 foreach (DownloadModel d in Downloads.Values) {
                     d.StatusMessage = localizer["DownloadStatus_ConnectionLost"];

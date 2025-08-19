@@ -8,26 +8,26 @@
                       Lines="8"
                       @bind-Value="@_inputText"
                       Placeholder=@Localizer["InputPlaceholder"] />
-        <MudTooltip Text=@(DownloadManager.IsHubConnectionOpen ? Localizer["DownloadToolTip"] : Localizer["TryPageRefresh"])
+        <MudTooltip Text=@(DownloadManager.IsHubConnectionOpen ? Localizer["DownloadToolTip"] : Localizer["Disconnected"])
                     RootClass="mud-width-full">
             <MudButton FullWidth
                        Variant="Variant.Filled"
                        Color="@Color.Primary"
-                       EndIcon="@Icons.Material.Filled.Download"
+                       EndIcon=@(DownloadManager.IsHubConnectionOpen ? Icons.Material.Filled.Download : Icons.Material.Filled.Error)
                        Disabled="@(_inputText.Length == 0 || !DownloadManager.IsHubConnectionOpen)"
                        OnClick="@(() => Download(DownloadAction.Enqueue))">
-                @(DownloadManager.IsHubConnectionOpen ? SharedLocalizer["Download"] : Localizer["Disconnected"])
+                @SharedLocalizer["Download"]
             </MudButton>
         </MudTooltip>
-        <MudTooltip Text=@(DownloadManager.IsHubConnectionOpen ? Localizer["QuickSaveToolTip"] : Localizer["TryPageRefresh"])
+        <MudTooltip Text=@(DownloadManager.IsHubConnectionOpen ? Localizer["QuickSaveToolTip"] : Localizer["Disconnected"])
                     RootClass="mud-width-full">
             <MudButton FullWidth
                        Variant="Variant.Filled"
                        Color="@Color.Secondary"
-                       EndIcon="@Icons.Material.Filled.Download"
+                       EndIcon=@(DownloadManager.IsHubConnectionOpen ? Icons.Material.Filled.Download : Icons.Material.Filled.Error)
                        Disabled="@(_inputText.Length == 0 || !DownloadManager.IsHubConnectionOpen)"
                        OnClick="@(() => Download(DownloadAction.QuickSave))">
-                @(DownloadManager.IsHubConnectionOpen ? Localizer["QuickSave"] : Localizer["Disconnected"])
+                @Localizer["QuickSave"]
             </MudButton>
         </MudTooltip>
     </div>
@@ -36,7 +36,7 @@
         <MudButton Color="Color.Secondary" 
                    Variant="Variant.Outlined"
                    OnClick="@OnImportButtonClick"
-                   Disabled="@_isImporting"
+                   Disabled=@(_isImporting || !DownloadManager.IsHubConnectionOpen)
                    Class="align-self-start">
             @if (_isImporting)
             {
@@ -51,29 +51,32 @@
                              Min="1" Max="8"
                              Pattern="[0-9]"
                              Value="@DownloadConfigurationService.Config.MaxConcurrentDownloadCount"
-                             ValueChanged="@OnMaxConcurrentDownloadCountChanged" />
+                             ValueChanged="@OnMaxConcurrentDownloadCountChanged"
+                             Disabled=@(!DownloadManager.IsHubConnectionOpen) />
             <MudNumericField T="int"
                              Label=@Localizer["DownloadThreadCount"]
                              Variant="Variant.Outlined"
                              Min="1" Max="16"
                              Pattern="[0-9]"
                              Value="@DownloadConfigurationService.Config.DownloadThreadCount"
-                             ValueChanged="@OnDownloadThreadCountChanged" />
+                             ValueChanged="@OnDownloadThreadCountChanged"
+                             Disabled=@(!DownloadManager.IsHubConnectionOpen) />
             <MudSelect T="string" FitContent
                        Label=@Localizer["PreferredFormat"]
                        Variant="Variant.Outlined"
                        Value="@DownloadConfigurationService.Config.PreferredFormat"
-                       ValueChanged="@OnPreferredFormatChanged">
+                       ValueChanged="@OnPreferredFormatChanged"
+                       Disabled=@(!DownloadManager.IsHubConnectionOpen)>
                 <MudSelectItem Value=@("webp")>webp</MudSelectItem>
                 <MudSelectItem Value=@("avif")>avif</MudSelectItem>
             </MudSelect>
             <MudSpacer/>
-            <MudButton Disabled="@(DownloadManager.Downloads.Count == 0)"
+            <MudButton Disabled="@(DownloadManager.Downloads.Count == 0 || !DownloadManager.IsHubConnectionOpen)"
                        StartIcon="@Icons.Material.Filled.Pause"
                        OnClick="@DownloadManager.SendPauseAllDownloads">
                 @Localizer["PauseAllDownloads"]
             </MudButton>
-            <MudButton Disabled="@(DownloadManager.Downloads.Count == 0)"
+            <MudButton Disabled="@(DownloadManager.Downloads.Count == 0 || !DownloadManager.IsHubConnectionOpen)"
                        StartIcon="@Icons.Material.Filled.Delete"
                        OnClick="@DownloadManager.SendDeleteAllDownloads"
                        Color="Color.Error">

@@ -1,6 +1,5 @@
 ﻿namespace Hitorus.Data {
     public interface IDownloadClient {
-        Task ReceiveSavedDownloads(IEnumerable<int> galleryIds);
         Task ReceiveCreateDownloads(IEnumerable<int> galleryIds);
         Task ReceiveGalleryAvailable(int galleryId);
         Task ReceiveProgress(int galleryId, int progress);

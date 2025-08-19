@@ -21,13 +21,13 @@ namespace Hitorus.Web.Services {
             _isLoaded = true;
         }
 
-        public async Task<bool> UpdateParallelDownload(bool enable) {
-            var response = await _httpClient.PatchAsync($"update-parallel-download?configId={Config.Id}", JsonContent.Create(enable));
+        public async Task<bool> UpdateMaxConcurrentDownloadCount(int value) {
+            var response = await _httpClient.PatchAsync($"update-max-concurrent-download-count?configId={Config.Id}", JsonContent.Create(value));
             return response.IsSuccessStatusCode;
         }
 
-        public async Task<bool> UpdateThreadNum(int threadNum) {
-            var response = await _httpClient.PatchAsync($"update-thread-num?configId={Config.Id}", JsonContent.Create(threadNum));
+        public async Task<bool> UpdateDownloadThreadCount(int value) {
+            var response = await _httpClient.PatchAsync($"update-download-thread-count?configId={Config.Id}", JsonContent.Create(value));
             return response.IsSuccessStatusCode;
         }
 

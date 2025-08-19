@@ -15,8 +15,19 @@
                        Color="@Color.Primary"
                        EndIcon="@Icons.Material.Filled.Download"
                        Disabled="@(_inputText.Length == 0 || !DownloadManager.IsHubConnectionOpen)"
-                       OnClick="@OnDownloadButtonClick">
-                @(DownloadManager.IsHubConnectionOpen ? SharedLocalizer["Download"] : Localizer["ServerUnavilable"])
+                       OnClick="@(() => Download(DownloadAction.Queue))">
+                @(DownloadManager.IsHubConnectionOpen ? SharedLocalizer["DefaultDownload"] : Localizer["ServerUnavilable"])
+            </MudButton>
+        </MudTooltip>
+        <MudTooltip Text=@(DownloadManager.IsHubConnectionOpen ? "" : Localizer["TryPageRefresh"])
+                    RootClass="mud-width-full">
+            <MudButton FullWidth
+                       Variant="Variant.Filled"
+                       Color="@Color.Secondary"
+                       EndIcon="@Icons.Material.Filled.Download"
+                       Disabled="@(_inputText.Length == 0 || !DownloadManager.IsHubConnectionOpen)"
+                       OnClick="@(() => Download(DownloadAction.GalleryInfoOnly))">
+                @(DownloadManager.IsHubConnectionOpen? SharedLocalizer["DownloadGalleryInfoOnly"] : Localizer["ServerUnavilable"])
             </MudButton>
         </MudTooltip>
     </div>
@@ -34,19 +45,20 @@
             @Localizer["ImportGalleries"]
         </MudButton>
         <div class="d-flex gap-4 align-center">
-            <MudSwitch T="bool"
-                       Label=@Localizer["ConcurrentDownload"]
-                       Value="@DownloadConfigurationService.Config.UseParallelDownload"
-                       ValueChanged="@OnParallelDownloadChanged"
-                       Color="Color.Primary" />
-            <MudDivider Vertical FlexItem />
             <MudNumericField T="int"
-                             Label=@Localizer["ThreadsPerDownload"]
+                             Label=@Localizer["MaxConcurrentDownloadCount"]
+                             Variant="Variant.Outlined"
+                             Min="1" Max="8"
+                             Pattern="[0-9]"
+                             Value="@DownloadConfigurationService.Config.MaxConcurrentDownloadCount"
+                             ValueChanged="@OnMaxConcurrentDownloadCountChanged" />
+            <MudNumericField T="int"
+                             Label=@Localizer["DownloadThreadCount"]
                              Variant="Variant.Outlined"
                              Min="1" Max="16"
                              Pattern="[0-9]"
                              Value="@DownloadConfigurationService.Config.DownloadThreadCount"
-                             ValueChanged="@OnThreadNumChanged" />
+                             ValueChanged="@OnDownloadThreadCountChanged" />
             <MudSelect T="string" FitContent
                        Label=@Localizer["PreferredFormat"]
                        Variant="Variant.Outlined"
@@ -58,17 +70,17 @@
             <MudSpacer/>
             <MudButton Disabled="@(DownloadManager.Downloads.Count == 0)"
                        StartIcon="@Icons.Material.Filled.PlayArrow"
-                       OnClick="@DownloadManager.StartAllDownloads">
+                       OnClick="@DownloadManager.SendStartAllDownloads">
                 @Localizer["StartAllDownloads"]
             </MudButton>
             <MudButton Disabled="@(DownloadManager.Downloads.Count == 0)"
                        StartIcon="@Icons.Material.Filled.Pause"
-                       OnClick="@DownloadManager.PauseAllDownloads">
+                       OnClick="@DownloadManager.SendPauseAllDownloads">
                 @Localizer["PauseAllDownloads"]
             </MudButton>
             <MudButton Disabled="@(DownloadManager.Downloads.Count == 0)"
                        StartIcon="@Icons.Material.Filled.Delete"
-                       OnClick="@DownloadManager.DeleteAllDownloads"
+                       OnClick="@DownloadManager.SendDeleteAllDownloads"
                        Color="Color.Error">
                 @Localizer["DeleteAllDownloads"]
             </MudButton>

@@ -1,4 +1,5 @@
 ﻿using Hitorus.Web.Services;
+using Hitorus.Data;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Localization;
 using MudBlazor;
@@ -17,14 +18,14 @@ namespace Hitorus.Web.Pages {
         private string _inputText = "";
         private bool _isImporting = false;
 
-        private async Task OnParallelDownloadChanged(bool value) {
-            DownloadConfigurationService.Config.UseParallelDownload = value;
-            await DownloadConfigurationService.UpdateParallelDownload(value);
+        private async Task OnMaxConcurrentDownloadCountChanged(int value) {
+            DownloadConfigurationService.Config.MaxConcurrentDownloadCount = value;
+            await DownloadConfigurationService.UpdateMaxConcurrentDownloadCount(value);
         }
         
-        private async Task OnThreadNumChanged(int value) {
+        private async Task OnDownloadThreadCountChanged(int value) {
             DownloadConfigurationService.Config.DownloadThreadCount = value;
-            await DownloadConfigurationService.UpdateThreadNum(value);
+            await DownloadConfigurationService.UpdateDownloadThreadCount(value);
         }
         
         private async Task OnPreferredFormatChanged(string value) {
@@ -52,14 +53,15 @@ namespace Hitorus.Web.Pages {
             BrowseConfigurationService.BrowsePageRefreshQueued = true;
         }
 
-        [GeneratedRegex(@"\d{6,7}")] private static partial Regex IdPatternRegex();
-        private void OnDownloadButtonClick() {
+        [GeneratedRegex(@"\d{6,7}")]
+        private static partial Regex IdPatternRegex();
+        private void Download(DownloadAction action) {
             MatchCollection matches = IdPatternRegex().Matches(_inputText);
             if (matches.Count == 0) {
                 Snackbar.Add(Localizer["InvalidInput"], Severity.Error, UiConstants.DEFAULT_SNACKBAR_OPTIONS);
                 return;
             }
-            _ = DownloadManager.AddDownloads(matches.Select(m => int.Parse(m.Value)));
+            _ = DownloadService.SendAction(action, matches.Select(m => int.Parse(m.Value)));
             _inputText = "";
         }
     }

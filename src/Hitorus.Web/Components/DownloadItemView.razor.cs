@@ -6,7 +6,7 @@ using Microsoft.Extensions.Localization;
 using MudBlazor;
 
 namespace Hitorus.Web.Components {
-    public partial class DownloadItemView : ComponentBase, IDisposable {
+    public partial class DownloadItemView : ComponentBase {
         [Inject] IStringLocalizer<SharedResource> SharedLocalizer { get; set; } = default!;
         [Inject] DownloadService DownloadService { get; set; } = default!;
         [Inject] DownloadClientManagerService DownloadManager { get; set; } = default!;
@@ -15,7 +15,7 @@ namespace Hitorus.Web.Components {
         private string ControlButtonIcon => Model.Status switch {
             DownloadStatus.Downloading => Icons.Material.Filled.Pause,
             DownloadStatus.Completed => Icons.Material.Filled.Check,
-            DownloadStatus.Paused or DownloadStatus.Failed => Icons.Material.Filled.PlayArrow,
+            DownloadStatus.Paused or DownloadStatus.Failed or DownloadStatus.Queued => Icons.Material.Filled.PlayArrow,
             DownloadStatus.Deleted => "",
             _ => throw new NotImplementedException()
         };
@@ -28,23 +28,21 @@ namespace Hitorus.Web.Components {
             Model.WaitingResponse = true;
             switch (Model.Status) {
                 case DownloadStatus.Downloading:
-                    await DownloadService.PauseDownloaders([Model.GalleryId]);
+                    await DownloadService.SendAction(DownloadAction.Pause, [Model.GalleryId]);
                     break;
-                case DownloadStatus.Paused or DownloadStatus.Failed:
-                    await DownloadService.StartDownloaders([Model.GalleryId]);
+                case DownloadStatus.Paused or DownloadStatus.Failed or DownloadStatus.Queued:
+                    await DownloadService.SendAction(DownloadAction.Start, [Model.GalleryId]);
                     break;
                 case DownloadStatus.Completed or DownloadStatus.Deleted:
-                    throw new InvalidOperationException("Action button should not be clickable");
+                    throw new InvalidOperationException("Action button should not be clickable.");
             }
+            Model.WaitingResponse = false;
         }
 
         private async Task OnDeleteButtonClick() {
             Model.WaitingResponse = true;
-            await DownloadService.DeleteDownloaders([Model.GalleryId]);
-        }
-
-        public void Dispose() {
-            GC.SuppressFinalize(this);
+            await DownloadService.SendAction(DownloadAction.Delete, [Model.GalleryId]);
+            Model.WaitingResponse = false;
         }
     }
 }

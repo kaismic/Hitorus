@@ -37,6 +37,7 @@ public class DownloadManagerService(
         logger.LogInformation("Fetching Live Server Info...");
         try {
             await UpdateLiveServerInfo();
+            logger.LogInformation("Fetch success.");
         } catch (HttpRequestException e) {
             logger.LogError(e, "Failed to fetch Live Server Info.");
         }

@@ -138,7 +138,8 @@
                                  Style="max-width: 120px" />
                 <MudNumericField T="int"
                                  Margin="Margin.Dense"
-                                 @bind-Value="@_imagesPerPage"
+                                 Value="@_imagesPerPage"
+                                 ValueChanged="@OnImagesPerPageChanged"
                                  Disabled="@_isAutoScrolling"
                                  Label=@(_viewConfiguration.ImageLayoutMode == ImageLayoutMode.Automatic ? Localizer["MaxImagesPerPage"] : Localizer["ImagesPerPage"])
                                  Min="1" Max=@Math.Min(4, _gallery.Images.Count)

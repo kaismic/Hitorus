@@ -204,6 +204,11 @@ namespace Hitorus.Web.Pages {
             await _jsModule.InvokeVoidAsync("setPageTurnInterval", value);
         }
 
+        private void OnImagesPerPageChanged(int value) {
+            _imagesPerPage = value;
+            CaculateImageIndexGroups();
+        }
+
         private void OnImageLayoutModeChanged(ImageLayoutMode mode) {
             _viewConfiguration.ImageLayoutMode = mode;
             CaculateImageIndexGroups();

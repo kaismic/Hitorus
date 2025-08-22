@@ -106,7 +106,7 @@
                 </MudSlider>
             }
         }
-        <MudIconButton Icon="@(_toolbarOpen ? Icons.Material.Filled.ExpandLess : Icons.Material.Filled.ExpandMore)"
+        <MudIconButton Icon="@(_toolbarOpen ? MudBlazor.Icons.Material.Filled.ExpandLess : MudBlazor.Icons.Material.Filled.ExpandMore)"
                        OnClick="@(() => _toolbarOpen = !_toolbarOpen)" />
         <MudToggleIconButton Toggled="_isDarkMode"
                              ToggledChanged="@OnDarkModeButtonToggled"

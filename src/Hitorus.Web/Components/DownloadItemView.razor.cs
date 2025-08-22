@@ -13,9 +13,9 @@ namespace Hitorus.Web.Components {
         [Parameter, EditorRequired] public DownloadModel Model { get; set; } = default!;
 
         private string ControlButtonIcon => Model.Status switch {
-            DownloadStatus.Downloading => Icons.Material.Filled.Pause,
-            DownloadStatus.Completed => Icons.Material.Filled.Check,
-            DownloadStatus.Paused or DownloadStatus.Failed or DownloadStatus.Enqueued => Icons.Material.Filled.PlayArrow,
+            DownloadStatus.Downloading => MudBlazor.Icons.Material.Filled.Pause,
+            DownloadStatus.Completed => MudBlazor.Icons.Material.Filled.Check,
+            DownloadStatus.Paused or DownloadStatus.Failed or DownloadStatus.Enqueued => MudBlazor.Icons.Material.Filled.PlayArrow,
             DownloadStatus.Deleted => "",
             _ => throw new NotImplementedException()
         };

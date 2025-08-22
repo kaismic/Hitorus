@@ -13,7 +13,7 @@
             <MudButton FullWidth
                        Variant="Variant.Filled"
                        Color="@Color.Primary"
-                       EndIcon=@(DownloadManager.IsHubConnectionOpen ? Icons.Material.Filled.Download : Icons.Material.Filled.Error)
+                       EndIcon=@(DownloadManager.IsHubConnectionOpen ? MudBlazor.Icons.Material.Filled.Download : MudBlazor.Icons.Material.Filled.Error)
                        Disabled="@(_inputText.Length == 0 || !DownloadManager.IsHubConnectionOpen)"
                        OnClick="@(() => Download(DownloadAction.Enqueue))">
                 @SharedLocalizer["Download"]
@@ -24,7 +24,7 @@
             <MudButton FullWidth
                        Variant="Variant.Filled"
                        Color="@Color.Secondary"
-                       EndIcon=@(DownloadManager.IsHubConnectionOpen ? Icons.Material.Filled.Download : Icons.Material.Filled.Error)
+                       EndIcon=@(DownloadManager.IsHubConnectionOpen ? MudBlazor.Icons.Material.Filled.Download : MudBlazor.Icons.Material.Filled.Error)
                        Disabled="@(_inputText.Length == 0 || !DownloadManager.IsHubConnectionOpen)"
                        OnClick="@(() => Download(DownloadAction.QuickSave))">
                 @Localizer["QuickSave"]

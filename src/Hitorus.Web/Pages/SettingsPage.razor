@@ -16,7 +16,7 @@
         </MudColorPicker>
     </SettingsCard>
     <MudText Typo="Typo.h4">@Localizer["DefaultGalleryViewPageSettings"]</MudText>
-    <SettingsCard Icon="@(ViewConfigurationService.Config.ViewMode == ViewMode.Default ? Icons.Material.Rounded.Rectangle : Icons.Material.Filled.TableRows)"
+    <SettingsCard Icon="@(ViewConfigurationService.Config.ViewMode == ViewMode.Default ? MudBlazor.Icons.Material.Rounded.Rectangle : MudBlazor.Icons.Material.Filled.TableRows)"
                   Header=@SharedLocalizer["ViewMode"]>
         <MudSelect T="ViewMode"
                    Variant="Variant.Outlined"
@@ -83,7 +83,7 @@
             <MudSelectItem T="ImageLayoutMode" Value="ImageLayoutMode.Fixed">@SharedLocalizer["Fixed"]</MudSelectItem>
         </MudSelect>
     </SettingsCard>
-    <SettingsCard Icon="@(ViewConfigurationService.Config.ViewDirection == ViewDirection.LTR ? Icons.Material.Filled.East : Icons.Material.Filled.West)"
+    <SettingsCard Icon="@(ViewConfigurationService.Config.ViewDirection == ViewDirection.LTR ? MudBlazor.Icons.Material.Filled.East : MudBlazor.Icons.Material.Filled.West)"
                   Header=@SharedLocalizer["ViewDirection"]>
         <MudSelect T="ViewDirection"
                    Value=@ViewConfigurationService.Config.ViewDirection

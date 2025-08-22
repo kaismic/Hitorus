@@ -10,22 +10,22 @@
 <MudLayout>
     @if (_isInitialized) {
         <MudAppBar Elevation="0">
-            <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@DrawerToggle" />
+            <MudIconButton Icon="@MudBlazor.Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@DrawerToggle" />
             <MudText Typo="Typo.h5" Class="ml-3">Hitorus</MudText>
             <MudSpacer />
             <MudToggleIconButton Toggled="_isDarkMode"
                 ToggledChanged="@OnDarkModeButtonToggled"
             Color="Color.Inherit"
-            Icon="@Icons.Material.Filled.LightMode"
-            ToggledIcon="@Icons.Material.Filled.DarkMode" />
+            Icon="@MudBlazor.Icons.Material.Filled.LightMode"
+            ToggledIcon="@MudBlazor.Icons.Material.Filled.DarkMode" />
         </MudAppBar>
         <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2" Width="180px">
             <MudNavMenu>
-                <MudNavLink Href="/search" Icon="@Icons.Material.Filled.Search">@SharedLocalizer["Search"]</MudNavLink>
-                <MudNavLink Href="/download" Icon="@Icons.Material.Filled.Download">@SharedLocalizer["Download"]</MudNavLink>
-                <MudNavLink Href="/browse" Icon="@Icons.Material.Filled.Folder">@SharedLocalizer["Browse"]</MudNavLink>
-                <MudNavLink Href="/settings" Icon="@Icons.Material.Filled.Settings">@SharedLocalizer["Settings"]</MudNavLink>
-                <MudNavLink Href="/about" Icon="@Icons.Material.Filled.Info">@SharedLocalizer["AppInfo"]</MudNavLink>
+                <MudNavLink Href="/search" Icon="@MudBlazor.Icons.Material.Filled.Search">@SharedLocalizer["Search"]</MudNavLink>
+                <MudNavLink Href="/download" Icon="@MudBlazor.Icons.Material.Filled.Download">@SharedLocalizer["Download"]</MudNavLink>
+                <MudNavLink Href="/browse" Icon="@MudBlazor.Icons.Material.Filled.Folder">@SharedLocalizer["Browse"]</MudNavLink>
+                <MudNavLink Href="/settings" Icon="@MudBlazor.Icons.Material.Filled.Settings">@SharedLocalizer["Settings"]</MudNavLink>
+                <MudNavLink Href="/about" Icon="@MudBlazor.Icons.Material.Filled.Info">@SharedLocalizer["AppInfo"]</MudNavLink>
             </MudNavMenu>
         </MudDrawer>
         <MudMainContent Style="height: 100dvh">
@@ -38,7 +38,7 @@
             <div style="display: flex; flex-direction: column; align-items: center;
                         justify-content: center; gap: 2dvh;">
                 @if (_connectionError || _incompatibleVersion) {
-                    <MudIcon Icon="@Icons.Material.Filled.Error" Size="Size.Large" Color="Color.Primary" Style="font-size: 4rem" />
+                    <MudIcon Icon="@MudBlazor.Icons.Material.Filled.Error" Size="Size.Large" Color="Color.Primary" Style="font-size: 4rem" />
                 }
                 @if (_connectionError) {
                     <MudText Typo="Typo.h6">@Localizer["ConnectionError"]</MudText>

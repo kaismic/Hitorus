@@ -3,7 +3,7 @@
 
 <div class="d-flex flex-column gap-4 pa-8">
     <MudText Typo="Typo.h4">@Localizer["GlobalSettings"]</MudText>
-    <SettingsCard Icon="@Icons.Material.Filled.Palette"
+    <SettingsCard Icon="@MudBlazor.Icons.Material.Filled.Palette"
                   Header=@Localizer["AppThemeColor"]>
         <MudColorPicker @bind-Value=@_appThemeColor ShowAlpha="false" ShowColorField="false" ShowInputs="false" ShowPreview="false">
             <PickerActions>
@@ -27,7 +27,7 @@
             <MudSelectItem T="ViewMode" Value="ViewMode.Scroll">@SharedLocalizer["Scroll"]</MudSelectItem>
         </MudSelect>
     </SettingsCard>
-    <SettingsCard Icon="@Icons.Material.Filled.Timer"
+    <SettingsCard Icon="@MudBlazor.Icons.Material.Filled.Timer"
                   Header=@SharedLocalizer["PageTurnInterval"]>
         <MudSlider T="int" ValueLabel TickMarks
                    Min="1" Max="20"
@@ -40,7 +40,7 @@
             </ValueLabelContent>
         </MudSlider>
     </SettingsCard>
-    <SettingsCard Icon="@Icons.Material.Filled.Settings"
+    <SettingsCard Icon="@MudBlazor.Icons.Material.Filled.Settings"
                   Header=@SharedLocalizer["AutoScrollMode"]>
 
         <MudSelect T="AutoScrollMode"
@@ -51,7 +51,7 @@
             <MudSelectItem T="AutoScrollMode" Value="AutoScrollMode.ByPage">@SharedLocalizer["ByPage"]</MudSelectItem>
         </MudSelect>
     </SettingsCard>
-    <SettingsCard Icon="@Icons.Material.Filled.Speed"
+    <SettingsCard Icon="@MudBlazor.Icons.Material.Filled.Speed"
                   Header=@SharedLocalizer["AutoScrollSpeed"]>
         <MudSlider T="int" ValueLabel TickMarks
                    Min="1" Max="8"
@@ -64,7 +64,7 @@
             </ValueLabelContent>
         </MudSlider>
     </SettingsCard>
-    <SettingsCard Icon="@Icons.Material.Filled.Loop"
+    <SettingsCard Icon="@MudBlazor.Icons.Material.Filled.Loop"
                   Header=@SharedLocalizer["Loop"]
                   Description=@Localizer["LoopDesc"]>
         <MudSwitch T="bool"
@@ -72,7 +72,7 @@
                    ValueChanged=@OnLoopChanged
                    Color="Color.Primary" />
     </SettingsCard>
-    <SettingsCard Icon="@Icons.Material.Filled.Settings"
+    <SettingsCard Icon="@MudBlazor.Icons.Material.Filled.Settings"
                   Header=@SharedLocalizer["ImageLayoutMode"]>
         <MudSelect T="ImageLayoutMode"
                    Value=@ViewConfigurationService.Config.ImageLayoutMode
@@ -93,7 +93,7 @@
             <MudSelectItem T="ViewDirection" Value="ViewDirection.RTL">@SharedLocalizer["RTL"]</MudSelectItem>
         </MudSelect>
     </SettingsCard>
-    <SettingsCard Icon="@Icons.Material.Filled.Mouse"
+    <SettingsCard Icon="@MudBlazor.Icons.Material.Filled.Mouse"
                   Header=@Localizer["InvertClickNav"]
                   Description=@Localizer["InvertClickNavDesc"]>
         <MudSwitch T="bool"
@@ -101,7 +101,7 @@
                    ValueChanged=@OnInvertClickNavigationChanged
                    Color="Color.Primary" />
     </SettingsCard>
-    <SettingsCard Icon="@Icons.Material.Filled.Keyboard"
+    <SettingsCard Icon="@MudBlazor.Icons.Material.Filled.Keyboard"
                   Header=@Localizer["InvertKeyboardNav"]
                   Description=@Localizer["InvertKeyboardNavDesc"]>
         <MudSwitch T="bool"

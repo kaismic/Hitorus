@@ -72,12 +72,12 @@
             </MudSelect>
             <MudSpacer/>
             <MudButton Disabled="@(DownloadManager.Downloads.Count == 0 || !DownloadManager.IsHubConnectionOpen)"
-                       StartIcon="@Icons.Material.Filled.Pause"
+                       StartIcon="@MudBlazor.Icons.Material.Filled.Pause"
                        OnClick="@DownloadManager.SendPauseAllDownloads">
                 @Localizer["PauseAllDownloads"]
             </MudButton>
             <MudButton Disabled="@(DownloadManager.Downloads.Count == 0 || !DownloadManager.IsHubConnectionOpen)"
-                       StartIcon="@Icons.Material.Filled.Delete"
+                       StartIcon="@MudBlazor.Icons.Material.Filled.Delete"
                        OnClick="@DownloadManager.SendDeleteAllDownloads"
                        Color="Color.Error">
                 @Localizer["DeleteAllDownloads"]

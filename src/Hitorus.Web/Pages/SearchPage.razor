@@ -18,7 +18,7 @@
                                  OnDeleteButtonClicked="@DeleteTagFilters"
                                  SelectPlaceholder=@Localizer["SelectPlaceholder"] />
                 <div class="d-flex gap-2">
-                    <MudButton StartIcon="@Icons.Material.Filled.Refresh"
+                    <MudButton StartIcon="@MudBlazor.Icons.Material.Filled.Refresh"
                                OnClick="LoadTags"
                                Disabled="@(_tagFilterEditor?.CurrentTagFilter == null)">
                         @Localizer["Reload"]
@@ -37,13 +37,13 @@
                     <MudFileUpload T="IBrowserFile" Accept=".json" OnFilesChanged="@ImportTagFilters">
                         <ActivatorContent>
                             <MudButton Variant="Variant.Outlined"
-                                       StartIcon="@Icons.Material.Filled.FileUpload">
+                                       StartIcon="@MudBlazor.Icons.Material.Filled.FileUpload">
                                 @Localizer["Import"]
                             </MudButton>
                         </ActivatorContent>
                     </MudFileUpload>
                     <MudButton Variant="Variant.Outlined"
-                               StartIcon="@Icons.Material.Filled.FileDownload"
+                               StartIcon="@MudBlazor.Icons.Material.Filled.FileDownload"
                                OnClick="@ExportTagFilters">
                         @Localizer["Export"]
                     </MudButton>
@@ -114,7 +114,7 @@
                            Color="Color.Primary"
                            Variant="Variant.Filled"
                            OnClick="@CreateSearchFilter"
-                           StartIcon="@Icons.Material.Filled.Search">
+                           StartIcon="@MudBlazor.Icons.Material.Filled.Search">
                     @Localizer["Button_Text_CreateSearchLink"]
                 </MudButton>
                 <MudButton Color="Color.Error"
@@ -128,7 +128,7 @@
                 @foreach (SearchFilterDTO model in SearchFilters) {
                     <div style="display: grid; grid-template-columns: 1fr min-content; gap: 4px;">
                         <SearchFilterItem Model="@model" />
-                        <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                        <MudIconButton Icon="@MudBlazor.Icons.Material.Filled.Delete"
                                        Disabled="@(model.Id == 0)"
                                        OnClick="@(() => DeleteSearchFilter(model))"
                                        Style="height: min-content; margin: auto;" />

@@ -17,13 +17,13 @@
         <div class="d-flex justify-end align-center gap-x-4 my-2">
             <MudButton Color="Color.Primary"
                        Variant="Variant.Text"
-                       StartIcon="@Icons.Material.Filled.Cancel"
+                       StartIcon="@MudBlazor.Icons.Material.Filled.Cancel"
                        OnClick=@ExitEditMode>
                 @Localizer["ExitEditMode"]
             </MudButton>
             <MudButton Color="Color.Error"
                        Variant="Variant.Filled"
-                       StartIcon="@Icons.Material.Filled.Delete"
+                       StartIcon="@MudBlazor.Icons.Material.Filled.Delete"
                        OnClick="@DeleteGalleries"
                        Disabled="@(!BrowseConfigurationService.Selections.Any(s => s))">
                 @Localizer["DeleteSelection"]
@@ -84,7 +84,7 @@
             <div id="right-control-panel" class="d-flex flex-grow-1 justify-end align-center gap-x-4 flex-wrap">
                 <MudButton Color="Color.Default"
                            Variant="Variant.Outlined"
-                           StartIcon="@Icons.Material.Filled.Edit"
+                           StartIcon="@MudBlazor.Icons.Material.Filled.Edit"
                            OnClick="@(() => _isEditing = true)">
                     @Localizer["Edit"]
                 </MudButton>
@@ -95,7 +95,7 @@
                            ValueChanged="@OnAutoRefreshChanged" />
                 <MudButton Color="Color.Primary"
                            Variant="Variant.Filled"
-                           StartIcon="@Icons.Material.Filled.Search"
+                           StartIcon="@MudBlazor.Icons.Material.Filled.Search"
                            OnClick="@LoadGalleries">
                     @SharedLocalizer["Browse"]
                 </MudButton>

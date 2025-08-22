@@ -1,12 +1,12 @@
 ﻿<div class="gap-4 align-center" style="display: grid; grid-template-columns: auto auto 1fr auto auto;">
     <MudTooltip Text=@Localizer["CreateTooltip"]>
         <MudFab Color="Color.Primary"
-                StartIcon="@Icons.Material.Filled.Add"
+                StartIcon="@MudBlazor.Icons.Material.Filled.Add"
                 OnClick="@OnCreateButtonClicked" />
     </MudTooltip>
     <MudTooltip Text=@Localizer["RenameTooltip"]>
         <MudFab Color="Color.Primary"
-                StartIcon="@Icons.Material.Filled.Edit"
+                StartIcon="@MudBlazor.Icons.Material.Filled.Edit"
                 OnClick="@OnRenameButtonClicked"
                 Disabled="@(CurrentTagFilter == null)" />
     </MudTooltip>
@@ -23,13 +23,13 @@
     </MudSelect>
     <MudTooltip Text=@SharedLocalizer["Save"]>
         <MudFab Color="Color.Primary"
-                StartIcon="@Icons.Material.Filled.Save"
+                StartIcon="@MudBlazor.Icons.Material.Filled.Save"
                 OnClick="@OnSaveButtonClicked"
                 Disabled="@(CurrentTagFilter == null)" />
     </MudTooltip>
     <MudTooltip Text=@SharedLocalizer["Delete"]>
         <MudFab Color="Color.Primary"
-                StartIcon="@Icons.Material.Filled.Delete"
+                StartIcon="@MudBlazor.Icons.Material.Filled.Delete"
                 OnClick="@OnDeleteButtonClicked" />
     </MudTooltip>
 </div>

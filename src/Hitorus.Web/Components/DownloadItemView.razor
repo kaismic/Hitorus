@@ -22,7 +22,7 @@
                            OnClick=@OnActionButtonClick />
         </MudTooltip>
         <MudTooltip Text="@(SharedLocalizer["Delete"])">
-            <MudIconButton Icon=@Icons.Material.Filled.Delete
+            <MudIconButton Icon=@MudBlazor.Icons.Material.Filled.Delete
                            Disabled=@(Model.Status is DownloadStatus.Completed or DownloadStatus.Deleted || !DownloadManager.IsHubConnectionOpen || Model.WaitingResponse)
                            OnClick="@OnDeleteButtonClick" />
         </MudTooltip>

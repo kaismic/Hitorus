@@ -46,8 +46,8 @@
             <MudTooltip Text="@(_isAutoScrolling ? Localizer["Stop"] : Localizer["Play"])">
                 <MudToggleIconButton Toggled=@_isAutoScrolling
                                      ToggledChanged="@ToggleAutoScroll"
-                                     Icon="@Icons.Material.Filled.PlayArrow"
-                                     ToggledIcon="@Icons.Material.Filled.Pause"
+                                     Icon="@MudBlazor.Icons.Material.Filled.PlayArrow"
+                                     ToggledIcon="@MudBlazor.Icons.Material.Filled.Pause"
                                      ToggledColor="Color.Primary" />
             </MudTooltip>
         </div>
@@ -111,8 +111,8 @@
         <MudToggleIconButton Toggled="_isDarkMode"
                              ToggledChanged="@OnDarkModeButtonToggled"
                              Color="Color.Default"
-                             Icon="@Icons.Material.Filled.LightMode"
-                             ToggledIcon="@Icons.Material.Filled.DarkMode"
+                             Icon="@MudBlazor.Icons.Material.Filled.LightMode"
+                             ToggledIcon="@MudBlazor.Icons.Material.Filled.DarkMode"
                              Style="position: absolute; right: 0px; margin-right: 8px" />
     </MudToolBar>
 

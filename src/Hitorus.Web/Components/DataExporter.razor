@@ -1,0 +1,29 @@
+﻿<div class="d-flex gap-4">
+    <MudButton Variant="Variant.Filled"
+                Color="Color.Primary"
+                StartIcon="@MudBlazor.Icons.Material.Filled.Download"
+                OnClick="@ExportTagFilters">
+        Tag Filters
+    </MudButton>
+    <MudTooltip Text=@(CurrentApiVersion < MinGalleryExportApiVersion ? $"Requires Version {MinGalleryExportApiVersion.ToString(3)} or higher" : "")>
+        <MudButton Variant="Variant.Filled"
+                    Color="Color.Primary"
+                    StartIcon="@MudBlazor.Icons.Material.Filled.Download"
+                    OnClick="@ExportGalleries"
+                    Disabled=@(CurrentApiVersion < MinGalleryExportApiVersion)>
+            Galleries
+        </MudButton>
+    </MudTooltip>
+    <MudButton Variant="Variant.Filled"
+                Color="Color.Primary"
+                StartIcon="@MudBlazor.Icons.Material.Filled.Download"
+                OnClick="@ExportAppSettings">
+        App Settings
+    </MudButton>
+    <MudButton Variant="Variant.Filled"
+                Color="Color.Primary"
+                StartIcon="@MudBlazor.Icons.Material.Filled.Download"
+                OnClick="@ExportViewPageSettings">
+        View Page Settings
+    </MudButton>
+</div>

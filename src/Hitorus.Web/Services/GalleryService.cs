@@ -55,5 +55,9 @@ namespace Hitorus.Web.Services {
             var response = await _httpClient.PostAsync("delete-galleries", JsonContent.Create(ids));
             return response.IsSuccessStatusCode;
         }
+
+        public async Task<IEnumerable<ExportGalleryDTO>> ExportGalleries() {
+            return (await _httpClient.GetFromJsonAsync<IEnumerable<ExportGalleryDTO>>("export"))!;
+        }
     }
 }

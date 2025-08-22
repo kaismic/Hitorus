@@ -124,5 +124,18 @@ namespace Hitorus.Api.Controllers {
             context.SaveChanges();
             return Ok();
         }
+
+        [HttpPost("export")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public ActionResult<IEnumerable<ExportGalleryDTO>> ExportGalleries() {
+            IEnumerable<Gallery> galleries =
+                context.Galleries.AsNoTracking()
+                .Include(g => g.Tags)
+                .Include(g => g.Language)
+                .Include(g => g.Type)
+                .Include(g => g.Images);
+            IEnumerable<ExportGalleryDTO> result = galleries.Select(g => g.ToExportDTO());
+            return Ok(result);
+        }
     }
 }

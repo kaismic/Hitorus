@@ -484,19 +484,5 @@ namespace Hitorus.Web.Pages {
                 );
             }
         }
-
-        private async Task ExportTagFilters() {
-            DialogParameters<TagFilterSelectorDialog> parameters = new() {
-                { d => d.ChipModels, [.. TagFilters.Select(tf => new ChipModel<TagFilterDTO>() { Value = tf, Selected = true })] }
-            };
-            IDialogReference dialogRef = await DialogService.ShowAsync<TagFilterSelectorDialog>(Localizer["Dialog_Title_Export"], parameters);
-            DialogResult result = (await dialogRef.Result)!;
-            if (!result.Canceled) {
-                IReadOnlyCollection<ChipModel<TagFilterDTO>> selected = (IReadOnlyCollection<ChipModel<TagFilterDTO>>)result.Data!;
-                IEnumerable<int> ids = selected.Select(m => m.Value.Id);
-                List<TagFilterBuildDTO> exportingTFs = await TagFilterService.ExportTagFilters(ids);
-                await JS.InvokeVoidAsync("exportData", exportingTFs, "tag-filters-" + DateTime.Now.ToString("yyyy-MM-ddThh:mm:ss"), "json");
-            }
-        }
     }
 }

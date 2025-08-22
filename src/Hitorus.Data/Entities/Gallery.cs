@@ -44,5 +44,18 @@ namespace Hitorus.Data.Entities {
             Title = Title,
             Images = [.. Images.Select(g => g.ToDTO())],
         };
+
+        public ExportGalleryDTO ToExportDTO() => new() {
+            Id = Id,
+            Title = Title,
+            JapaneseTitle = JapaneseTitle,
+            Date = Date,
+            LastDownloadTime = LastDownloadTime,
+            SceneIndexes = SceneIndexes,
+            Language = Language.EnglishName,
+            Type = Type.Value,
+            Tags = [.. Tags.Select(t => t.ToDTO())],
+            Images = [.. Images.Select(g => g.ToDTO())],
+        };
     }
 }

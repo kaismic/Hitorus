@@ -1,8 +1,9 @@
 ﻿using Blazored.LocalStorage;
+using Microsoft.JSInterop;
 using System.Globalization;
 
 namespace Hitorus.Web {
-    public class Utilities {
+    public static class Utilities {
         public static uint ArgbToRgba(uint value) {
             return (value - 0xFF000000) * 0x100 + 0xFF;
         }
@@ -27,6 +28,10 @@ namespace Hitorus.Web {
                 Path = hostConfiguration[pathKey]
             };
             return builder.Uri;
+        }
+
+        public static ValueTask ExportData(IJSRuntime JSRuntime, object data, string fileName, string fileFormat) {
+            return JSRuntime.InvokeVoidAsync("exportData", data, fileName, fileFormat);
         }
     }
 }

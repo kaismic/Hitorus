@@ -59,5 +59,10 @@ namespace Hitorus.Web.Services {
         public async Task<IEnumerable<ExportGalleryDTO>> ExportGalleries() {
             return (await _httpClient.GetFromJsonAsync<IEnumerable<ExportGalleryDTO>>("export"))!;
         }
+
+        public async Task<int> ImportGalleries(IEnumerable<ExportGalleryDTO> galleries) {
+            var response = await _httpClient.PostAsync("import", JsonContent.Create(galleries));
+            return await response.Content.ReadFromJsonAsync<int>();
+        }
     }
 }

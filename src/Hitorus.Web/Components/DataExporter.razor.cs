@@ -17,7 +17,6 @@ namespace Hitorus.Web.Components {
         [Inject] AppConfigurationService AppConfigurationService { get; set; } = default!;
         [Inject] SearchConfigurationService SearchConfigurationService { get; set; } = default!;
         [Inject] ViewConfigurationService ViewConfigurationService { get; set; } = default!;
-        [Parameter, EditorRequired] public Version CurrentApiVersion { get; set; }
 
         private static readonly Version MinGalleryExportApiVersion = new(1, 1, 0);
 
@@ -43,7 +42,7 @@ namespace Hitorus.Web.Components {
         }
 
         private async Task ExportAppSettings() {
-            await AppConfigurationService.Load();
+            await AppConfigurationService.Load(false);
             await Utilities.ExportData(JSRuntime, AppConfigurationService.Config, "hitorus-app-settings" + DateTime.Now.ToString("yyyy-MM-ddThh:mm:ss"), "json");
         }
 

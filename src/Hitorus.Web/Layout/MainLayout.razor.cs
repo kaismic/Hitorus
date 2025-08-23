@@ -38,10 +38,9 @@ namespace Hitorus.Web.Layout {
             _initialApiPort = Utilities.GetApiPort(HostConfiguration, LocalStorageService);
             _apiPort = _initialApiPort;
             try {
-                await AppConfigService.Load();
+                await AppConfigService.Load(false);
                 // need to drop the revision part of the version to compare with the minimum compatible version
-                Version temp = await AppConfigService.GetCurrentApiVersion();
-                _currentApiVersion = new(temp.Major, temp.Minor, temp.Build);
+                _currentApiVersion = new(AppConfigService.CurrentApiVersion.Major, AppConfigService.CurrentApiVersion.Minor, AppConfigService.CurrentApiVersion.Build);
                 Version minCompatibleVersion = new(HostConfiguration["MinCompatibleApiVersion"]!);
                 if (_currentApiVersion < minCompatibleVersion) {
                     _incompatibleVersion = true;
@@ -85,8 +84,7 @@ namespace Hitorus.Web.Layout {
             if (_isInitialized && _hasRendered) {
                 if (AppConfigService.Config.LastUpdateCheckTime.AddDays(HostConfiguration.GetValue<int>("UpdateCheckInterval")) < DateTimeOffset.UtcNow) {
                     Version? latestApiVersion = await AppConfigService.GetLatestApiVersion();
-                    Version currentApiVersion = await AppConfigService.GetCurrentApiVersion();
-                    if (latestApiVersion != null && latestApiVersion > currentApiVersion) {
+                    if (latestApiVersion != null && latestApiVersion > AppConfigService.CurrentApiVersion) {
                         Snackbar.Add(
                             string.Format(Localizer["NewApiVersionAvailable"], latestApiVersion.ToString(3)),
                             Severity.Success,

@@ -1,0 +1,38 @@
+﻿<div class="d-flex gap-4">
+    <MudFileUpload T="IBrowserFile" Accept=".json" OnFilesChanged="@ImportTagFilters">
+        <ActivatorContent>
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       StartIcon="@Hitorus.Data.Icons.Import">
+                Tag Filters
+            </MudButton>
+        </ActivatorContent>
+    </MudFileUpload>
+    <MudFileUpload T="IBrowserFile" Accept=".json" OnFilesChanged="@ImportGalleries">
+        <ActivatorContent>
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       StartIcon="@Hitorus.Data.Icons.Import">
+                Galleries
+            </MudButton>
+        </ActivatorContent>
+    </MudFileUpload>
+    <MudFileUpload T="IBrowserFile" Accept=".json" OnFilesChanged="@ImportAppSettings">
+        <ActivatorContent>
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       StartIcon="@Hitorus.Data.Icons.Import">
+                App Settings
+            </MudButton>
+        </ActivatorContent>
+    </MudFileUpload>
+    <MudFileUpload T="IBrowserFile" Accept=".json" OnFilesChanged="@ImportViewPageSettings">
+        <ActivatorContent>
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       StartIcon="@Hitorus.Data.Icons.Import">
+                View Page Settings
+            </MudButton>
+        </ActivatorContent>
+    </MudFileUpload>
+</div>

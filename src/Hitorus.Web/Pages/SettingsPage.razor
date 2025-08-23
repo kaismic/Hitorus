@@ -2,14 +2,25 @@
 @using System.Globalization
 
 <div class="d-flex flex-column gap-4 pa-8">
+    <MudText Typo="Typo.h4">Import/Export Data</MudText>
+    <div class="d-flex flex-column gap-2">
+        <MudText Typo="Typo.h6">Import</MudText>
+        <DataImporter></DataImporter>
+        <MudText Typo="Typo.h6">Export</MudText>
+        <DataExporter></DataExporter>
+    </div>
     <MudText Typo="Typo.h4">@Localizer["GlobalSettings"]</MudText>
     <SettingsCard Icon="@MudBlazor.Icons.Material.Filled.Palette"
                   Header=@Localizer["AppThemeColor"]>
-        <MudColorPicker @bind-Value=@_appThemeColor ShowAlpha="false" ShowColorField="false" ShowInputs="false" ShowPreview="false">
+        <MudColorPicker @bind-Value=@AppConfigurationService.LocalAppThemeColor
+                        ShowAlpha="false"
+                        ShowColorField="false"
+                        ShowInputs="false"
+                        ShowPreview="false">
             <PickerActions>
                 <MudButton Color="Color.Primary"
                            Variant="Variant.Filled"
-                           OnClick="@(() => OnAppThemeColorChanged(_appThemeColor.Value))">
+                           OnClick="@(() => OnAppThemeColorChanged(AppConfigurationService.LocalAppThemeColor.Value))">
                     @SharedLocalizer["Confirm"]
                 </MudButton>
             </PickerActions>

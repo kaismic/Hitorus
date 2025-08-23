@@ -2,7 +2,6 @@
 using Hitorus.Web.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Localization;
-using MudBlazor.Utilities;
 
 namespace Hitorus.Web.Pages {
     public partial class SettingsPage {
@@ -12,12 +11,9 @@ namespace Hitorus.Web.Pages {
         [Inject] IStringLocalizer<SettingsPage> Localizer { get; set; } = default!;
         [Inject] IStringLocalizer<SharedResource> SharedLocalizer { get; set; } = default!;
 
-        private MudColor _appThemeColor = default!;
-
         protected override async Task OnInitializedAsync() {
-            await AppConfigurationService.Load();
+            await AppConfigurationService.Load(false);
             await ViewConfigurationService.Load();
-            _appThemeColor = new('#' + AppConfigurationService.Config.AppThemeColor);
         }
 
         private async Task OnViewModeChanged(ViewMode value) {

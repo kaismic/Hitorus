@@ -22,15 +22,18 @@ namespace Hitorus.Web.Services {
         }
 
         public AppConfigurationDTO Config { get; private set; } = new();
+        public MudColor LocalAppThemeColor { get; set; } = new();
         private bool _isLoaded = false;
+        public Version CurrentApiVersion { get; private set; } = new(0, 0, 0);
 
         public MudTheme AppTheme { get; } = new();
 
-        public async Task Load() {
-            if (_isLoaded) {
+        public async Task Load(bool force) {
+            if (_isLoaded && !force) {
                 return;
             }
             Config = (await _httpClient.GetFromJsonAsync<AppConfigurationDTO>(""))!;
+            CurrentApiVersion = (await _httpClient.GetFromJsonAsync<Version>("version"))!;
             SetAppThemeColors();
             _isLoaded = true;
         }
@@ -69,6 +72,7 @@ namespace Hitorus.Web.Services {
         /// <see cref="ComponentBase.StateHasChanged"/> must be called after this method is called.
         /// </summary>
         public void SetAppThemeColors() {
+            LocalAppThemeColor = new('#' + Config.AppThemeColor);
             // The parameter of CorePalette.Of uses ARGB format
             CorePalette palette = CorePalette.Of(Utilities.RgbToArgb(Config.AppThemeColor));
             List<MudColor> paletteValues = [.. new uint[] {
@@ -93,10 +97,6 @@ namespace Hitorus.Web.Services {
                 Tertiary = paletteValues[5],
                 AppbarBackground = paletteValues[3],
             };
-        }
-
-        public async Task<Version> GetCurrentApiVersion() {
-            return (await _httpClient.GetFromJsonAsync<Version>("version"))!;
         }
 
         public async Task<bool> UpdateAppThemeColor(string color) {
@@ -126,6 +126,14 @@ namespace Hitorus.Web.Services {
         public async Task<bool> UpdateShowSearchPageWalkthrough(bool value) {
             Config.ShowSearchPageWalkthrough = value;
             var response = await _httpClient.PatchAsync($"show-search-page-walkthrough?configId={Config.Id}", JsonContent.Create(value));
+            return response.IsSuccessStatusCode;
+        }
+        
+        public async Task<bool> Import(AppConfigurationDTO value) {
+            var response = await _httpClient.PostAsync("import", JsonContent.Create(value));
+            if (response.IsSuccessStatusCode) {
+                await Load(true);
+            }
             return response.IsSuccessStatusCode;
         }
     }

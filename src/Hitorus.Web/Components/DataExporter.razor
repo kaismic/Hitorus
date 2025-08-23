@@ -5,12 +5,12 @@
                 OnClick="@ExportTagFilters">
         Tag Filters
     </MudButton>
-    <MudTooltip Text=@(CurrentApiVersion < MinGalleryExportApiVersion ? $"Requires Version {MinGalleryExportApiVersion.ToString(3)} or higher" : "")>
+    <MudTooltip Text=@(AppConfigurationService.CurrentApiVersion < MinGalleryExportApiVersion ? $"Requires Version {MinGalleryExportApiVersion.ToString(3)} or higher" : "")>
         <MudButton Variant="Variant.Filled"
-                    Color="Color.Primary"
-                    StartIcon="@MudBlazor.Icons.Material.Filled.Download"
-                    OnClick="@ExportGalleries"
-                    Disabled=@(CurrentApiVersion < MinGalleryExportApiVersion)>
+                   Color="Color.Primary"
+                   StartIcon="@MudBlazor.Icons.Material.Filled.Download"
+                   OnClick="@ExportGalleries"
+                   Disabled=@(AppConfigurationService.CurrentApiVersion < MinGalleryExportApiVersion)>
             Galleries
         </MudButton>
     </MudTooltip>

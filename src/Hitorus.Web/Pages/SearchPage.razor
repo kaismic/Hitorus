@@ -33,15 +33,6 @@
                                Color="Color.Primary"
                                Value="SearchConfigurationService.Config.AutoSaveEnabled"
                                ValueChanged=@OnAutoSaveEnabledChanged />
-                    <MudSpacer />
-                    <MudFileUpload T="IBrowserFile" Accept=".json" OnFilesChanged="@ImportTagFilters">
-                        <ActivatorContent>
-                            <MudButton Variant="Variant.Outlined"
-                                       StartIcon="@MudBlazor.Icons.Material.Filled.FileUpload">
-                                @Localizer["Import"]
-                            </MudButton>
-                        </ActivatorContent>
-                    </MudFileUpload>
                 </div>
                 <TagSearchPanelCollection TagSearchPanelChipModels="@_tagSearchPanelChipModels" />
             </MudPaper>

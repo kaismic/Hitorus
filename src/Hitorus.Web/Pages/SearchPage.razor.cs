@@ -120,7 +120,7 @@ namespace Hitorus.Web.Pages {
             _isInitialized = false;
             _isRendered = false;
             await SearchConfigurationService.Load();
-            await AppConfigurationService.Load();
+            await AppConfigurationService.Load(false);
             TagFilters = [.. SearchConfigurationService.Config.TagFilters];
             SearchFilters = [.. SearchConfigurationService.Config.SearchFilters];
             if (AppConfigurationService.Config.ShowSearchPageWalkthrough) {
@@ -412,77 +412,6 @@ namespace Hitorus.Web.Pages {
 
         private string GetWalkthroughHighlightStyle(int step) {
             return _showWalkthrough && _walkthroughStep == step ? "z-index: calc(var(--mud-zindex-popover) + 1); pointer-events: none;" : "";
-        }
-
-        private const long MB_IN_BYTES = 1_000_000;
-        private const long MAX_FILE_SIZE = MB_IN_BYTES * 10;
-        private static readonly JsonSerializerOptions DEFAULT_JSON_SERIALIZER_OPTIONS = new() {
-            PropertyNameCaseInsensitive = true
-        };
-        private async Task ImportTagFilters(InputFileChangeEventArgs args) {
-            if (args.File.Size > MAX_FILE_SIZE) {
-                Snackbar.Add(
-                    string.Format(
-                        Localizer["Snackbar_ImportFileTooLarge"],
-                        ((double)args.File.Size / MB_IN_BYTES) + "mb",
-                        (MAX_FILE_SIZE / MB_IN_BYTES) + "mb"
-                    ),
-                    Severity.Error,
-                    UiConstants.DEFAULT_SNACKBAR_OPTIONS
-                );
-                return;
-            }
-            using Stream fileStream = args.File.OpenReadStream(MAX_FILE_SIZE);
-            List<TagFilterBuildDTO>? imported;
-            try {
-                imported = await JsonSerializer.DeserializeAsync<List<TagFilterBuildDTO>>(
-                    fileStream,
-                    DEFAULT_JSON_SERIALIZER_OPTIONS
-                );
-            } catch (JsonException e) {
-                Snackbar.Add(
-                    string.Format(Localizer["Snackbar_ImportInvalidFormat"], e.Message),
-                    Severity.Error,
-                    UiConstants.DEFAULT_SNACKBAR_OPTIONS
-                );
-                return;
-            }
-            if (imported == null) {
-                Snackbar.Add(
-                    string.Format(Localizer["Snackbar_ImportUnknownError"]),
-                    Severity.Error,
-                    UiConstants.DEFAULT_SNACKBAR_OPTIONS
-                );
-                return;
-            }
-            if (imported.Count == 0) {
-                Snackbar.Add(
-                    string.Format(Localizer["Snackbar_ImportEmptyFile"]),
-                    Severity.Error,
-                    UiConstants.DEFAULT_SNACKBAR_OPTIONS
-                );
-                return;
-            }
-            Dictionary<string, TagFilterBuildDTO> importedDict = imported.ToDictionary(dto => dto.Name, dto => dto);
-            DialogParameters<TagFilterSelectorDialog> parameters = new() {
-                { d => d.ChipModels, [.. imported.Select(tf => tf.ToDTO()).Select(tf => new ChipModel<TagFilterDTO>() { Value = tf, Selected = true })] }
-            };
-            IDialogReference dialogRef = await DialogService.ShowAsync<TagFilterSelectorDialog>(Localizer["Dialog_Title_Import"], parameters);
-            DialogResult result = (await dialogRef.Result)!;
-            if (!result.Canceled) {
-                IReadOnlyCollection<ChipModel<TagFilterDTO>> selected = (IReadOnlyCollection<ChipModel<TagFilterDTO>>)result.Data!;
-                IEnumerable<string> names = selected.Select(m => m.Value.Name);
-                IEnumerable<TagFilterBuildDTO> selectedImported = names.Select(name => importedDict[name]);
-                List<TagFilterDTO> importedTagFilters = await TagFilterService.ImportTagFilters(selectedImported);
-                foreach (TagFilterDTO tf in importedTagFilters) {
-                    TagFilters.Add(tf);
-                }
-                Snackbar.Add(
-                    string.Format(Localizer["Snackbar_ImportSuccess"], importedTagFilters.Count),
-                    Severity.Success,
-                    UiConstants.DEFAULT_SNACKBAR_OPTIONS
-                );
-            }
         }
     }
 }

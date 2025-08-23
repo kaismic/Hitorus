@@ -85,5 +85,17 @@ namespace Hitorus.Api.Controllers {
             context.SaveChanges();
             return Ok();
         }
+
+
+        [HttpPost("import")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public ActionResult Import([FromBody] AppConfigurationDTO dto) {
+            AppConfiguration config = context.AppConfigurations.First();
+            config.AppThemeColor = dto.AppThemeColor;
+            config.AppLaunchCount = dto.AppLaunchCount;
+            config.ShowSurveyPrompt = dto.ShowSurveyPrompt;
+            context.SaveChanges();
+            return Ok();
+        }
     }
 }

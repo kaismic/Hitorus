@@ -6,6 +6,7 @@ using Hitorus.Data.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor;
+using System.Xml.Linq;
 
 namespace Hitorus.Api.Controllers {
     [ApiController]
@@ -125,7 +126,7 @@ namespace Hitorus.Api.Controllers {
             return Ok();
         }
 
-        [HttpPost("export")]
+        [HttpGet("export")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public ActionResult<IEnumerable<ExportGalleryDTO>> ExportGalleries() {
             IEnumerable<Gallery> galleries =
@@ -136,6 +137,64 @@ namespace Hitorus.Api.Controllers {
                 .Include(g => g.Images);
             IEnumerable<ExportGalleryDTO> result = galleries.Select(g => g.ToExportDTO());
             return Ok(result);
+        }
+
+
+        [HttpPost("import")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public ActionResult<int> ImportGalleries([FromBody] IEnumerable<ExportGalleryDTO> galleries) {
+            int count = 0;
+            int maxOrder = context.Galleries
+                .OrderByDescending(g => g.UserDefinedOrder)
+                .Select(g => g.UserDefinedOrder)
+                .FirstOrDefault();
+            foreach (ExportGalleryDTO dto in galleries) {
+                if (context.Galleries.Any(existing => existing.Id == dto.Id)) {
+                    continue; // Skip if gallery already exists
+                }
+                Console.WriteLine("Importing gallery: " + dto.Id);
+                GalleryLanguage? language = context.GalleryLanguages.FirstOrDefault(l => l.EnglishName == dto.Language);
+                GalleryType? type = context.GalleryTypes.FirstOrDefault(t => t.Value == dto.Type);
+                Console.WriteLine("Language: " + (language?.EnglishName ?? "Not found"));
+                Console.WriteLine("Type: " + (type?.Value ?? "Not found"));
+                if (language == null || type == null) {
+                    continue; // Skip if language or type is not found
+                }
+                count++;
+                Gallery gallery = new() {
+                    Id = dto.Id,
+                    Title = dto.Title,
+                    JapaneseTitle = dto.JapaneseTitle,
+                    Date = dto.Date,
+                    LastDownloadTime = DateTimeOffset.UtcNow,
+                    SceneIndexes = dto.SceneIndexes,
+                    Language = language,
+                    Type = type,
+                    UserDefinedOrder = ++maxOrder,
+                    Tags = [],
+                    Images = [.. dto.Images.Select(i => new GalleryImage() {
+                        Index = i.Index,
+                        FileName = i.FileName,
+                        Hasavif = i.Hasavif,
+                        Haswebp = i.Haswebp,
+                        Hasjxl = i.Hasjxl,
+                        Hash = i.Hash,
+                        Width = i.Width,
+                        Height = i.Height,
+                    })]
+                };
+                foreach (TagDTO dtoTag in dto.Tags) {
+                    Tag? tag = context.Tags.FirstOrDefault(t => t.Category == dtoTag.Category && t.Value == dtoTag.Value);
+                    if (tag == null) {
+                        tag = new Tag { Category = dtoTag.Category, Value = dtoTag.Value, GalleryCount = dtoTag.GalleryCount };
+                        context.Tags.Add(tag);
+                    }
+                    gallery.Tags.Add(tag);
+                }
+                context.Galleries.Add(gallery);
+            }
+            context.SaveChanges();
+            return Ok(count);
         }
     }
 }

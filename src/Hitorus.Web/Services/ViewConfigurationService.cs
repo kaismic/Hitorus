@@ -66,5 +66,15 @@ namespace Hitorus.Web.Services {
             var response = await _httpClient.PatchAsJsonAsync($"invert-keyboard-navigation?configId={Config.Id}", value);
             return response.IsSuccessStatusCode;
         }
+
+        public async Task<bool> Import(ViewConfigurationDTO value) {
+            var response = await _httpClient.PostAsync("import", JsonContent.Create(value));
+            if (response.IsSuccessStatusCode) {
+                int id = Config.Id;
+                Config = value;
+                Config.Id = id; // Preserve the original ID after import
+            }
+            return response.IsSuccessStatusCode;
+        }
     }
 }

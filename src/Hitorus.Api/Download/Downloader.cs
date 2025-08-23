@@ -277,10 +277,10 @@ namespace Hitorus.Api.Download {
 
             await using var transaction = await dbContext.Database.BeginTransactionAsync();
 
-            int maxOrder = await dbContext.Galleries
+            int maxOrder = dbContext.Galleries
                 .OrderByDescending(g => g.UserDefinedOrder)
                 .Select(g => g.UserDefinedOrder)
-                .FirstOrDefaultAsync();
+                .FirstOrDefault();
 
             Gallery gallery = new() {
                 Id = original.Id,

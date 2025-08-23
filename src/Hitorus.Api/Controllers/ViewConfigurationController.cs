@@ -131,5 +131,23 @@ namespace Hitorus.Api.Controllers {
             context.SaveChanges();
             return Ok();
         }
+
+
+        [HttpPost("import")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public ActionResult Import([FromBody] ViewConfigurationDTO value) {
+            ViewConfiguration config = context.ViewConfigurations.First();
+            config.ViewMode = value.ViewMode;
+            config.Loop = value.Loop;
+            config.ImageLayoutMode = value.ImageLayoutMode;
+            config.ViewDirection = value.ViewDirection;
+            config.PageTurnInterval = value.PageTurnInterval;
+            config.AutoScrollMode = value.AutoScrollMode;
+            config.ScrollSpeed = value.ScrollSpeed;
+            config.InvertClickNavigation = value.InvertClickNavigation;
+            config.InvertKeyboardNavigation = value.InvertKeyboardNavigation;
+            context.SaveChanges();
+            return Ok();
+        }
     }
 }

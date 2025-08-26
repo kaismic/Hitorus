@@ -1,15 +1,19 @@
 ﻿using Hitorus.Data.DTOs;
 using Hitorus.Data.Events;
+using Hitorus.Web.Components.Dialogs;
+using Hitorus.Web.Models;
 using Hitorus.Web.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Localization;
+using MudBlazor;
 
 namespace Hitorus.Web.Components {
     public partial class TagFilterEditor : ComponentBase {
+        [Inject] IDialogService DialogService { get; set; } = default!;
         [Inject] IStringLocalizer<TagFilterEditor> Localizer { get; set; } = default!;
         [Inject] IStringLocalizer<SharedResource> SharedLocalizer { get; set; } = default!;
         [Inject] private SearchConfigurationService SearchConfigurationService { get; set; } = default!;
-        [Parameter, EditorRequired] public IEnumerable<TagFilterDTO> TagFilters { get; set; } = null!;
+        [Parameter, EditorRequired] public ICollection<TagFilterDTO> TagFilters { get; set; } = null!;
         [Parameter, EditorRequired] public EventCallback OnCreateButtonClicked { get; set; }
         [Parameter, EditorRequired] public EventCallback OnRenameButtonClicked { get; set; }
         [Parameter, EditorRequired] public EventCallback OnSaveButtonClicked { get; set; }
@@ -35,6 +39,17 @@ namespace Hitorus.Web.Components {
                     _firstTagFilter = false;
                 }
                 SelectedTagFilterChanged.InvokeAsync(new(oldValue, value));
+            }
+        }
+
+        private async Task ShowTagFilterSelectorDialog() {
+            DialogParameters<SingleTagFilterSelectorDialog> parameters = new() {
+                { d => d.ChipModels, [.. TagFilters.Select(tf => new ChipModel<TagFilterDTO>() { Value = tf, Selected = tf.Id == CurrentTagFilter?.Id })] },
+            };
+            IDialogReference dialogRef = await DialogService.ShowAsync<SingleTagFilterSelectorDialog>("Select a tag filter to edit:", parameters);
+            DialogResult result = (await dialogRef.Result)!;
+            if (!result.Canceled) {
+                CurrentTagFilter = (TagFilterDTO)result.Data!;
             }
         }
     }

@@ -7,13 +7,11 @@ using Hitorus.Web.Components.Dialogs;
 using Hitorus.Web.Models;
 using Hitorus.Web.Services;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.Extensions.Localization;
 using Microsoft.JSInterop;
 using MudBlazor;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.Text.Json;
 
 namespace Hitorus.Web.Pages {
     public partial class SearchPage {

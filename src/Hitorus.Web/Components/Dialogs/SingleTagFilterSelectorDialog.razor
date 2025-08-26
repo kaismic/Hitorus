@@ -1,0 +1,18 @@
+﻿<MudDialog>
+    <DialogContent>
+        <MudChipSet T="@(ChipModel<TagFilterDTO>)"
+                    SelectionMode="SelectionMode.SingleSelection"
+                    SelectedColor="@Color.Primary"
+                    Class="overflow-y-auto">
+            @foreach (ChipModel<TagFilterDTO> model in ChipModels) {
+                <CustomMudChip T="TagFilterDTO"
+                               Model="@model"
+                               ToStringFunc="@(model => model.Value.Name)"
+                               OnSelectedChanged="@OnChipModelClicked" />
+            }
+        </MudChipSet>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="@MudDialog.Cancel">@SharedLocalizer["Cancel"]</MudButton>
+    </DialogActions>
+</MudDialog>

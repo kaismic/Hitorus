@@ -10,17 +10,15 @@
                 OnClick="@OnRenameButtonClicked"
                 Disabled="@(CurrentTagFilter == null)" />
     </MudTooltip>
-    <MudSelect T="TagFilterDTO"
-               Variant="Variant.Outlined"
-               Placeholder=@SelectPlaceholder
-               @bind-Value="@CurrentTagFilter"
-               ToStringFunc="@(tf => tf.Name)"
-               Class="tag-filter-selector"
-               FullWidth>
-        @foreach (TagFilterDTO tagFilter in TagFilters) {
-            <MudSelectItem Value="@tagFilter" />
-        }
-    </MudSelect>
+    <MudTextField ReadOnly
+                  T="@TagFilterDTO"
+                  Value="@CurrentTagFilter"
+                  Text="@CurrentTagFilter?.Name"
+                  Variant="Variant.Outlined"
+                  Placeholder=@SelectPlaceholder
+                  OnAdornmentClick="@ShowTagFilterSelectorDialog"
+                  @onclick="@ShowTagFilterSelectorDialog">
+    </MudTextField>
     <MudTooltip Text=@SharedLocalizer["Save"]>
         <MudFab Color="Color.Primary"
                 StartIcon="@MudBlazor.Icons.Material.Filled.Save"

@@ -11,7 +11,7 @@ namespace Hitorus.Web.Components {
         [Parameter] public string? HeaderText { get; set; }
         [Parameter] public Color HeaderColor { get; set; } = Color.Default;
         [Parameter] public IReadOnlyCollection<ChipModel<TagFilterDTO>> SelectedChipModels { get; set; } = [];
-        [Parameter]  public EventCallback<IReadOnlyCollection<ChipModel<TagFilterDTO>>> SelectedChipModelsChanged { get; set; }
+        [Parameter] public EventCallback<IReadOnlyCollection<ChipModel<TagFilterDTO>>> SelectedChipModelsChanged { get; set; }
         protected virtual void OnSelectedChanged(ChipModel<TagFilterDTO> model) {}
     }
 }

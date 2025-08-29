@@ -1,6 +1,11 @@
-﻿::deep #sort-property-select fieldset {
-    border-radius: var(--mud-default-borderradius) 0 0 var(--mud-default-borderradius);
+﻿::deep .first-input-group-item fieldset {
+    border-radius: var(--mud-default-borderradius) 0 0 var(--mud-default-borderradius) !important;
 }
-::deep #sort-direction-select fieldset {
-    border-radius: 0 var(--mud-default-borderradius) var(--mud-default-borderradius) 0;
+
+::deep .middle-input-group-item fieldset {
+    border-radius: 0 !important;
+}
+
+::deep .last-input-group-item fieldset {
+    border-radius: 0 var(--mud-default-borderradius) var(--mud-default-borderradius) 0 !important;
 }

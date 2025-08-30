@@ -145,5 +145,19 @@ namespace Hitorus.Api.Controllers {
             context.SaveChanges();
             return Ok();
         }
+
+
+        [HttpPatch("min-image-count")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult UpdateMinimumImageCount(int configId, [FromBody] int value) {
+            BrowseConfiguration? config = context.BrowseConfigurations.Find(configId);
+            if (config == null) {
+                return NotFound();
+            }
+            config.MinimumImageCount = value;
+            context.SaveChanges();
+            return Ok();
+        }
     }
 }

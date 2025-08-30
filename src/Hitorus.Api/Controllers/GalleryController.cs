@@ -6,7 +6,6 @@ using Hitorus.Data.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor;
-using System.Xml.Linq;
 
 namespace Hitorus.Api.Controllers {
     [ApiController]
@@ -84,6 +83,8 @@ namespace Hitorus.Api.Controllers {
             if (!string.IsNullOrEmpty(config.TitleSearchKeyword)) {
                 galleries = galleries.Where(g => g.Title.Contains(config.TitleSearchKeyword, StringComparison.InvariantCultureIgnoreCase));
             }
+            galleries = galleries.Where(g => context.Entry(g).Collection(g => g.Images).Query().Count() >= config.MinimumImageCount);
+            
             IEnumerable<int> selectedTagIds = config.Tags.Select(t => t.Id);
             foreach (int tagId in selectedTagIds) {
                 galleries = galleries.Where(g => g.Tags.Any(t => t.Id == tagId));

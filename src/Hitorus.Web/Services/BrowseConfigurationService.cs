@@ -87,5 +87,10 @@ namespace Hitorus.Web.Services {
             var response = await _httpClient.PatchAsync($"sort-direction?configId={Config.Id}", JsonContent.Create(value));
             return response.IsSuccessStatusCode;
         }
+
+        public async Task<bool> UpdateMinImageCountAsync(int value) {
+            var response = await _httpClient.PatchAsync($"min-image-count?configId={Config.Id}", JsonContent.Create(value));
+            return response.IsSuccessStatusCode;
+        }
     }
 }

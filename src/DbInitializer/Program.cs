@@ -108,7 +108,8 @@ namespace DbInitializer {
                 ItemsPerPage = 8,
                 AutoRefresh = true,
                 SelectedSortProperty = GalleryProperty.LastDownloadTime,
-                SelectedSortDirection = SortDirection.Descending
+                SelectedSortDirection = SortDirection.Descending,
+                MinimumImageCount = 0
             });
 
             dbContext.DownloadConfigurations.Add(new() {

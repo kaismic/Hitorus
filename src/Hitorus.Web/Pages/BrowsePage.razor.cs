@@ -80,6 +80,14 @@ namespace Hitorus.Web.Pages {
             }
         }
 
+        private async Task OnMinImageCountChanged(int value) {
+            BrowseConfigurationService.Config.MinimumImageCount = value;
+            await BrowseConfigurationService.UpdateMinImageCountAsync(value);
+            if (BrowseConfigurationService.Config.AutoRefresh) {
+                await LoadGalleries();
+            }
+        }
+
         private async Task OnAutoRefreshChanged(bool value) {
             BrowseConfigurationService.Config.AutoRefresh = value;
             await BrowseConfigurationService.UpdateAutoRefreshAsync(value);

@@ -80,26 +80,14 @@
                         </MudSelect>
                     </div>
                 </div>
-                <div class="d-flex align-center">
-                    <div class="first-input-group-item">
-                        <MudSelect T="string" FitContent
-                                   Margin="Margin.Dense"
-                                   Label="Filter by Image Count"
-                                   Variant="Variant.Outlined"
-                                   ToStringFunc="@(p => SharedLocalizer[p.ToString()])">
-                            @foreach (string c in new string[] { "Minimum", "Maximum" }) {
-                                <MudSelectItem Value="@c" />
-                            }
-                        </MudSelect>
-                    </div>
-                    <div class="last-input-group-item">
-                        <MudNumericField T="int"
-                                         Label="Image Count"
-                                         Margin="Margin.Dense"
-                                         Variant="Variant.Outlined">
-                        </MudNumericField>
-                    </div>
-                </div>
+                <MudNumericField T="int" Margin="Margin.Dense"
+                                 Label="Minimum Image Count"
+                                 Variant="Variant.Outlined"
+                                 Min="0" Max="1024"
+                                 Pattern="[0-9]"
+                                 Value="@BrowseConfigurationService.Config.MinimumImageCount"
+                                 ValueChanged="@OnMinImageCountChanged">
+                </MudNumericField>
             </div>
             <div id="right-control-panel" class="d-flex flex-grow-1 justify-end align-center gap-x-4 flex-wrap">
                 <MudButton Color="Color.Default"

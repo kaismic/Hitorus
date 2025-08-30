@@ -13,5 +13,6 @@ namespace Hitorus.Data.DTOs
         public bool AutoRefresh { get; set; }
         public GalleryProperty SelectedSortProperty { get; set; }
         public SortDirection SelectedSortDirection { get; set; }
+        public int MinimumImageCount { get; set; }
     }
 }

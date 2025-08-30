@@ -12,6 +12,7 @@ public class BrowseConfiguration {
     public bool AutoRefresh { get; set; }
     public GalleryProperty SelectedSortProperty { get; set; }
     public SortDirection SelectedSortDirection { get; set; }
+    public int MinimumImageCount { get; set; }
 
     public BrowseConfigurationDTO ToDTO() => new() {
         Id = Id,
@@ -22,6 +23,7 @@ public class BrowseConfiguration {
         ItemsPerPage = ItemsPerPage,
         AutoRefresh = AutoRefresh,
         SelectedSortProperty = SelectedSortProperty,
-        SelectedSortDirection = SelectedSortDirection
+        SelectedSortDirection = SelectedSortDirection,
+        MinimumImageCount = MinimumImageCount,
     };
 }

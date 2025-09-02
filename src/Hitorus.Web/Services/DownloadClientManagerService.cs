@@ -75,6 +75,7 @@ namespace Hitorus.Web.Services {
                     case DownloadStatus.Downloading:
                         model.StatusMessage = localizer["DownloadStatus_Downloading"];
                         model.WaitingResponse = false;
+                        model.StateHasChanged();
                         break;
                     case DownloadStatus.Completed:
                         if (browseConfigurationService.BrowsePageLoaded) {
@@ -83,22 +84,31 @@ namespace Hitorus.Web.Services {
                             browseConfigurationService.BrowsePageRefreshQueued = true;
                         }
                         model.StatusMessage = localizer["DownloadStatus_Completed"];
+                        model.StateHasChanged();
                         await jsRuntime.InvokeVoidAsync("startDeleteAnimation", model.ElementId, galleryId, DELETE_ANIM_DURATION);
-                        _ = Task.Delay(DELETE_ANIM_DURATION).ContinueWith(_ => DeleteDownload(galleryId));
+                        _ = Task.Run(async () => {
+                            await Task.Delay(DELETE_ANIM_DURATION);
+                            DeleteDownload(galleryId);
+                            DownloadPageStateHasChanged();
+                        });
                         break;
                     case DownloadStatus.Paused:
                         model.StatusMessage = localizer["DownloadStatus_Paused"];
                         model.WaitingResponse = false;
+                        model.StateHasChanged();
                         break;
                     case DownloadStatus.Deleted:
                         model.StatusMessage = "";
                         await jsRuntime.InvokeVoidAsync("startDeleteAnimation", model.ElementId, galleryId, DELETE_ANIM_DURATION);
-                        _ = Task.Delay(DELETE_ANIM_DURATION).ContinueWith(_ => DeleteDownload(galleryId));
+                        _ = Task.Run(async () => {
+                            await Task.Delay(DELETE_ANIM_DURATION);
+                            DeleteDownload(galleryId);
+                            DownloadPageStateHasChanged();
+                        });
                         break;
                     case DownloadStatus.Failed:
                         throw new InvalidOperationException($"{DownloadStatus.Failed} must be handled by {nameof(OnReceiveFailure)}");
                 }
-                model.StateHasChanged();
             }
         }
 

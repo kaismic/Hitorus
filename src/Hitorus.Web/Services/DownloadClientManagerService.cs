@@ -1,10 +1,9 @@
 ﻿using Blazored.LocalStorage;
 using DebounceThrottle;
 using Hitorus.Data;
-using Hitorus.Web.Models;
+using Hitorus.Web.ViewModels;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Localization;
-using Microsoft.JSInterop;
 
 namespace Hitorus.Web.Services {
     public class DownloadClientManagerService(
@@ -13,19 +12,15 @@ namespace Hitorus.Web.Services {
         ISyncLocalStorageService localStorageService,
         BrowseConfigurationService browseConfigurationService,
         DownloadService downloadService,
-        IJSRuntime jsRuntime,
         IStringLocalizer<DownloadClientManagerService> localizer
     ) : IAsyncDisposable, IDownloadClient {
         private HubConnection? _hubConnection;
-        public Dictionary<int, DownloadModel> Downloads { get; } = [];
+        public Dictionary<int, DownloadItemViewModel> Downloads { get; } = [];
 
         public bool IsHubConnectionOpen => _hubConnection?.State == HubConnectionState.Connected;
         public Action DownloadPageStateHasChanged { get; set; } = () => { };
 
         private readonly DebounceDispatcher _loadGalleriesDebDispatcher = new(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(3));
-
-        private const int DELETE_ANIM_DURATION = 2000; // milliseconds
-        private const string START_DELETE_ANIM_JS_FUNC = "startDeleteAnimation";
 
         public void OpenHubConnection() {
             _hubConnection = new HubConnectionBuilder()
@@ -52,9 +47,9 @@ namespace Hitorus.Web.Services {
         }
 
         public async Task ReceiveGalleryAvailable(int galleryId) {
-            if (Downloads.TryGetValue(galleryId, out DownloadModel? model)) {
-                model.Gallery = await galleryService.GetDownloadGalleryDTO(galleryId);
-                model.StateHasChanged();
+            if (Downloads.TryGetValue(galleryId, out DownloadItemViewModel? vm)) {
+                vm.Gallery = await galleryService.GetDownloadGalleryDTO(galleryId);
+                // TODO test if component is rendered and displays gallery title without StateHasChanged
                 if (browseConfigurationService.BrowsePageLoaded) {
                     _loadGalleriesDebDispatcher.Debounce(browseConfigurationService.LoadGalleries);
                 } else {
@@ -64,63 +59,54 @@ namespace Hitorus.Web.Services {
         }
 
         public Task ReceiveProgress(int galleryId, int progress) {
-            if (Downloads.TryGetValue(galleryId, out DownloadModel? model)) {
-                model.Progress = progress;
-                model.StateHasChanged();
+            if (Downloads.TryGetValue(galleryId, out DownloadItemViewModel? vm)) {
+                vm.Progress = progress;
             }
             return Task.CompletedTask;
         }
 
-        public async Task ReceiveStatus(int galleryId, DownloadStatus status) {
-            if (Downloads.TryGetValue(galleryId, out DownloadModel? model)) {
-                model.Status = status;
+        public Task ReceiveStatus(int galleryId, DownloadStatus status) {
+            if (Downloads.TryGetValue(galleryId, out DownloadItemViewModel? vm)) {
+                vm.Status = status;
                 switch (status) {
-                    case DownloadStatus.Enqueued:
-                        model.StatusMessage = localizer["DownloadStatus_Enqueued"];
+                    case DownloadStatus.Paused or DownloadStatus.Downloading:
+                        vm.WaitingResponse = false;
+                        DownloadPageStateHasChanged();
                         break;
-                    case DownloadStatus.Downloading:
-                        model.StatusMessage = localizer["DownloadStatus_Downloading"];
-                        break;
-                    case DownloadStatus.Completed:
-                        if (browseConfigurationService.BrowsePageLoaded) {
-                            _loadGalleriesDebDispatcher.Debounce(browseConfigurationService.LoadGalleries);
-                        } else {
-                            browseConfigurationService.BrowsePageRefreshQueued = true;
+                    case DownloadStatus.Completed or DownloadStatus.Deleted:
+                        if (status == DownloadStatus.Completed) {
+                            if (browseConfigurationService.BrowsePageLoaded) {
+                                _loadGalleriesDebDispatcher.Debounce(browseConfigurationService.LoadGalleries);
+                            } else {
+                                browseConfigurationService.BrowsePageRefreshQueued = true;
+                            }
                         }
-                        model.StatusMessage = localizer["DownloadStatus_Completed"];
-                        await jsRuntime.InvokeVoidAsync(START_DELETE_ANIM_JS_FUNC, model.ElementId, galleryId, DELETE_ANIM_DURATION);
-                        _ = Task.Delay(DELETE_ANIM_DURATION).ContinueWith(_ => DeleteDownloadModel(galleryId));
-                        break;
-                    case DownloadStatus.Paused:
-                        model.StatusMessage = localizer["DownloadStatus_Paused"];
-                        break;
-                    case DownloadStatus.Deleted:
-                        model.StatusMessage = "";
-                        await jsRuntime.InvokeVoidAsync(START_DELETE_ANIM_JS_FUNC, model.ElementId, galleryId, DELETE_ANIM_DURATION);
-                        _ = Task.Delay(DELETE_ANIM_DURATION).ContinueWith(_ => DeleteDownloadModel(galleryId));
+                        _ = Task.Run(async () => {
+                            await vm.BeginDeleteSelf();
+                            Downloads.Remove(galleryId);
+                            DownloadPageStateHasChanged();
+                        });
                         break;
                     case DownloadStatus.Failed:
                         throw new InvalidOperationException($"{DownloadStatus.Failed} must be handled by {nameof(ReceiveFailure)}");
                 }
-                model.StateHasChanged();
             }
+            return Task.CompletedTask;
         }
 
         public Task ReceiveFailure(int galleryId, string message) {
-            if (Downloads.TryGetValue(galleryId, out DownloadModel? model)) {
-                model.Status = DownloadStatus.Failed;
-                model.StatusMessage = message;
-                model.StateHasChanged();
+            if (Downloads.TryGetValue(galleryId, out DownloadItemViewModel? vm)) {
+                vm.Status = DownloadStatus.Failed;
+                vm.ErrorMessage = message;
             }
             return Task.CompletedTask;
         }
 
         public Task ReceiveIdChange(int oldId, int newId) {
-            if (Downloads.TryGetValue(oldId, out DownloadModel? model)) {
+            if (Downloads.TryGetValue(oldId, out DownloadItemViewModel? vm)) {
                 Downloads.Remove(oldId);
-                Downloads.TryAdd(newId, model);
-                model.GalleryId = newId;
-                model.StateHasChanged();
+                vm.GalleryId = newId;
+                Downloads.TryAdd(newId, vm);
             }
             return Task.CompletedTask;
         }
@@ -128,9 +114,9 @@ namespace Hitorus.Web.Services {
         private async Task OnClosed(Exception? e) {
             DownloadPageStateHasChanged();
             if (_hubConnection != null) {
-                foreach (DownloadModel d in Downloads.Values) {
-                    d.StatusMessage = localizer["DownloadStatus_ConnectionLost"];
-                    d.Status = DownloadStatus.Failed;
+                foreach (var vm in Downloads.Values) {
+                    vm.Status = DownloadStatus.Failed;
+                    vm.ErrorMessage = localizer["DownloadStatus_ConnectionLost"];
                 }
                 await _hubConnection.DisposeAsync();
                 _hubConnection = null;
@@ -149,9 +135,34 @@ namespace Hitorus.Web.Services {
             await downloadService.SendAction(DownloadAction.Delete, ids);
         }
 
-        public void DeleteDownloadModel(int galleryId) {
-            Downloads.Remove(galleryId);
-            DownloadPageStateHasChanged();
+        public async Task HandleDownloadItemActionRequest(int galleryId) {
+            if (Downloads.TryGetValue(galleryId, out DownloadItemViewModel? vm)) {
+                vm.WaitingResponse = true;
+                bool success = false;
+                switch (vm.Status) {
+                    case DownloadStatus.Downloading:
+                        success = await downloadService.SendAction(DownloadAction.Pause, [vm.GalleryId]);
+                        break;
+                    case DownloadStatus.Paused or DownloadStatus.Failed or DownloadStatus.Enqueued:
+                        success = await downloadService.SendAction(DownloadAction.Start, [vm.GalleryId]);
+                        break;
+                    case DownloadStatus.Completed or DownloadStatus.Deleted:
+                        throw new InvalidOperationException("Action button should not be clickable.");
+                }
+                if (!success) {
+                    vm.WaitingResponse = false;
+                }
+            }
+        }
+
+        public async Task HandleDownloadItemDeleteRequest(int galleryId) {
+            if (Downloads.TryGetValue(galleryId, out DownloadItemViewModel? vm)) {
+                vm.WaitingResponse = true;
+                bool success = await downloadService.SendAction(DownloadAction.Delete, [vm.GalleryId]);
+                if (!success) {
+                    vm.WaitingResponse = false;
+                }
+            }
         }
 
         public async ValueTask DisposeAsync() {

@@ -16,7 +16,7 @@ namespace Hitorus.Web.Pages {
         [Inject] IStringLocalizer<SharedResource> SharedLocalizer { get; set; } = default!;
 
         private string _inputText = "";
-        private bool _isImporting = false;
+        private bool _isAutoImporting = false;
 
         private async Task OnMaxConcurrentDownloadCountChanged(int value) {
             DownloadConfigurationService.Config.MaxConcurrentDownloadCount = value;
@@ -41,15 +41,15 @@ namespace Hitorus.Web.Pages {
             }
         }
 
-        private async Task OnImportButtonClick() {
-            _isImporting = true;
-            int importCount = await DownloadService.ImportGalleries();
+        private async Task OnAutoImportButtonClick() {
+            _isAutoImporting = true;
+            int importCount = await DownloadService.AutoImportGalleries();
             Snackbar.Add(
                 string.Format(Localizer["ImportSuccess"], importCount),
                 Severity.Success,
                 UiConstants.DEFAULT_SNACKBAR_OPTIONS
             );
-            _isImporting = false;
+            _isAutoImporting = false;
             BrowseConfigurationService.BrowsePageRefreshQueued = true;
         }
 

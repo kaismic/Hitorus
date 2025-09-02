@@ -1,30 +1,33 @@
-﻿<MudPaper id="@Model.ElementId"
-          Class="d-flex pa-4 gap-4" Outlined>
-    <div style="width: 240px;">
-        <MudText>@Model.GalleryId</MudText>
-        <MudText>@Model.Gallery?.Title</MudText>
-    </div>
-    <div class="align-self-end" style="flex: 1;">
-        <MudProgressLinear Color="Color.Primary"
-                           Value="@Model.Progress"
-                           Min="0"
-                           Max="@(Model.Gallery == null ? 0 : Model.Gallery.ImageCount)"
-                           Class="mb-1" />
-        <div class="d-flex">
-            <MudText Style="flex: 1 1 auto;">@Model.StatusMessage</MudText>
-            <MudText Style="white-space: nowrap;">@(Model.Progress.ToString() + "/" + (Model.Gallery == null ? "-" : Model.Gallery.ImageCount.ToString()))</MudText>
+﻿@if (ViewModel.Visible)
+{
+    <MudPaper id="@ViewModel.ElementId"
+              Class="d-flex pa-4 gap-4" Outlined>
+        <div style="width: 240px;">
+            <MudText>@ViewModel.GalleryId</MudText>
+            <MudText>@ViewModel.Gallery?.Title</MudText>
         </div>
-    </div>
-    <div style="width: 120px;" class="d-flex gap-4 align-center">
-        <MudTooltip Text="@(Model.Status == DownloadStatus.Downloading ? SharedLocalizer["Pause"] : SharedLocalizer["Start"])">
-            <MudIconButton Icon=@ControlButtonIcon
-                           Disabled=@(Model.Status is DownloadStatus.Completed or DownloadStatus.Deleted || !DownloadManager.IsHubConnectionOpen || Model.WaitingResponse)
-                           OnClick=@OnActionButtonClick />
-        </MudTooltip>
-        <MudTooltip Text="@(SharedLocalizer["Delete"])">
-            <MudIconButton Icon=@MudBlazor.Icons.Material.Filled.Delete
-                           Disabled=@(Model.Status is DownloadStatus.Completed or DownloadStatus.Deleted || !DownloadManager.IsHubConnectionOpen || Model.WaitingResponse)
-                           OnClick="@OnDeleteButtonClick" />
-        </MudTooltip>
-    </div>
-</MudPaper>
+        <div class="align-self-end" style="flex: 1;">
+            <MudProgressLinear Color="Color.Primary"
+                               Value="@ViewModel.Progress"
+                               Min="0"
+                               Max="@(ViewModel.Gallery == null ? 0 : ViewModel.Gallery.ImageCount)"
+                               Class="mb-1" />
+            <div class="d-flex">
+                <MudText Style="flex: 1 1 auto;">@ViewModel.StatusMessage</MudText>
+                <MudText Style="white-space: nowrap;">@(ViewModel.Progress.ToString() + "/" + (ViewModel.Gallery == null ? "-" : ViewModel.Gallery.ImageCount.ToString()))</MudText>
+            </div>
+        </div>
+        <div style="width: 120px;" class="d-flex gap-4 align-center">
+            <MudTooltip Text="@(ViewModel.Status == DownloadStatus.Downloading ? SharedLocalizer["Pause"] : SharedLocalizer["Start"])">
+                <MudIconButton Icon=@ControlButtonIcon
+                               Disabled=@(ViewModel.Status is DownloadStatus.Completed or DownloadStatus.Deleted || ViewModel.WaitingResponse)
+                               OnClick=@(() => OnActionButtonClick.InvokeAsync(ViewModel.GalleryId)) />
+            </MudTooltip>
+            <MudTooltip Text="@(SharedLocalizer["Delete"])">
+                <MudIconButton Icon=@MudBlazor.Icons.Material.Filled.Delete
+                               Disabled=@(ViewModel.Status is DownloadStatus.Completed or DownloadStatus.Deleted || ViewModel.WaitingResponse)
+                               OnClick=@(() => OnDeleteButtonClick.InvokeAsync(ViewModel.GalleryId)) />
+            </MudTooltip>
+        </div>
+    </MudPaper>
+}

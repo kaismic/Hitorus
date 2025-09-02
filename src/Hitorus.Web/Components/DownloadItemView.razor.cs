@@ -1,18 +1,21 @@
 ﻿using Hitorus.Data;
-using Hitorus.Web.Models;
-using Hitorus.Web.Services;
+using Hitorus.Web.ViewModels;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Localization;
-using MudBlazor;
+using Microsoft.JSInterop;
 
 namespace Hitorus.Web.Components {
     public partial class DownloadItemView : ComponentBase {
         [Inject] IStringLocalizer<SharedResource> SharedLocalizer { get; set; } = default!;
-        [Inject] DownloadService DownloadService { get; set; } = default!;
-        [Inject] DownloadClientManagerService DownloadManager { get; set; } = default!;
-        [Parameter, EditorRequired] public DownloadModel Model { get; set; } = default!;
+        [Inject] private IJSRuntime JSRuntime { get; set; } = default!;
+        //[Inject] DownloadService DownloadService { get; set; } = default!;
+        [Parameter, EditorRequired] public DownloadItemViewModel ViewModel { get; set; } = default!;
+        [Parameter, EditorRequired] public EventCallback<int> OnActionButtonClick { get; set; }
+        [Parameter, EditorRequired] public EventCallback<int> OnDeleteButtonClick { get; set; }
 
-        private string ControlButtonIcon => Model.Status switch {
+        private const string START_DELETE_ANIM_JS_FUNC = "startDeleteAnimation";
+
+        private string ControlButtonIcon => ViewModel.Status switch {
             DownloadStatus.Downloading => MudBlazor.Icons.Material.Filled.Pause,
             DownloadStatus.Completed => MudBlazor.Icons.Material.Filled.Check,
             DownloadStatus.Paused or DownloadStatus.Failed or DownloadStatus.Enqueued => MudBlazor.Icons.Material.Filled.PlayArrow,
@@ -21,28 +24,12 @@ namespace Hitorus.Web.Components {
         };
 
         protected override void OnInitialized() {
-            Model.StateHasChanged = StateHasChanged;
+            //ViewModel.StateHasChanged = StateHasChanged;
+            ViewModel.StartDeleteAnimation = StartDeleteAnimation;
         }
 
-        private async Task OnActionButtonClick() {
-            Model.WaitingResponse = true;
-            switch (Model.Status) {
-                case DownloadStatus.Downloading:
-                    await DownloadService.SendAction(DownloadAction.Pause, [Model.GalleryId]);
-                    break;
-                case DownloadStatus.Paused or DownloadStatus.Failed or DownloadStatus.Enqueued:
-                    await DownloadService.SendAction(DownloadAction.Start, [Model.GalleryId]);
-                    break;
-                case DownloadStatus.Completed or DownloadStatus.Deleted:
-                    throw new InvalidOperationException("Action button should not be clickable.");
-            }
-            Model.WaitingResponse = false;
-        }
-
-        private async Task OnDeleteButtonClick() {
-            Model.WaitingResponse = true;
-            await DownloadService.SendAction(DownloadAction.Delete, [Model.GalleryId]);
-            Model.WaitingResponse = false;
+        private async ValueTask StartDeleteAnimation(string elementId, int animDuration) {
+            await JSRuntime.InvokeVoidAsync(START_DELETE_ANIM_JS_FUNC, elementId, animDuration);
         }
     }
 }

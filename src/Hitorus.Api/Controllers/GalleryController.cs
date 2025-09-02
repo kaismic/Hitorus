@@ -153,11 +153,8 @@ namespace Hitorus.Api.Controllers {
                 if (context.Galleries.Any(existing => existing.Id == dto.Id)) {
                     continue; // Skip if gallery already exists
                 }
-                Console.WriteLine("Importing gallery: " + dto.Id);
                 GalleryLanguage? language = context.GalleryLanguages.FirstOrDefault(l => l.EnglishName == dto.Language);
                 GalleryType? type = context.GalleryTypes.FirstOrDefault(t => t.Value == dto.Type);
-                Console.WriteLine("Language: " + (language?.EnglishName ?? "Not found"));
-                Console.WriteLine("Type: " + (type?.Value ?? "Not found"));
                 if (language == null || type == null) {
                     continue; // Skip if language or type is not found
                 }

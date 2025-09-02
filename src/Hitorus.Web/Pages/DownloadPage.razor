@@ -35,14 +35,14 @@
     <div style="flex: 1;" class="d-flex flex-column gap-4">
         <MudButton Color="Color.Secondary" 
                    Variant="Variant.Outlined"
-                   OnClick="@OnImportButtonClick"
-                   Disabled=@(_isImporting || !DownloadManager.IsHubConnectionOpen)
+                   OnClick="@OnAutoImportButtonClick"
+                   Disabled=@(_isAutoImporting || !DownloadManager.IsHubConnectionOpen)
                    Class="align-self-start">
-            @if (_isImporting)
+            @if (_isAutoImporting)
             {
                 <MudProgressCircular Indeterminate Size="Size.Small" Color="Color.Primary" Class="mr-2" />
             }
-            @Localizer["ImportGalleries"]
+            <MudText>Automatically Detect Galleries</MudText>
         </MudButton>
         <div class="d-flex gap-4 align-center">
             <MudNumericField T="int"
@@ -85,8 +85,11 @@
         </div>
         <MudPaper Class="d-flex flex-column gap-4 overflow-y-auto overflow-x-hidden pa-4"
                   Style="flex: 1" Outlined>
-            @foreach (DownloadModel model in DownloadManager.Downloads.Values) {
-                <DownloadItemView Model="@model" @key=@model />
+            @foreach (DownloadItemViewModel vm in DownloadManager.Downloads.Values) {
+                <DownloadItemView ViewModel="@vm"
+                                  OnActionButtonClick="@DownloadManager.HandleDownloadItemActionRequest"
+                                  OnDeleteButtonClick="@DownloadManager.HandleDownloadItemDeleteRequest"
+                                  @key=@vm />
             }
         </MudPaper>
     </div>

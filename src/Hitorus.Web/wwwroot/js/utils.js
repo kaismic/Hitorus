@@ -64,7 +64,7 @@ function getClientWidthById(id) {
     return element.clientWidth;
 }
 
-function startDeleteAnimation(elementId, galleryId, duration) {
+function startDeleteAnimation(elementId, duration) {
     const element = document.getElementById(elementId);
     if (element) {
         const keyframes = [
@@ -73,10 +73,7 @@ function startDeleteAnimation(elementId, galleryId, duration) {
             { transform: "translateX(0%) scale(0.8)", opacity: "0.6", offset: 0.3 },
             { transform: "translateX(400%) scale(0)", opacity: "0", offset: 1 },
         ];
-        const animation = element.animate(keyframes, { duration: duration, fill: "forwards", easing: "ease-out" })
-        animation.finished.then(() => {
-            dotNetObject.invokeMethodAsync("OnDeleteAnimationFinished", galleryId);
-        })
+        element.animate(keyframes, { duration: duration, fill: "forwards", easing: "ease-out" })
     }
 }
 

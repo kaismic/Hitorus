@@ -18,9 +18,9 @@ namespace Hitorus.Api.Controllers {
             return Ok();
         }
 
-        [HttpPost("import")]
+        [HttpPost("auto-import")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public ActionResult<int> ImportExistingGalleries() {
+        public ActionResult<int> AutoImport() {
             IEnumerable<int> existingGalleryIds = GalleryIOUtility.GetExistingGalleries();
             if (!existingGalleryIds.Any()) {
                 return Ok(0);

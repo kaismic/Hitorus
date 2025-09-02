@@ -15,8 +15,8 @@ namespace Hitorus.Web.Services {
             return response.IsSuccessStatusCode;
         }
         
-        public async Task<int> ImportGalleries() {
-            HttpResponseMessage response = await _httpClient.PostAsync($"import", null);
+        public async Task<int> AutoImportGalleries() {
+            HttpResponseMessage response = await _httpClient.PostAsync($"auto-import", null);
             return await response.Content.ReadFromJsonAsync<int>();
         }
     }

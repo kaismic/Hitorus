@@ -70,8 +70,14 @@ public class DownloadManagerService(
                                 continue;
                             }
                             IDownloader downloader = CreateDownloader(id, true);
-                            _liveDownloaders.TryAdd(id, downloader);
-                            _ = downloader.Start();
+                            DownloadConfiguration config = dbContext.DownloadConfigurations.First();
+                            if (_liveDownloaders.TryAdd(id, downloader)) {
+                                if (!config.SavedDownloads.Contains(id)) {
+                                    config.SavedDownloads.Add(id);
+                                    dbContext.SaveChanges();
+                                }
+                                _ = downloader.Start();
+                            }
                         }
                         break;
                     }
@@ -84,8 +90,14 @@ public class DownloadManagerService(
                             }
                             IDownloader downloader = CreateDownloader(id, false);
                             _downloaderQueue.AddFirst(downloader);
+                            DownloadConfiguration config = dbContext.DownloadConfigurations.First();
+                            if (!config.SavedDownloads.Contains(id)) {
+                                config.SavedDownloads.Add(id);
+                                dbContext.SaveChanges();
+                            }
                             downloader.ChangeStatus(DownloadStatus.Enqueued);
                         }
+                        DequeueDownloaders();
                         break;
                     }
                     case DownloadAction.Start: {

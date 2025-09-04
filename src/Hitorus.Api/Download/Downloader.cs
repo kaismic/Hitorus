@@ -71,7 +71,7 @@ namespace Hitorus.Api.Download {
                     break;
                 case DownloadStatus.Failed:
                     _cts?.Cancel();
-                    _logger.LogInformation("{GalleryId}: Download failed: {message}.", GalleryId, message);
+                    _logger.LogInformation("{GalleryId}: Download Failed.", GalleryId);
                     break;
             }
         }
@@ -108,13 +108,14 @@ namespace Hitorus.Api.Download {
                     if (_gallery == null) {
                         return;
                     }
-                } catch (HttpRequestException) {
+                } catch (HttpRequestException e) {
+                    _logger.LogError(e, "Failed to get gallery info.");
                     ChangeStatus(DownloadStatus.Failed, "Failed to get gallery info.");
                     return;
                 } catch (TaskCanceledException) {
                     return;
                 } catch (Exception e) {
-                    _logger.LogError(e, "");
+                    _logger.LogError(e, "An unhandled exception has occurred.");
                     return;
                 }
             }

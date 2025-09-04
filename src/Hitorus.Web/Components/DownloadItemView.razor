@@ -16,6 +16,7 @@
                 <MudText Style="flex: 1 1 auto;">@ViewModel.StatusMessage</MudText>
                 <MudText Style="white-space: nowrap;">@(ViewModel.Progress.ToString() + "/" + (ViewModel.Gallery == null ? "-" : ViewModel.Gallery.ImageCount.ToString()))</MudText>
             </div>
+            <MudText>@ViewModel.ErrorMessage</MudText>
         </div>
         <div style="width: 120px;" class="d-flex gap-4 align-center">
             <MudTooltip Text="@(ViewModel.Status == DownloadStatus.Downloading ? SharedLocalizer["Pause"] : SharedLocalizer["Start"])">

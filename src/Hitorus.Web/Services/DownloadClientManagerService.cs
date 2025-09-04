@@ -49,12 +49,12 @@ namespace Hitorus.Web.Services {
         public async Task ReceiveGalleryAvailable(int galleryId) {
             if (Downloads.TryGetValue(galleryId, out DownloadItemViewModel? vm)) {
                 vm.Gallery = await galleryService.GetDownloadGalleryDTO(galleryId);
-                // TODO test if component is rendered and displays gallery title without StateHasChanged
                 if (browseConfigurationService.BrowsePageLoaded) {
                     _loadGalleriesDebDispatcher.Debounce(browseConfigurationService.LoadGalleries);
                 } else {
                     browseConfigurationService.BrowsePageRefreshQueued = true;
                 }
+                DownloadPageStateHasChanged();
             }
         }
 
@@ -68,19 +68,22 @@ namespace Hitorus.Web.Services {
         public Task ReceiveStatus(int galleryId, DownloadStatus status) {
             if (Downloads.TryGetValue(galleryId, out DownloadItemViewModel? vm)) {
                 vm.Status = status;
+                vm.ErrorMessage = null;
                 switch (status) {
                     case DownloadStatus.Paused or DownloadStatus.Downloading:
                         vm.WaitingResponse = false;
+                        goto case DownloadStatus.Enqueued;
+                    case DownloadStatus.Enqueued:
                         DownloadPageStateHasChanged();
                         break;
-                    case DownloadStatus.Completed or DownloadStatus.Deleted:
-                        if (status == DownloadStatus.Completed) {
-                            if (browseConfigurationService.BrowsePageLoaded) {
-                                _loadGalleriesDebDispatcher.Debounce(browseConfigurationService.LoadGalleries);
-                            } else {
-                                browseConfigurationService.BrowsePageRefreshQueued = true;
-                            }
+                    case DownloadStatus.Completed:
+                        if (browseConfigurationService.BrowsePageLoaded) {
+                            _loadGalleriesDebDispatcher.Debounce(browseConfigurationService.LoadGalleries);
+                        } else {
+                            browseConfigurationService.BrowsePageRefreshQueued = true;
                         }
+                        goto case DownloadStatus.Deleted;
+                    case DownloadStatus.Deleted:
                         _ = Task.Run(async () => {
                             await vm.BeginDeleteSelf();
                             Downloads.Remove(galleryId);
@@ -98,6 +101,7 @@ namespace Hitorus.Web.Services {
             if (Downloads.TryGetValue(galleryId, out DownloadItemViewModel? vm)) {
                 vm.Status = DownloadStatus.Failed;
                 vm.ErrorMessage = message;
+                DownloadPageStateHasChanged();
             }
             return Task.CompletedTask;
         }
@@ -107,12 +111,12 @@ namespace Hitorus.Web.Services {
                 Downloads.Remove(oldId);
                 vm.GalleryId = newId;
                 Downloads.TryAdd(newId, vm);
+                DownloadPageStateHasChanged();
             }
             return Task.CompletedTask;
         }
 
         private async Task OnClosed(Exception? e) {
-            DownloadPageStateHasChanged();
             if (_hubConnection != null) {
                 foreach (var vm in Downloads.Values) {
                     vm.Status = DownloadStatus.Failed;
@@ -120,6 +124,7 @@ namespace Hitorus.Web.Services {
                 }
                 await _hubConnection.DisposeAsync();
                 _hubConnection = null;
+                DownloadPageStateHasChanged();
             }
         }
 
@@ -138,6 +143,7 @@ namespace Hitorus.Web.Services {
         public async Task HandleDownloadItemActionRequest(int galleryId) {
             if (Downloads.TryGetValue(galleryId, out DownloadItemViewModel? vm)) {
                 vm.WaitingResponse = true;
+                DownloadPageStateHasChanged();
                 bool success = false;
                 switch (vm.Status) {
                     case DownloadStatus.Downloading:
@@ -152,16 +158,19 @@ namespace Hitorus.Web.Services {
                 if (!success) {
                     vm.WaitingResponse = false;
                 }
+                DownloadPageStateHasChanged();
             }
         }
 
         public async Task HandleDownloadItemDeleteRequest(int galleryId) {
             if (Downloads.TryGetValue(galleryId, out DownloadItemViewModel? vm)) {
                 vm.WaitingResponse = true;
+                DownloadPageStateHasChanged();
                 bool success = await downloadService.SendAction(DownloadAction.Delete, [vm.GalleryId]);
                 if (!success) {
                     vm.WaitingResponse = false;
                 }
+                DownloadPageStateHasChanged();
             }
         }
 

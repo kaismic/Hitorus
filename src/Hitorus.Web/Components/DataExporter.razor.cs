@@ -12,6 +12,7 @@ namespace Hitorus.Web.Components {
         [Inject] IJSRuntime JSRuntime { get; set; } = default!;
         [Inject] IDialogService DialogService { get; set; } = default!;
         [Inject] IStringLocalizer<DataExporter> Localizer { get; set; } = default!;
+        [Inject] IStringLocalizer<SharedResource> SharedLocalizer { get; set; } = default!;
         [Inject] TagFilterService TagFilterService { get; set; } = default!;
         [Inject] GalleryService GalleryService { get; set; } = default!;
         [Inject] AppConfigurationService AppConfigurationService { get; set; } = default!;
@@ -19,6 +20,8 @@ namespace Hitorus.Web.Components {
         [Inject] ViewConfigurationService ViewConfigurationService { get; set; } = default!;
 
         private static readonly Version MinGalleryExportApiVersion = new(1, 1, 0);
+        private const string FILE_NAME_DATETIME_FORMAT = "yyyy-MM-ddThh:mm:ss";
+        private const string FILE_TYPE_JSON = "json";
 
         private async Task ExportTagFilters() {
             await SearchConfigurationService.Load();
@@ -32,23 +35,23 @@ namespace Hitorus.Web.Components {
                 IReadOnlyCollection<ChipModel<TagFilterDTO>> selected = (IReadOnlyCollection<ChipModel<TagFilterDTO>>)result.Data!;
                 IEnumerable<int> ids = selected.Select(m => m.Value.Id);
                 List<TagFilterBuildDTO> exportingTFs = await TagFilterService.ExportTagFilters(ids);
-                await JSRuntime.InvokeVoidAsync("exportData", exportingTFs, "hitorus-tag-filters-" + DateTime.Now.ToString("yyyy-MM-ddThh:mm:ss"), "json");
+                await Utilities.ExportData(JSRuntime, exportingTFs, "hitorus-tag-filters-" + DateTime.Now.ToString(FILE_NAME_DATETIME_FORMAT), FILE_TYPE_JSON);
             }
         }
 
         private async Task ExportGalleries() {
             IEnumerable<ExportGalleryDTO> galleries = await GalleryService.ExportGalleries();
-            await Utilities.ExportData(JSRuntime, galleries, "hitorus-galleries-" + DateTime.Now.ToString("yyyy-MM-ddThh:mm:ss"), "json");
+            await Utilities.ExportData(JSRuntime, galleries, "hitorus-galleries-" + DateTime.Now.ToString(FILE_NAME_DATETIME_FORMAT), FILE_TYPE_JSON);
         }
 
         private async Task ExportAppSettings() {
             await AppConfigurationService.Load(false);
-            await Utilities.ExportData(JSRuntime, AppConfigurationService.Config, "hitorus-app-settings" + DateTime.Now.ToString("yyyy-MM-ddThh:mm:ss"), "json");
+            await Utilities.ExportData(JSRuntime, AppConfigurationService.Config, "hitorus-app-settings" + DateTime.Now.ToString(FILE_NAME_DATETIME_FORMAT), FILE_TYPE_JSON);
         }
 
         private async Task ExportViewPageSettings() {
             await ViewConfigurationService.Load();
-            await Utilities.ExportData(JSRuntime, ViewConfigurationService.Config, "hitorus-view-page-settings-" + DateTime.Now.ToString("yyyy-MM-ddThh:mm:ss"), "json");
+            await Utilities.ExportData(JSRuntime, ViewConfigurationService.Config, "hitorus-view-page-settings-" + DateTime.Now.ToString(FILE_NAME_DATETIME_FORMAT), FILE_TYPE_JSON);
         }
     }
 }

@@ -3,27 +3,27 @@
                 Color="Color.Primary"
                 StartIcon="@MudBlazor.Icons.Material.Filled.Download"
                 OnClick="@ExportTagFilters">
-        Tag Filters
+        @SharedLocalizer["TagFilters"]
     </MudButton>
-    <MudTooltip Text=@(AppConfigurationService.CurrentApiVersion < MinGalleryExportApiVersion ? $"Requires Version {MinGalleryExportApiVersion.ToString(3)} or higher" : "")>
+    <MudTooltip Text=@(AppConfigurationService.CurrentApiVersion < MinGalleryExportApiVersion ? string.Format(SharedLocalizer["RequiresHigherVersion"], MinGalleryExportApiVersion.ToString(3)) : "")>
         <MudButton Variant="Variant.Filled"
                    Color="Color.Primary"
                    StartIcon="@MudBlazor.Icons.Material.Filled.Download"
                    OnClick="@ExportGalleries"
                    Disabled=@(AppConfigurationService.CurrentApiVersion < MinGalleryExportApiVersion)>
-            Galleries
+            @SharedLocalizer["Galleries"]
         </MudButton>
     </MudTooltip>
     <MudButton Variant="Variant.Filled"
                 Color="Color.Primary"
                 StartIcon="@MudBlazor.Icons.Material.Filled.Download"
                 OnClick="@ExportAppSettings">
-        App Settings
+        @SharedLocalizer["AppSettings"]
     </MudButton>
     <MudButton Variant="Variant.Filled"
                 Color="Color.Primary"
                 StartIcon="@MudBlazor.Icons.Material.Filled.Download"
                 OnClick="@ExportViewPageSettings">
-        View Page Settings
+        @SharedLocalizer["ViewPageDefaultSettings"]
     </MudButton>
 </div>

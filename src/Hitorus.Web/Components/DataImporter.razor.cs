@@ -31,7 +31,7 @@ namespace Hitorus.Web.Components {
                 Snackbar.Add(
                     string.Format(
                         Localizer["Snackbar_ImportFileTooLarge"],
-                        ((double)args.File.Size / MB_IN_BYTES) + "mb",
+                        ((double)args.File.Size / MB_IN_BYTES).ToString("F2") + "mb",
                         (MAX_FILE_SIZE / MB_IN_BYTES) + "mb"
                     ),
                     Severity.Error,
@@ -56,7 +56,7 @@ namespace Hitorus.Web.Components {
             }
             if (candidates == null) {
                 Snackbar.Add(
-                    string.Format(Localizer["Snackbar_ImportUnknownError"]),
+                    Localizer["Snackbar_ImportUnknownError"],
                     Severity.Error,
                     UiConstants.DEFAULT_SNACKBAR_OPTIONS
                 );
@@ -64,7 +64,7 @@ namespace Hitorus.Web.Components {
             }
             if (candidates.Count == 0) {
                 Snackbar.Add(
-                    string.Format(Localizer["Snackbar_ImportEmptyFile"]),
+                    Localizer["Snackbar_ImportEmptyFile"],
                     Severity.Error,
                     UiConstants.DEFAULT_SNACKBAR_OPTIONS
                 );
@@ -74,7 +74,7 @@ namespace Hitorus.Web.Components {
             DialogParameters<TagFilterSelectorDialog> parameters = new() {
                 { d => d.ChipModels, [.. candidates.Select(tf => tf.ToDTO()).Select(tf => new ChipModel<TagFilterDTO>() { Value = tf, Selected = true })] }
             };
-            IDialogReference dialogRef = await DialogService.ShowAsync<TagFilterSelectorDialog>(Localizer["Dialog_Title_Import"], parameters);
+            IDialogReference dialogRef = await DialogService.ShowAsync<TagFilterSelectorDialog>(Localizer["Dialog_Title_ImportTagFilters"], parameters);
             DialogResult result = (await dialogRef.Result)!;
             if (!result.Canceled) {
                 IReadOnlyCollection<ChipModel<TagFilterDTO>> selected = (IReadOnlyCollection<ChipModel<TagFilterDTO>>)result.Data!;
@@ -85,7 +85,7 @@ namespace Hitorus.Web.Components {
                     SearchConfigurationService.Config.TagFilters.Add(tf);
                 }
                 Snackbar.Add(
-                    string.Format(Localizer["Snackbar_ImportSuccess"], imported.Count),
+                    string.Format(Localizer["Snackbar_ImportTagFiltersSuccess"], imported.Count),
                     Severity.Success,
                     UiConstants.DEFAULT_SNACKBAR_OPTIONS
                 );
@@ -97,7 +97,7 @@ namespace Hitorus.Web.Components {
                 Snackbar.Add(
                     string.Format(
                         Localizer["Snackbar_ImportFileTooLarge"],
-                        ((double)args.File.Size / MB_IN_BYTES) + "mb",
+                        ((double)args.File.Size / MB_IN_BYTES).ToString("F2") + "mb",
                         (MAX_FILE_SIZE / MB_IN_BYTES) + "mb"
                     ),
                     Severity.Error,
@@ -122,7 +122,7 @@ namespace Hitorus.Web.Components {
             }
             if (candidates == null) {
                 Snackbar.Add(
-                    string.Format(Localizer["Snackbar_ImportUnknownError"]),
+                    Localizer["Snackbar_ImportUnknownError"],
                     Severity.Error,
                     UiConstants.DEFAULT_SNACKBAR_OPTIONS
                 );
@@ -130,7 +130,7 @@ namespace Hitorus.Web.Components {
             }
             if (candidates.Count == 0) {
                 Snackbar.Add(
-                    string.Format(Localizer["Snackbar_ImportEmptyFile"]),
+                    Localizer["Snackbar_ImportEmptyFile"],
                     Severity.Error,
                     UiConstants.DEFAULT_SNACKBAR_OPTIONS
                 );
@@ -138,19 +138,18 @@ namespace Hitorus.Web.Components {
             }
             int importedCount = await GalleryService.ImportGalleries(candidates);
             Snackbar.Add(
-                $"Imported {importedCount} galleries.",
+                string.Format(Localizer["Snackbar_ImportGalleriesSuccess"], importedCount),
                 Severity.Success,
                 UiConstants.DEFAULT_SNACKBAR_OPTIONS
             );
         }
-
 
         private async Task ImportAppSettings(InputFileChangeEventArgs args) {
             if (args.File.Size > MAX_FILE_SIZE) {
                 Snackbar.Add(
                     string.Format(
                         Localizer["Snackbar_ImportFileTooLarge"],
-                        ((double)args.File.Size / MB_IN_BYTES) + "mb",
+                        ((double)args.File.Size / MB_IN_BYTES).ToString("F2") + "mb",
                         (MAX_FILE_SIZE / MB_IN_BYTES) + "mb"
                     ),
                     Severity.Error,
@@ -175,7 +174,7 @@ namespace Hitorus.Web.Components {
             }
             if (dto == null) {
                 Snackbar.Add(
-                    string.Format(Localizer["Snackbar_ImportUnknownError"]),
+                    Localizer["Snackbar_ImportUnknownError"],
                     Severity.Error,
                     UiConstants.DEFAULT_SNACKBAR_OPTIONS
                 );
@@ -183,7 +182,7 @@ namespace Hitorus.Web.Components {
             }
             bool success = await AppConfigurationService.Import(dto);
             Snackbar.Add(
-                "App settings import success.",
+                Localizer["Snackbar_ImportAppSettingsSuccess"],
                 Severity.Success,
                 UiConstants.DEFAULT_SNACKBAR_OPTIONS
             );
@@ -195,7 +194,7 @@ namespace Hitorus.Web.Components {
                 Snackbar.Add(
                     string.Format(
                         Localizer["Snackbar_ImportFileTooLarge"],
-                        ((double)args.File.Size / MB_IN_BYTES) + "mb",
+                        ((double)args.File.Size / MB_IN_BYTES).ToString("F2") + "mb",
                         (MAX_FILE_SIZE / MB_IN_BYTES) + "mb"
                     ),
                     Severity.Error,
@@ -220,7 +219,7 @@ namespace Hitorus.Web.Components {
             }
             if (dto == null) {
                 Snackbar.Add(
-                    string.Format(Localizer["Snackbar_ImportUnknownError"]),
+                    Localizer["Snackbar_ImportUnknownError"],
                     Severity.Error,
                     UiConstants.DEFAULT_SNACKBAR_OPTIONS
                 );
@@ -228,7 +227,7 @@ namespace Hitorus.Web.Components {
             }
             bool success = await ViewConfigurationService.Import(dto);
             Snackbar.Add(
-                "View settings import success.",
+                Localizer["Snackbar_ImportViewPageDefaultSettingsSuccess"],
                 Severity.Success,
                 UiConstants.DEFAULT_SNACKBAR_OPTIONS
             );

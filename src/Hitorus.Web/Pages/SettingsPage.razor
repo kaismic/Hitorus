@@ -26,7 +26,7 @@
             </PickerActions>
         </MudColorPicker>
     </SettingsCard>
-    <MudText Typo="Typo.h4">@Localizer["DefaultGalleryViewPageSettings"]</MudText>
+    <MudText Typo="Typo.h4">@SharedLocalizer["ViewPageDefaultSettings"]</MudText>
     <SettingsCard Icon="@(ViewConfigurationService.Config.ViewMode == ViewMode.Default ? MudBlazor.Icons.Material.Rounded.Rectangle : MudBlazor.Icons.Material.Filled.TableRows)"
                   Header=@SharedLocalizer["ViewMode"]>
         <MudSelect T="ViewMode"

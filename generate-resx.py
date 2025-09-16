@@ -54,4 +54,4 @@ for p in projects:
         with open(filePath) as file:
             data: dict = json.load(file)
             generateResx(outputPath, data, lang)
-            print("Generated resource files in", outputPath)
+            print("Generated resource files for", f"'{lang}'", "to", outputPath)

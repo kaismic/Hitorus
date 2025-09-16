@@ -7,8 +7,8 @@ using Microsoft.JSInterop;
 namespace Hitorus.Web.Components {
     public partial class DownloadItemView : ComponentBase {
         [Inject] IStringLocalizer<SharedResource> SharedLocalizer { get; set; } = default!;
+        [Inject] IStringLocalizer<DownloadItemView> Localizer { get; set; } = default!;
         [Inject] private IJSRuntime JSRuntime { get; set; } = default!;
-        //[Inject] DownloadService DownloadService { get; set; } = default!;
         [Parameter, EditorRequired] public DownloadItemViewModel ViewModel { get; set; } = default!;
         [Parameter, EditorRequired] public EventCallback<int> OnActionButtonClick { get; set; }
         [Parameter, EditorRequired] public EventCallback<int> OnDeleteButtonClick { get; set; }
@@ -23,8 +23,17 @@ namespace Hitorus.Web.Components {
             _ => throw new NotImplementedException()
         };
 
+        private string StatusMessage => ViewModel.Status switch {
+            DownloadStatus.Enqueued => Localizer["Enqueued"],
+            DownloadStatus.Downloading => Localizer["Downloading"],
+            DownloadStatus.Paused => ViewModel.Gallery == null ? "" : Localizer["Paused"],
+            DownloadStatus.Completed => Localizer["Completed"],
+            DownloadStatus.Failed => Localizer["Download Failed"],
+            DownloadStatus.Deleted => "",
+            _ => throw new NotImplementedException()
+        };
+
         protected override void OnInitialized() {
-            //ViewModel.StateHasChanged = StateHasChanged;
             ViewModel.StartDeleteAnimation = StartDeleteAnimation;
         }
 

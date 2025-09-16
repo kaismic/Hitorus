@@ -9,16 +9,6 @@ namespace Hitorus.Web.ViewModels {
         public required int GalleryId { get; set; }
         public DownloadGalleryDTO? Gallery { get; set; }
         public DownloadStatus Status { get; set; } = DownloadStatus.Paused;
-        // TODO localize
-        public string StatusMessage => Status switch {
-            DownloadStatus.Enqueued => "Enqueued",
-            DownloadStatus.Downloading => "Downloading",
-            DownloadStatus.Paused => Gallery == null ? "" : "Download Paused",
-            DownloadStatus.Completed => "Download Completed",
-            DownloadStatus.Failed => "Download Failed",
-            DownloadStatus.Deleted => "",
-            _ => throw new NotImplementedException()
-        };
         public string? ErrorMessage { get; set; }
         public int Progress { get; set; }
         public bool WaitingResponse { get; set; } = false;

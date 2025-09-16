@@ -46,7 +46,7 @@ namespace Hitorus.Web.Components {
             DialogParameters<SingleTagFilterSelectorDialog> parameters = new() {
                 { d => d.ChipModels, [.. TagFilters.Select(tf => new ChipModel<TagFilterDTO>() { Value = tf, Selected = tf.Id == CurrentTagFilter?.Id })] },
             };
-            IDialogReference dialogRef = await DialogService.ShowAsync<SingleTagFilterSelectorDialog>("Select a tag filter to edit:", parameters);
+            IDialogReference dialogRef = await DialogService.ShowAsync<SingleTagFilterSelectorDialog>(Localizer["Dialog_Title_SelectTagFilter"], parameters);
             DialogResult result = (await dialogRef.Result)!;
             if (!result.Canceled) {
                 CurrentTagFilter = (TagFilterDTO)result.Data!;

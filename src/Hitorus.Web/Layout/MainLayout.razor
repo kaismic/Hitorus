@@ -66,8 +66,8 @@
                         <MudText Typo="Typo.subtitle1">@Localizer["IncompatibleDesc"]</MudText>
                         <MudLink Href="https://github.com/kaismic/Hitorus/releases/latest" Target="_blank">@Localizer["DownloadLink"]</MudLink>
                     </div>
-                    <MudText Typo="Typo.subtitle1">Before downloading the latest version, it is highly recommended to download your current app data.</MudText>
-                    <MudText Typo="Typo.subtitle1">Please use the buttons below to download your data and import them later.</MudText>
+                    <MudText Typo="Typo.subtitle1">@Localizer["RecommendedActionDesc1"]</MudText>
+                    <MudText Typo="Typo.subtitle1">@Localizer["RecommendedActionDesc2"]</MudText>
                     <DataExporter CurrentApiVersion="@_currentApiVersion"></DataExporter>
                 } else {
                     <MudProgressCircular Indeterminate="true" Size="Size.Large" Color="Color.Primary" Style="font-size: 4rem" />

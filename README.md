@@ -13,7 +13,7 @@
 
 **Read in other languages:** [English](README.md), [한국어](README-ko.md)
 
-Hitorus is a desktop web application that enhances the use of hitomi.la by extending its features and incorporating custom features unique to the app.
+Hitorus is a desktop web application that enhances the use of hitomi.la (18+) by extending its features and incorporating custom features unique to the app.
 
 ## Preview
 <div align="center">

@@ -47,7 +47,6 @@ namespace Hitorus.Web.Pages {
         private bool _isAutoScrolling = false;
         private CancellationTokenSource? _autoPageTurnCts;
         private FitMode _fitMode = FitMode.Automatic;
-        private int _imagesPerPage = 2;
         private DotNetObjectReference<GalleryViewPage>? _dotNetObjectRef;
         private bool _preventDefaultKeyDown = false;
         private bool _toolbarOpen = false;
@@ -148,7 +147,7 @@ namespace Hitorus.Web.Pages {
                         imageCount = currRange.End.Value - currRange.Start.Value;
                         break;
                     case ImageLayoutMode.Fixed:
-                        imageCount = _imagesPerPage;
+                        imageCount = _viewConfiguration.ImagesPerPage;
                         break;
                     default:
                         throw new NotImplementedException();
@@ -205,7 +204,7 @@ namespace Hitorus.Web.Pages {
         }
 
         private void OnImagesPerPageChanged(int value) {
-            _imagesPerPage = value;
+            _viewConfiguration.ImagesPerPage = value;
             CaculateImageIndexGroups();
         }
 
@@ -274,7 +273,7 @@ namespace Hitorus.Web.Pages {
                     int count = 1;
                     for (int i = _pageOffset + 1; i < _gallery.Images.Count; i++) {
                         double currImgAspectRatio = (double)_gallery.Images.ElementAt(i).Width / _gallery.Images.ElementAt(i).Height;
-                        if (currImgAspectRatio > remainingAspectRatio || count == _imagesPerPage) {
+                        if (currImgAspectRatio > remainingAspectRatio || count == _viewConfiguration.ImagesPerPage) {
                             remainingAspectRatio = viewportAspectRatio - currImgAspectRatio;
                             indexRanges.Add(new(currStart, i));
                             currStart = i;
@@ -288,12 +287,12 @@ namespace Hitorus.Web.Pages {
                     indexRanges.Add(new(currStart, _gallery.Images.Count));
                     break;
                 case ImageLayoutMode.Fixed:
-                    int quotient = (_gallery.Images.Count - _pageOffset) / _imagesPerPage;
-                    int remainder = (_gallery.Images.Count - _pageOffset) % _imagesPerPage;
+                    int quotient = (_gallery.Images.Count - _pageOffset) / _viewConfiguration.ImagesPerPage;
+                    int remainder = (_gallery.Images.Count - _pageOffset) % _viewConfiguration.ImagesPerPage;
                     IEnumerable<Range> midRanges = Enumerable.Range(0, quotient)
                         .Select(i => new Range(
-                            i * _imagesPerPage + _pageOffset,
-                            (i + 1) * _imagesPerPage + _pageOffset)
+                            i * _viewConfiguration.ImagesPerPage + _pageOffset,
+                            (i + 1) * _viewConfiguration.ImagesPerPage + _pageOffset)
                         );
                     indexRanges.AddRange(midRanges);
                     if (remainder > 0) {
@@ -312,7 +311,7 @@ namespace Hitorus.Web.Pages {
             _preventDefaultKeyDown = true;
             switch (e.Code) {
                 case "ArrowLeft" or "ArrowRight":
-                    if (e.Code == "ArrowLeft" ^ ViewConfigurationService.Config.InvertKeyboardNavigation) {
+                    if (e.Code == "ArrowLeft" ^ _viewConfiguration.InvertKeyboardNavigation) {
                         if (CanDecrement()) await Decrement();
                     } else {
                         if (CanIncrement()) await Increment();
@@ -348,9 +347,9 @@ namespace Hitorus.Web.Pages {
         private async Task OnPageClick(MouseEventArgs e) {
             if (e.Button == 0) {
                 bool isXOverHalf = e.ClientX > (_browserWindowSize.Width / 2);
-                if (CanIncrement() && isXOverHalf ^ ViewConfigurationService.Config.InvertClickNavigation) {
+                if (CanIncrement() && isXOverHalf ^ _viewConfiguration.InvertClickNavigation) {
                     await Increment();
-                } else if (CanDecrement() && !(isXOverHalf ^ ViewConfigurationService.Config.InvertClickNavigation)) {
+                } else if (CanDecrement() && !(isXOverHalf ^ _viewConfiguration.InvertClickNavigation)) {
                     await Decrement();
                 }
             }

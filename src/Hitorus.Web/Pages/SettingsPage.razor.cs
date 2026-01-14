@@ -21,6 +21,11 @@ namespace Hitorus.Web.Pages {
             await ViewConfigurationService.UpdateViewModeAsync(value);
         }
 
+        private async Task OnImagesPerPageChanged(int value) {
+            ViewConfigurationService.Config.ImagesPerPage = value;
+            await ViewConfigurationService.UpdateImagesPerPageAsync(value);
+        }
+
         private async Task OnPageTurnIntervalChanged(int value) {
             ViewConfigurationService.Config.PageTurnInterval = value;
             await ViewConfigurationService.UpdatePageTurnIntervalAsync(value);

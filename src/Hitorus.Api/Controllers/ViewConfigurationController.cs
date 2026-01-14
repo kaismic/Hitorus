@@ -28,6 +28,19 @@ namespace Hitorus.Api.Controllers {
             return Ok();
         }
 
+        [HttpPatch("images-per-page")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult UpdateImagesPerPage(int configId, [FromBody] int value) {
+            ViewConfiguration? config = context.ViewConfigurations.Find(configId);
+            if (config == null) {
+                return NotFound();
+            }
+            config.ImagesPerPage = value;
+            context.SaveChanges();
+            return Ok();
+        }
+
         [HttpPatch("page-turn-interval")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

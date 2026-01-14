@@ -12,6 +12,7 @@ namespace Hitorus.Web.Components {
     public partial class DataImporter : ComponentBase {
         [CascadingParameter] private Action LayoutStateHasChanged { get; set; } = default!;
         [Inject] IStringLocalizer<DataImporter> Localizer { get; set; } = default!;
+        [Inject] IStringLocalizer<SharedResource> SharedLocalizer { get; set; } = default!;
         [Inject] ISnackbar Snackbar { get; set; } = default!;
         [Inject] IDialogService DialogService { get; set; } = default!;
         [Inject] TagFilterService TagFilterService { get; set; } = default!;

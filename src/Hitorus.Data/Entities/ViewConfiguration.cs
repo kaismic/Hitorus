@@ -12,6 +12,7 @@ public class ViewConfiguration {
     public ImageLayoutMode ImageLayoutMode { get; set; }
     public ViewDirection ViewDirection { get; set; }
     public AutoScrollMode AutoScrollMode { get; set; }
+    public int ImagesPerPage { get; set; }
     public int PageTurnInterval { get; set; } // in seconds
     public int ScrollSpeed { get; set; } // in pixels per x milliseconds (see startAutoScroll function in GalleryViewPage.razor.js for exact value)
     public bool InvertClickNavigation { get; set; }
@@ -23,6 +24,7 @@ public class ViewConfiguration {
         Loop = Loop,
         ImageLayoutMode = ImageLayoutMode,
         ViewDirection = ViewDirection,
+        ImagesPerPage = ImagesPerPage,
         PageTurnInterval = PageTurnInterval,
         AutoScrollMode = AutoScrollMode,
         ScrollSpeed = ScrollSpeed,

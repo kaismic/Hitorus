@@ -38,6 +38,20 @@
             <MudSelectItem T="ViewMode" Value="ViewMode.Scroll">@SharedLocalizer["Scroll"]</MudSelectItem>
         </MudSelect>
     </SettingsCard>
+    <SettingsCard Icon="@MudBlazor.Icons.Material.Filled.Settings"
+                  Header="Images per page (Fixed Layout) / Maximum images per page (Automatic Layout)">
+        <MudSelect T="int"
+                   Value=@ViewConfigurationService.Config.ImagesPerPage
+                   ValueChanged="@OnImagesPerPageChanged"
+                   Variant="Variant.Outlined"
+                   Style="max-width: 200px">
+            @for (int i = 1; i <= 4; i++)
+            {
+                int j = i;
+                <MudSelectItem T="int" Value="@j">@j</MudSelectItem>
+            }
+        </MudSelect>
+    </SettingsCard>
     <SettingsCard Icon="@MudBlazor.Icons.Material.Filled.Timer"
                   Header=@SharedLocalizer["PageTurnInterval"]>
         <MudSlider T="int" ValueLabel TickMarks

@@ -14,6 +14,8 @@ public class ViewConfigurationDTO {
     [JsonRequired]
     public AutoScrollMode AutoScrollMode { get; set; }
     [JsonRequired]
+    public int ImagesPerPage { get; set; }
+    [JsonRequired]
     public int PageTurnInterval { get; set; }
     [JsonRequired]
     public int ScrollSpeed { get; set; }

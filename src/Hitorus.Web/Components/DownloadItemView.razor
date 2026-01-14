@@ -13,7 +13,7 @@
                                Max="@(ViewModel.Gallery == null ? 0 : ViewModel.Gallery.ImageCount)"
                                Class="mb-1" />
             <div class="d-flex">
-                <MudText Style="flex: 1 1 auto;">@ViewModel.StatusMessage</MudText>
+                <MudText Style="flex: 1 1 auto;">@ViewModel.Status.ToString()</MudText>
                 <MudText Style="white-space: nowrap;">@(ViewModel.Progress.ToString() + "/" + (ViewModel.Gallery == null ? "-" : ViewModel.Gallery.ImageCount.ToString()))</MudText>
             </div>
             <MudText>@ViewModel.ErrorMessage</MudText>

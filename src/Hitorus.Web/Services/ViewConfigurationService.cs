@@ -27,6 +27,11 @@ namespace Hitorus.Web.Services {
             return response.IsSuccessStatusCode;
         }
 
+        public async Task<bool> UpdateImagesPerPageAsync(int value) {
+            var response = await _httpClient.PatchAsync($"images-per-page?configId={Config.Id}", JsonContent.Create(value));
+            return response.IsSuccessStatusCode;
+        }
+
         public async Task<bool> UpdatePageTurnIntervalAsync(int value) {
             var response = await _httpClient.PatchAsync($"page-turn-interval?configId={Config.Id}", JsonContent.Create(value));
             return response.IsSuccessStatusCode;

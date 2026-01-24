@@ -2,11 +2,11 @@
 @using System.Globalization
 
 <div class="d-flex flex-column gap-4 pa-8">
-    <MudText Typo="Typo.h4">Import/Export Data</MudText>
+    <MudText Typo="Typo.h4">@Localizer["ImportExportUserData"]</MudText>
     <div class="d-flex flex-column gap-2">
-        <MudText Typo="Typo.h6">Import</MudText>
+        <MudText Typo="Typo.h6">@Localizer["Import"]</MudText>
         <DataImporter></DataImporter>
-        <MudText Typo="Typo.h6">Export</MudText>
+        <MudText Typo="Typo.h6">@Localizer["Export"]</MudText>
         <DataExporter></DataExporter>
     </div>
     <MudText Typo="Typo.h4">@Localizer["GlobalSettings"]</MudText>
@@ -38,20 +38,32 @@
             <MudSelectItem T="ViewMode" Value="ViewMode.Scroll">@SharedLocalizer["Scroll"]</MudSelectItem>
         </MudSelect>
     </SettingsCard>
-    <SettingsCard Icon="@MudBlazor.Icons.Material.Filled.Settings"
-                  Header="Images per page (Fixed Layout) / Maximum images per page (Automatic Layout)">
-        <MudSelect T="int"
-                   Value=@ViewConfigurationService.Config.ImagesPerPage
-                   ValueChanged="@OnImagesPerPageChanged"
-                   Variant="Variant.Outlined"
-                   Style="max-width: 200px">
-            @for (int i = 1; i <= 4; i++)
-            {
-                int j = i;
-                <MudSelectItem T="int" Value="@j">@j</MudSelectItem>
-            }
-        </MudSelect>
-    </SettingsCard>
+    <SettingsCardGroup>
+        <SettingsCard Icon="@MudBlazor.Icons.Material.Filled.Settings"
+                      Header=@SharedLocalizer["ImageLayoutMode"]>
+            <MudSelect T="ImageLayoutMode"
+                       Value=@ViewConfigurationService.Config.ImageLayoutMode
+                       ValueChanged="@OnImageLayoutModeChanged"
+                       Variant="Variant.Outlined"
+                       Style="max-width: 200px">
+                <MudSelectItem T="ImageLayoutMode" Value="ImageLayoutMode.Automatic">@SharedLocalizer["Automatic"]</MudSelectItem>
+                <MudSelectItem T="ImageLayoutMode" Value="ImageLayoutMode.Fixed">@SharedLocalizer["Fixed"]</MudSelectItem>
+            </MudSelect>
+        </SettingsCard>
+        <SettingsCard Icon="@MudBlazor.Icons.Material.Filled.Settings"
+                      Header=@(ViewConfigurationService.Config.ImageLayoutMode == ImageLayoutMode.Automatic ? SharedLocalizer["MaxImagesPerPage"] : SharedLocalizer["ImagesPerPage"])>
+            <MudSelect T="int"
+                       Value=@ViewConfigurationService.Config.ImagesPerPage
+                       ValueChanged="@OnImagesPerPageChanged"
+                       Variant="Variant.Outlined"
+                       Style="max-width: 200px">
+                @for (int i = 1; i <= 4; i++) {
+                    int j = i;
+                    <MudSelectItem T="int" Value="@j">@j</MudSelectItem>
+                }
+            </MudSelect>
+        </SettingsCard>
+    </SettingsCardGroup>
     <SettingsCard Icon="@MudBlazor.Icons.Material.Filled.Timer"
                   Header=@SharedLocalizer["PageTurnInterval"]>
         <MudSlider T="int" ValueLabel TickMarks
@@ -96,17 +108,6 @@
                    Value=@ViewConfigurationService.Config.Loop
                    ValueChanged=@OnLoopChanged
                    Color="Color.Primary" />
-    </SettingsCard>
-    <SettingsCard Icon="@MudBlazor.Icons.Material.Filled.Settings"
-                  Header=@SharedLocalizer["ImageLayoutMode"]>
-        <MudSelect T="ImageLayoutMode"
-                   Value=@ViewConfigurationService.Config.ImageLayoutMode
-                   ValueChanged="@OnImageLayoutModeChanged"
-                   Variant="Variant.Outlined"
-                   Style="max-width: 200px">
-            <MudSelectItem T="ImageLayoutMode" Value="ImageLayoutMode.Automatic">@SharedLocalizer["Automatic"]</MudSelectItem>
-            <MudSelectItem T="ImageLayoutMode" Value="ImageLayoutMode.Fixed">@SharedLocalizer["Fixed"]</MudSelectItem>
-        </MudSelect>
     </SettingsCard>
     <SettingsCard Icon="@(ViewConfigurationService.Config.ViewDirection == ViewDirection.LTR ? MudBlazor.Icons.Material.Filled.East : MudBlazor.Icons.Material.Filled.West)"
                   Header=@SharedLocalizer["ViewDirection"]>

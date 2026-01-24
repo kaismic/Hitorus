@@ -1,0 +1,11 @@
+﻿/* SettingsCardGroup */
+.settings-card-group > .settings-card:not(:first-child) {
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
+    border-top-width: 0px;
+}
+
+.settings-card-group > .settings-card:not(:last-child) {
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+}

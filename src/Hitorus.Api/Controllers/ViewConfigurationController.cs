@@ -153,6 +153,7 @@ namespace Hitorus.Api.Controllers {
             config.ViewMode = value.ViewMode;
             config.Loop = value.Loop;
             config.ImageLayoutMode = value.ImageLayoutMode;
+            config.ImagesPerPage = value.ImagesPerPage;
             config.ViewDirection = value.ViewDirection;
             config.PageTurnInterval = value.PageTurnInterval;
             config.AutoScrollMode = value.AutoScrollMode;

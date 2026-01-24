@@ -141,7 +141,7 @@
                                  Value="@_viewConfiguration.ImagesPerPage"
                                  ValueChanged="@OnImagesPerPageChanged"
                                  Disabled="@_isAutoScrolling"
-                                 Label=@(_viewConfiguration.ImageLayoutMode == ImageLayoutMode.Automatic ? Localizer["MaxImagesPerPage"] : Localizer["ImagesPerPage"])
+                                 Label=@(_viewConfiguration.ImageLayoutMode == ImageLayoutMode.Automatic ? SharedLocalizer["MaxImagesPerPage"] : SharedLocalizer["ImagesPerPage"])
                                  Min="1" Max=@Math.Min(4, _gallery.Images.Count)
                                  Pattern="[0-9]"
                                  Variant="Variant.Outlined" />

@@ -121,6 +121,7 @@ namespace DbInitializer {
                 ViewMode = ViewMode.Default,
                 Loop = true,
                 ImageLayoutMode = ImageLayoutMode.Automatic,
+                ImagesPerPage = 2,
                 ViewDirection = ViewDirection.RTL,
                 AutoScrollMode = AutoScrollMode.ByPage,
                 PageTurnInterval = 8,
